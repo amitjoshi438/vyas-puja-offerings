@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View all Vyasa Puja offerings to HH Radhanath Swami Maharaj">
+    <title>All Offerings - 75th Vyasa Puja</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="offerings-page">
+    <!-- Decorative Background -->
+    <div class="background-pattern"></div>
+    
+    <!-- Header -->
+    <header class="header sticky">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <!-- <span class="om-symbol">ॐ</span> -->
+                    <span class="site-title">Vyasa Puja 2025</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html">Home</a>
+                    <a href="offerings.html" class="active">View Offerings</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Offerings to Gurudev</h1>
+            <p class="page-subtitle">Heartfelt prayers from disciples around the world</p>
+        </div>
+    </section>
+
+    <!-- Search and Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-container">
+                <!-- Search Box -->
+                <div class="search-box">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2"/>
+                        <path d="M14 14L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search by name, city, or country..."
+                        autocomplete="off"
+                    >
+                    <button id="clear-search" class="clear-btn" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <select id="country-filter" class="filter-select">
+                        <option value="">All Countries</option>
+                    </select>
+                    <select id="city-filter" class="filter-select">
+                        <option value="">All Cities</option>
+                    </select>
+                </div>
+
+                <!-- Results Count -->
+                <div class="results-info">
+                    <span id="results-count">Loading offerings...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offerings Grid -->
+    <section class="offerings-section">
+        <div class="container">
+            <div id="offerings-grid" class="offerings-grid">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="loading-indicator">
+                <div class="spinner"></div>
+                <p>Loading more offerings...</p>
+            </div>
+
+            <!-- No Results Message -->
+            <div id="no-results" class="no-results" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                    <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2"/>
+                    <path d="M32 20V36M32 44V44.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <h3>No offerings found</h3>
+                <p>Try adjusting your search or filters</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Full Offering -->
+    <div id="offering-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h2 id="modal-name" class="modal-name"></h2>
+                    <div id="modal-location" class="modal-location"></div>
+                </div>
+                
+                <div class="modal-offering">
+                    <div class="offering-decoration"></div>
+                    <div id="modal-text" class="modal-text"></div>
+                    <div class="offering-decoration bottom"></div>
+                </div>
+            </div>
+
+            <!-- Navigation Arrows -->
+            <button class="modal-nav prev" id="modal-prev">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="modal-nav next" id="modal-next">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-text">
+                    <p class="footer-main">All Glories to Srila Prabhupada</p>
+                    <p class="footer-sub">All Glories to His Holiness Radhanath Swami Maharaj</p>
+                </div>
+                <div class="footer-mantra">
+                    <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
+                    <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Vyasa Puja Offerings | Made with devotion and love</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

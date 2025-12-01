@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="75th Vyasa Puja Offerings to HH Radhanath Swami Maharaj - 2025">
+    <title>75th Vyasa Puja - HH Radhanath Swami Maharaj</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- Decorative Background Elements -->
+    <div class="background-pattern"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <!-- <span class="om-symbol">ॐ</span> -->
+                    <span class="site-title">Vyasa Puja 2025</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="active">Home</a>
+                    <a href="offerings.html">View Offerings</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-decorations">
+            <div class="lotus-left"></div>
+            <div class="lotus-right"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <!-- Portrait Placeholder -->
+                <div class="portrait-container">
+                    <div class="portrait-frame">
+                        <img src="assets/images/maharaj-portrait.jpg" alt="HH Radhanath Swami Maharaj" class="portrait-image">
+                        <div class="portrait-glow"></div>
+                    </div>
+                </div>
+
+                <!-- Title Section -->
+                <div class="hero-text">
+                    <div class="sanskrit-verse">
+                        <p>वन्दे गुरूणां चरणारविन्दे</p>
+                        <p class="translation">I offer my respectful obeisances unto the lotus feet of my spiritual master</p>
+                    </div>
+                    
+                    <h1 class="main-title">
+                        <span class="title-line">75th Vyasa Puja</span>
+                        <span class="title-year">2025</span>
+                    </h1>
+                    
+                    <h2 class="subtitle">His Holiness Radhanath Swami Maharaj</h2>
+                    
+                    <p class="hero-description">
+                        Celebrating the 75th appearance day of our beloved spiritual master with heartfelt offerings 
+                        from disciples around the world expressing gratitude, love, and devotion.
+                    </p>
+
+                    <!-- Statistics -->
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-offerings">0</div>
+                            <div class="stat-label">Offerings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-countries">0</div>
+                            <div class="stat-label">Countries</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-cities">0</div>
+                            <div class="stat-label">Cities</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="cta-container">
+                        <a href="offerings.html" class="btn-primary">
+                            <span>View All Offerings</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="section-header">
+                    <h2 class="section-title">About Vyasa Puja</h2>
+                    <div class="title-decoration"></div>
+                </div>
+                <div class="about-text">
+                    <p>
+                        Vyasa Puja is the most auspicious occasion to honor and glorify the spiritual master, 
+                        who represents the disciplic succession dating back to Lord Krishna Himself. On this sacred day, 
+                        disciples from all corners of the world offer their heartfelt prayers, gratitude, and devotion 
+                        at the lotus feet of His Holiness Radhanath Swami Maharaj.
+                    </p>
+                    <p>
+                        This year marks the 75th appearance day of Maharaj, a milestone celebration of his divine mission 
+                        to spread the teachings of Srila Prabhupada and inspire countless souls on the path of bhakti-yoga.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-text">
+                    <p class="footer-main">All Glories to Srila Prabhupada</p>
+                    <p class="footer-sub">All Glories to His Holiness Radhanath Swami Maharaj</p>
+                </div>
+                <div class="footer-mantra">
+                    <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
+                    <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Vyasa Puja Offerings | Made with devotion and love</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+    <script>
+        // Initialize statistics on homepage
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('csvjson.json');
+                const offerings = await response.json();
+                
+                // Animate numbers
+                const animateNumber = (element, target) => {
+                    let current = 0;
+                    const increment = target / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            element.textContent = target.toLocaleString();
+                            clearInterval(timer);
+                        } else {
+                            element.textContent = Math.floor(current).toLocaleString();
+                        }
+                    }, 30);
+                };
+                
+                // Calculate statistics
+                const totalOfferings = offerings.length;
+                const countries = new Set(offerings.map(o => o.country).filter(Boolean));
+                const cities = new Set(offerings.map(o => o['Name of City you are from']).filter(Boolean));
+                
+                // Animate counters
+                setTimeout(() => {
+                    animateNumber(document.getElementById('total-offerings'), totalOfferings);
+                    animateNumber(document.getElementById('total-countries'), countries.size);
+                    animateNumber(document.getElementById('total-cities'), cities.size);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        });
+    </script>
+</body>
+</html>
