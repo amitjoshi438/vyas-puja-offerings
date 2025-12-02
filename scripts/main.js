@@ -251,6 +251,7 @@ function setupModal() {
     const overlay = modal.querySelector('.modal-overlay');
     const prevBtn = document.getElementById('modal-prev');
     const nextBtn = document.getElementById('modal-next');
+    const modalContent = modal.querySelector('.modal-content');
 
     closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', closeModal);
@@ -266,6 +267,34 @@ function setupModal() {
         if (e.key === 'ArrowLeft') navigateModal(-1);
         if (e.key === 'ArrowRight') navigateModal(1);
     });
+
+    // Touch gesture support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const minSwipeDistance = 50;
+
+    modalContent.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modalContent.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeDistance = touchEndX - touchStartX;
+        
+        if (Math.abs(swipeDistance) > minSwipeDistance) {
+            if (swipeDistance > 0) {
+                // Swipe right - previous
+                navigateModal(-1);
+            } else {
+                // Swipe left - next
+                navigateModal(1);
+            }
+        }
+    }
 }
 
 function openModal(index) {

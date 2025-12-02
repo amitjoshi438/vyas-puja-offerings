@@ -25,12 +25,20 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
     background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
     color: var(--text-dark);
     line-height: 1.6;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -110,6 +118,9 @@ body {
     border-radius: 8px;
     transition: all 0.3s ease;
     position: relative;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
 }
 
 .nav a:hover {
@@ -440,6 +451,8 @@ body {
     font-size: 1rem;
     font-family: inherit;
     transition: all 0.3s ease;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 #search-input:focus {
@@ -485,6 +498,12 @@ body {
     background: var(--white);
     cursor: pointer;
     transition: all 0.3s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C4033' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 3rem;
 }
 
 .filter-select:focus {
@@ -690,6 +709,7 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.4s ease;
     z-index: 1001;
+    overflow: hidden;
 }
 
 @keyframes slideUp {
@@ -731,6 +751,7 @@ body {
     padding: 3rem 2.5rem;
     max-height: 85vh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {
@@ -869,8 +890,13 @@ body {
    Responsive Design
    ============================================ */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
     .title-line {
         font-size: 2.5rem;
+        line-height: 1.1;
     }
     
     .title-year {
@@ -883,6 +909,7 @@ body {
     
     .hero-description {
         font-size: 1rem;
+        padding: 0 10px;
     }
     
     .portrait-frame {
@@ -892,10 +919,19 @@ body {
     
     .stats-container {
         gap: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .stat-card {
+        padding: 1.5rem 1rem;
     }
     
     .stat-number {
         font-size: 2.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
     }
     
     .offerings-grid {
@@ -903,8 +939,20 @@ body {
         gap: 1.5rem;
     }
     
+    .offering-card {
+        padding: 1.5rem;
+    }
+    
+    .filter-section {
+        padding: 1.5rem 0;
+    }
+    
     .filter-container {
         gap: 1rem;
+    }
+    
+    .search-box {
+        max-width: 100%;
     }
     
     .filters {
@@ -913,58 +961,298 @@ body {
     
     .filter-select {
         min-width: 100%;
+        font-size: 0.95rem;
     }
     
     .modal-content {
         width: 95%;
         max-height: 90vh;
+        border-radius: 16px;
     }
     
     .modal-body {
         padding: 2rem 1.5rem;
     }
     
+    .modal-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+    
     .modal-name {
         font-size: 1.5rem;
+    }
+    
+    .modal-text {
+        font-size: 1rem;
     }
     
     .modal-nav {
         display: none;
     }
     
+    .page-header {
+        padding: 2rem 0;
+    }
+    
     .page-title {
         font-size: 2rem;
     }
     
+    .page-subtitle {
+        font-size: 1.1rem;
+    }
+    
     .nav {
-        gap: 1rem;
+        gap: 0.5rem;
     }
     
     .nav a {
-        padding: 0.5rem 0.75rem;
+        padding: 0.5rem 0.875rem;
         font-size: 0.9rem;
+    }
+    
+    .about-section {
+        padding: 3rem 0;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .about-text {
+        font-size: 1rem;
+    }
+    
+    .btn-primary {
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .footer {
+        padding: 2rem 0 1rem;
+    }
+    
+    .footer-main {
+        font-size: 1.25rem;
+    }
+    
+    .footer-sub {
+        font-size: 1.1rem;
+    }
+    
+    .footer-mantra p {
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    .header {
+        padding: 0.75rem 0;
+    }
+    
     .logo {
-        font-size: 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .site-title {
+        display: none;
     }
     
     .om-symbol {
         font-size: 1.5rem;
     }
     
+    .nav a {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .hero {
+        padding: 1.5rem 0 2.5rem;
+    }
+    
+    .portrait-frame {
+        width: 180px;
+        height: 180px;
+        padding: 6px;
+    }
+    
+    .portrait-container {
+        margin-bottom: 2rem;
+    }
+    
+    .sanskrit-verse p:first-child {
+        font-size: 1.2rem;
+    }
+    
+    .translation {
+        font-size: 0.85rem;
+    }
+    
     .title-line {
         font-size: 2rem;
     }
     
-    .hero {
-        padding: 2rem 0 3rem;
+    .title-year {
+        font-size: 1.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stats-container {
+        gap: 0.75rem;
+        max-width: 100%;
+    }
+    
+    .stat-card {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
     }
     
     .btn-primary {
-        padding: 0.875rem 2rem;
+        padding: 0.75rem 1.75rem;
+        font-size: 0.95rem;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .page-header {
+        padding: 1.5rem 0;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .page-subtitle {
         font-size: 1rem;
+    }
+    
+    .filter-section {
+        padding: 1.25rem 0;
+    }
+    
+    #search-input {
+        font-size: 0.95rem;
+        padding: 0.875rem 2.5rem 0.875rem 2.5rem;
+    }
+    
+    .search-icon {
+        left: 0.875rem;
+    }
+    
+    .clear-btn {
+        right: 0.875rem;
+    }
+    
+    .filter-select {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .results-info {
+        font-size: 0.9rem;
+    }
+    
+    .offerings-section {
+        padding: 2rem 0 3rem;
+    }
+    
+    .offerings-grid {
+        gap: 1.25rem;
+    }
+    
+    .offering-card {
+        padding: 1.25rem;
+    }
+    
+    .card-name {
+        font-size: 1.1rem;
+    }
+    
+    .card-location {
+        font-size: 0.85rem;
+    }
+    
+    .card-excerpt {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 3;
+    }
+    
+    .read-more {
+        font-size: 0.85rem;
+    }
+    
+    .modal-content {
+        width: 98%;
+        max-height: 92vh;
+        border-radius: 12px;
+    }
+    
+    .modal-body {
+        padding: 1.5rem 1.25rem;
+    }
+    
+    .modal-close {
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .modal-name {
+        font-size: 1.3rem;
+    }
+    
+    .modal-location {
+        font-size: 0.95rem;
+    }
+    
+    .modal-text {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    
+    .section-title {
+        font-size: 1.75rem;
+    }
+    
+    .about-text {
+        font-size: 0.95rem;
+    }
+    
+    .footer-main {
+        font-size: 1.1rem;
+    }
+    
+    .footer-sub {
+        font-size: 1rem;
+    }
+    
+    .footer-mantra {
+        padding: 1.25rem;
+    }
+    
+    .footer-mantra p {
+        font-size: 0.95rem;
     }
 }
