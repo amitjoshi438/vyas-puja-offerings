@@ -423,6 +423,14 @@ body {
     z-index: 90;
 }
 
+@media (max-width: 768px) {
+    .filter-section {
+        position: relative;
+        top: auto;
+        z-index: 10;
+    }
+}
+
 .filter-container {
     display: flex;
     flex-direction: column;
@@ -531,6 +539,13 @@ body {
     margin-bottom: 3rem;
 }
 
+@media (max-width: 768px) {
+    .offerings-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
 .offering-card {
     background: var(--white);
     border-radius: 16px;
@@ -598,9 +613,12 @@ body {
     color: var(--text-medium);
     display: -webkit-box;
     -webkit-line-clamp: 4;
+    line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin-bottom: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .card-footer {
@@ -920,6 +938,8 @@ body {
     .stats-container {
         gap: 1rem;
         grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+        max-width: 100%;
     }
     
     .stat-card {
@@ -1152,7 +1172,7 @@ body {
     }
     
     #search-input {
-        font-size: 0.95rem;
+        font-size: 16px;
         padding: 0.875rem 2.5rem 0.875rem 2.5rem;
     }
     
@@ -1166,7 +1186,7 @@ body {
     
     .filter-select {
         padding: 0.875rem 1rem;
-        font-size: 0.9rem;
+        font-size: 16px;
     }
     
     .results-info {
@@ -1196,6 +1216,7 @@ body {
     .card-excerpt {
         font-size: 0.9rem;
         -webkit-line-clamp: 3;
+        line-clamp: 3;
     }
     
     .read-more {

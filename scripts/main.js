@@ -39,6 +39,13 @@ async function loadOfferings() {
 function initializeOfferingsPage() {
     if (!document.getElementById('offerings-grid')) return;
 
+    // Check if data is loaded
+    if (allOfferings.length === 0) {
+        console.error('No offerings data loaded');
+        showError('No offerings data available. Please refresh the page.');
+        return;
+    }
+
     // Populate filter dropdowns
     populateFilters();
 
@@ -160,6 +167,12 @@ function applyFilters() {
 function renderOfferings(reset = false) {
     const grid = document.getElementById('offerings-grid');
     const noResults = document.getElementById('no-results');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    if (!grid) {
+        console.error('Offerings grid not found');
+        return;
+    }
 
     if (reset) {
         grid.innerHTML = '';
@@ -168,23 +181,33 @@ function renderOfferings(reset = false) {
 
     // Show/hide no results message
     if (filteredOfferings.length === 0) {
-        noResults.style.display = 'block';
+        if (noResults) noResults.style.display = 'block';
+        if (loadingIndicator) loadingIndicator.classList.remove('active');
         return;
     } else {
-        noResults.style.display = 'none';
+        if (noResults) noResults.style.display = 'none';
     }
 
     // Calculate how many to display
     const endIndex = Math.min(displayedCount + ITEMS_PER_LOAD, filteredOfferings.length);
 
+    // Use document fragment for better performance
+    const fragment = document.createDocumentFragment();
+
     // Render cards
     for (let i = displayedCount; i < endIndex; i++) {
         const offering = filteredOfferings[i];
         const card = createOfferingCard(offering, i);
-        grid.appendChild(card);
+        fragment.appendChild(card);
     }
 
+    grid.appendChild(fragment);
     displayedCount = endIndex;
+
+    // Hide loading if all loaded
+    if (displayedCount >= filteredOfferings.length && loadingIndicator) {
+        loadingIndicator.classList.remove('active');
+    }
 }
 
 // ============================================
