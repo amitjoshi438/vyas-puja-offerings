@@ -101,10 +101,11 @@ function populateFilters() {
     const cities = new Set();
 
     allOfferings.forEach(offering => {
-        if (offering.country) {
+        // Safe access with null checks
+        if (offering && offering.country && typeof offering.country === 'string') {
             countries.add(offering.country.trim());
         }
-        if (offering['Name of City you are from']) {
+        if (offering && offering['Name of City you are from'] && typeof offering['Name of City you are from'] === 'string') {
             cities.add(offering['Name of City you are from'].trim());
         }
     });
@@ -139,18 +140,21 @@ function applyFilters() {
     const selectedCity = document.getElementById('city-filter').value;
 
     filteredOfferings = allOfferings.filter(offering => {
-        // Search filter
+        // Null check for offering
+        if (!offering) return false;
+        
+        // Search filter with safe access
         const matchesSearch = !searchTerm || 
-            (offering['Your Name'] && offering['Your Name'].toLowerCase().includes(searchTerm)) ||
-            (offering['Name of City you are from'] && offering['Name of City you are from'].toLowerCase().includes(searchTerm)) ||
-            (offering.country && offering.country.toLowerCase().includes(searchTerm)) ||
-            (offering['Your Offering'] && offering['Your Offering'].toLowerCase().includes(searchTerm));
+            (offering['Your Name'] && typeof offering['Your Name'] === 'string' && offering['Your Name'].toLowerCase().includes(searchTerm)) ||
+            (offering['Name of City you are from'] && typeof offering['Name of City you are from'] === 'string' && offering['Name of City you are from'].toLowerCase().includes(searchTerm)) ||
+            (offering.country && typeof offering.country === 'string' && offering.country.toLowerCase().includes(searchTerm)) ||
+            (offering['Your Offering '] && typeof offering['Your Offering '] === 'string' && offering['Your Offering '].toLowerCase().includes(searchTerm));
 
-        // Country filter
-        const matchesCountry = !selectedCountry || offering.country === selectedCountry;
+        // Country filter with safe access
+        const matchesCountry = !selectedCountry || (offering.country && offering.country === selectedCountry);
 
-        // City filter
-        const matchesCity = !selectedCity || offering['Name of City you are from'] === selectedCity;
+        // City filter with safe access
+        const matchesCity = !selectedCity || (offering['Name of City you are from'] && offering['Name of City you are from'] === selectedCity);
 
         return matchesSearch && matchesCountry && matchesCity;
     });
@@ -219,10 +223,10 @@ function createOfferingCard(offering, index) {
     card.className = 'offering-card';
     card.setAttribute('data-index', index);
 
-    const name = offering['Your Name'] || 'Anonymous';
-    const city = offering['Name of City you are from'] || '';
-    const country = offering.country || '';
-    const text = offering['Your Offering'] || '';
+    const name = (offering && offering['Your Name']) ? offering['Your Name'] : 'Anonymous';
+    const city = (offering && offering['Name of City you are from']) ? offering['Name of City you are from'] : '';
+    const country = (offering && offering.country) ? offering.country : '';
+    const text = (offering && offering['Your Offering ']) ? offering['Your Offering '] : '';
 
     // Create location string
     let location = '';
@@ -349,10 +353,10 @@ function navigateModal(direction) {
 function updateModalContent() {
     const offering = filteredOfferings[currentIndex];
     
-    const name = offering['Your Name'] || 'Anonymous';
-    const city = offering['Name of City you are from'] || '';
-    const country = offering.country || '';
-    const text = offering['Your Offering'] || 'No offering text available.';
+    const name = (offering && offering['Your Name']) ? offering['Your Name'] : 'Anonymous';
+    const city = (offering && offering['Name of City you are from']) ? offering['Name of City you are from'] : '';
+    const country = (offering && offering.country) ? offering.country : '';
+    const text = (offering && offering['Your Offering ']) ? offering['Your Offering '] : 'No offering text available.';
 
     // Create location string
     let location = '';
