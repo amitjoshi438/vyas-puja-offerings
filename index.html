@@ -167,9 +167,10 @@
                 };
                 
                 // Calculate statistics
-                const totalOfferings = offerings.length;
-                const countries = new Set(offerings.filter(o => o && o.country).map(o => o.country));
-                const cities = new Set(offerings.filter(o => o && o['Name of City you are from']).map(o => o['Name of City you are from']));
+                const validOfferings = offerings.filter(o => o !== null && o !== undefined);
+                const totalOfferings = validOfferings.length;
+                const countries = new Set(validOfferings.filter(o => o.country && typeof o.country === 'string').map(o => o.country));
+                const cities = new Set(validOfferings.filter(o => o['Name of City you are from'] && typeof o['Name of City you are from'] === 'string').map(o => o['Name of City you are from']));
                 
                 // Animate counters
                 setTimeout(() => {
