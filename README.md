@@ -19,7 +19,10 @@ A beautiful, traditional-themed tribute website displaying heartfelt offerings f
 vyasPujaSite/
 ├── index.html              # Homepage with hero section and statistics
 ├── offerings.html          # Offerings page with search and grid
-├── csvjson.json           # Data file with all offerings
+├── data/
+│   ├── README.md          # Data folder documentation
+│   └── 2025/
+│       └── offerings.json # 2025 offerings data
 ├── styles/
 │   └── main.css           # All styling (traditional theme)
 ├── scripts/
@@ -29,6 +32,16 @@ vyasPujaSite/
 │       └── maharaj-portrait.jpg  # Portrait image (add your own)
 └── README.md              # This file
 ```
+
+## 📊 Data Organization
+
+Offerings data is organized by year for easy scalability:
+
+- **Current Year**: Data is stored in `data/2025/offerings.json`
+- **Future Years**: Create new folders like `data/2026/` with their own `offerings.json`
+- **Switching Years**: Update `CURRENT_YEAR` constant in `scripts/main.js`
+
+See `data/README.md` for detailed instructions on adding new years.
 
 ## 🚀 Quick Start
 

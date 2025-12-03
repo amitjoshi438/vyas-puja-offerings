@@ -6,6 +6,7 @@ let filteredOfferings = [];
 let currentIndex = 0;
 let displayedCount = 0;
 const ITEMS_PER_LOAD = 50;
+const CURRENT_YEAR = 2025; // Update this for different years
 
 // ============================================
 // Initialize Application
@@ -20,13 +21,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ============================================
 async function loadOfferings() {
     try {
-        const response = await fetch('csvjson.json');
+        const response = await fetch(`data/${CURRENT_YEAR}/offerings.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         allOfferings = await response.json();
         filteredOfferings = [...allOfferings];
-        console.log(`Loaded ${allOfferings.length} offerings`);
+        console.log(`Loaded ${allOfferings.length} offerings for ${CURRENT_YEAR}`);
     } catch (error) {
         console.error('Error loading offerings:', error);
         showError('Failed to load offerings. Please refresh the page.');
