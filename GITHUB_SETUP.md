@@ -26,7 +26,7 @@ Git is not currently installed on your system. Here are your options:
 3. **Select ALL files and folders**:
    - index.html
    - offerings.html
-   - csvjson.json
+   - data/2025/offerings.json
    - README.md
    - DEPLOYMENT.md
    - .gitignore

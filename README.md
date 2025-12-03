@@ -160,7 +160,7 @@ To change fonts, update the Google Fonts link in HTML files.
 
 ## 📊 Data Format
 
-The `csvjson.json` file contains offerings in this format:
+The `data/2025/offerings.json` file contains offerings in this format:
 
 ```json
 [
@@ -175,11 +175,11 @@ The `csvjson.json` file contains offerings in this format:
 
 ### Updating Data
 
-1. Edit `csvjson.json` directly, or
+1. Edit `data/2025/offerings.json` directly, or
 2. Replace with new export from Google Sheets/Excel:
    - Export as CSV
    - Convert to JSON using [csvjson.com](https://csvjson.com/)
-   - Replace `csvjson.json` file
+   - Replace `data/2025/offerings.json` file
 
 ## 🔧 Technical Details
 
@@ -210,7 +210,7 @@ The `csvjson.json` file contains offerings in this format:
 ### Offerings not loading?
 
 1. Check browser console for errors (F12)
-2. Ensure `csvjson.json` is in the same folder as `index.html`
+2. Ensure `data/2025/offerings.json` exists in the correct folder structure
 3. If using `file://` protocol, switch to local server (see Quick Start)
 
 ### Images not showing?
