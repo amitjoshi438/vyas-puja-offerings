@@ -168,8 +168,8 @@
                 
                 // Calculate statistics
                 const totalOfferings = offerings.length;
-                const countries = new Set(offerings.map(o => o.country).filter(Boolean));
-                const cities = new Set(offerings.map(o => o['Name of City you are from']).filter(Boolean));
+                const countries = new Set(offerings.filter(o => o && o.country).map(o => o.country));
+                const cities = new Set(offerings.filter(o => o && o['Name of City you are from']).map(o => o['Name of City you are from']));
                 
                 // Animate counters
                 setTimeout(() => {
