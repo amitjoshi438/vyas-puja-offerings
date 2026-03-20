@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CS3RYDL2F6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CS3RYDL2F6');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Initiation Lectures by HH Radhanath Swami Maharaj - Harinām-dīkṣā Ceremonies">
+    <meta name="theme-color" content="#FF9933">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Initiation Lectures - Vyasa Puja 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/lectures.css">
+</head>
+<body class="lectures-page">
+    <!-- Decorative Background -->
+    <div class="background-pattern"></div>
+
+    <!-- Header -->
+    <header class="header sticky">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="site-title">Vyasa Puja 2025</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html">Home</a>
+                    <a href="offerings.html">Offerings</a>
+                    <a href="lectures.html" class="active">Lectures</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner — updated dynamically from selected year -->
+    <section class="lectures-hero">
+        <div class="lectures-hero-bg">
+            <div class="hero-grain"></div>
+            <div class="hero-gradient"></div>
+        </div>
+        <div class="container">
+            <div id="lectures-hero-content" class="lectures-hero-content">
+                <!-- Populated by JS from index.json -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Year Selector — populated dynamically -->
+    <section class="year-selector-section">
+        <div class="container">
+            <div id="year-selector" class="year-selector">
+                <!-- Year tabs inserted by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Series Selector — appears only when a year has multiple series -->
+    <section id="series-selector-section" class="series-selector-section" style="display:none;">
+        <div class="container">
+            <div id="series-selector" class="series-selector">
+                <!-- Series tabs inserted by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Lectures Timeline -->
+    <section class="lectures-timeline-section">
+        <div class="container">
+            <div id="lectures-container" class="lectures-timeline">
+                <!-- Lectures will be dynamically inserted -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-text">
+                    <p class="footer-main">All Glories to Srila Prabhupada</p>
+                    <p class="footer-sub">All Glories to His Holiness Radhanath Swami Maharaj</p>
+                </div>
+                <div class="footer-mantra">
+                    <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
+                    <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Vyasa Puja Offerings | Made with devotion and love</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js?v=3"></script>
+    <script src="scripts/lectures.js"></script>
+</body>
+</html>
