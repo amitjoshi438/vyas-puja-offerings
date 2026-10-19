@@ -1,0 +1,18 @@
+{
+  "name": "vyasa-puja-book",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Exports Vyasa Puja offerings into a print-ready, two-column PDF book.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "book": "node build.mjs",
+    "review": "node build.mjs --review-only"
+  },
+  "dependencies": {
+    "hyphen": "^1.14.1",
+    "playwright": "^1.45.0"
+  }
+}

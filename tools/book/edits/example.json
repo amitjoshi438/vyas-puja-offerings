@@ -1,0 +1,24 @@
+{
+  "_comment": "Copy to <year>.json (e.g. 2025.json). Ids come from the review report or the website share link (offerings.html?year=2025#o=<id>). Keys starting with _ are ignored, so the entries below are inactive until the _ is removed.",
+  "exclude": {
+    "_2025-1114": "legacy Sanskrit font; asked the devotee for a Unicode copy",
+    "_2025-1451": "sent twice"
+  },
+  "fix": {
+    "_2025-512": {
+      "name": "Corrected Name",
+      "city": "Pune",
+      "country": "India",
+      "offering": "Corrected full text. Leave out any field that is already right."
+    }
+  },
+  "add": [],
+  "_add_example": [
+    {
+      "name": "Offering that arrived by email",
+      "city": "Vrindavan",
+      "country": "India",
+      "offering": "Full text of the offering.\n\nBlank lines separate paragraphs."
+    }
+  ]
+}

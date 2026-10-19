@@ -33,3 +33,6 @@ build/
 # Cache
 .cache/
 *.cache
+
+# Generated offerings books (tools/book)
+tools/book/out/

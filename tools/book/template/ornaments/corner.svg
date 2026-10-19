@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 120">
+  <!-- Top-left page corner. The book mirrors it for the other three corners. -->
+  <defs>
+    <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="120">
+      <stop offset="0" stop-color="#9c7334"/>
+      <stop offset=".35" stop-color="#e2c084"/>
+      <stop offset=".6" stop-color="#b98d47"/>
+      <stop offset="1" stop-color="#e9d3a2"/>
+    </linearGradient>
+    <path id="leaf" d="M0 0C4-5 12-5.5 17 0 12 3.2 4 3.4 0 0Z"/>
+    <g id="half" fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="2.6" d="M11 11C34 8 58 6 80 12c18 5 24 18 14 26-8 6-18 0-15-8 2-5 9-5 10 0"/>
+      <path stroke-width="1.5" d="M19 18c17-1 31 1 39 9 6 6 2 14-5 12-5-2-3-8 1-7"/>
+      <path stroke-width="1.2" d="M80 12c12-4 24-4 35 0"/>
+      <path stroke-width="1" d="M30 11c4-5 10-7 15-5"/>
+      <g fill="url(#gold)" stroke="none">
+        <use href="#leaf" xlink:href="#leaf" transform="translate(38 9) rotate(-14)"/>
+        <use href="#leaf" xlink:href="#leaf" transform="translate(62 9) rotate(8) scale(.85)"/>
+        <use href="#leaf" xlink:href="#leaf" transform="translate(70 21) rotate(52) scale(.7)"/>
+        <use href="#leaf" xlink:href="#leaf" transform="translate(96 9) rotate(-8) scale(.6)"/>
+        <circle cx="116" cy="12" r="1.8"/>
+        <circle cx="34" cy="24" r="1.4"/>
+        <circle cx="45" cy="27" r="1"/>
+      </g>
+    </g>
+  </defs>
+  <use href="#half" xlink:href="#half"/>
+  <use href="#half" xlink:href="#half" transform="matrix(0 1 1 0 0 0)"/>
+  <g fill="url(#gold)">
+    <path d="M7 2 12 7 7 12 2 7Z"/>
+    <g transform="translate(26 26) rotate(135)">
+      <path d="M0-15C5.5-9 5.5-2 0 2-5.5-2-5.5-9 0-15Z"/>
+      <path d="M0 2C-3-4-9-8.5-14-8.5-11.5-3-6 1 0 2Z"/>
+      <path d="M0 2C3-4 9-8.5 14-8.5 11.5-3 6 1 0 2Z"/>
+      <path fill="none" stroke="url(#gold)" stroke-width="1.3" stroke-linecap="round" d="M-9 5C-4 8.5 4 8.5 9 5"/>
+      <circle cy="-19" r="1.5"/>
+    </g>
+  </g>
+</svg>

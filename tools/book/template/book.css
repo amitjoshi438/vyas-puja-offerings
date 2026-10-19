@@ -1,0 +1,282 @@
+/* Vyasa Puja offerings book — page geometry follows the printed reference book (A4, two columns). */
+
+:root {
+    --page-w: 210mm;
+    --page-h: 297mm;
+    --m-top: 22mm;
+    --m-bottom: 31mm;
+    --m-side: 19mm;
+    --gutter: 11mm;
+    --body-size: 11pt;
+    --leading: 1.43;
+    --name-size: 14.5pt;
+
+    --ink: #2a1d14;
+    --name: #134a61;
+    --muted: #7b6248;
+    --gold: #b48a49;
+    --gold-hi: #e6c78c;
+    --folio: #e2bc82;
+    --paper: #fff;
+
+    --serif: "Newsreader", "Tiro Devanagari Sanskrit", "Noto Serif Devanagari", "Noto Serif Telugu", "Noto Serif Bengali",
+        "Noto Serif Oriya", "Noto Serif Gujarati", "Noto Serif Kannada", "Noto Serif Tamil", "Noto Serif Malayalam",
+        "Noto Serif Gurmukhi", "Noto Serif", Georgia, serif;
+    /* Tiro has no bold; a faked bold would be embedded in the PDF as a Type 3 font. */
+    --serif-strong: "Newsreader", "Noto Serif Devanagari", "Noto Serif Telugu", "Noto Serif Bengali",
+        "Noto Serif Oriya", "Noto Serif Gujarati", "Noto Serif Kannada", "Noto Serif Tamil", "Noto Serif Malayalam",
+        "Noto Serif Gurmukhi", "Noto Serif", Georgia, serif;
+    --display: "Eczar", "Noto Serif Devanagari", "Noto Serif", Georgia, serif;
+}
+
+.size-letter { --page-w: 215.9mm; --page-h: 279.4mm; --m-top: 21mm; --m-bottom: 29mm; }
+.size-a5 { --page-w: 148mm; --page-h: 210mm; --m-top: 17mm; --m-bottom: 23mm; --m-side: 15mm; --body-size: 10pt; --name-size: 12.5pt; }
+
+@page { size: A4; margin: 0; }
+
+* { box-sizing: border-box; }
+
+html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    -webkit-text-size-adjust: none;
+}
+
+body {
+    margin: 0;
+    background: #cfc7b8;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: var(--body-size);
+    line-height: var(--leading);
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures;
+    /* Faked bold/italic looks poor in Indic scripts, and faked bold embeds as a Type 3 font. */
+    font-synthesis: none;
+}
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+#book { padding: 10mm 0; }
+
+/* ---------- page shell ---------- */
+
+.page {
+    position: relative;
+    width: var(--page-w);
+    height: var(--page-h);
+    margin: 0 auto 8mm;
+    background: var(--paper);
+    overflow: hidden;
+    contain: strict;
+    box-shadow: 0 1px 2px rgb(60 40 10 / .18), 0 10px 30px rgb(60 40 10 / .18);
+}
+
+.orn { position: absolute; display: block; overflow: visible; pointer-events: none; }
+.corner { width: 24mm; height: 24mm; }
+.corner.tl { top: 4mm; left: 4mm; }
+.corner.tr { top: 4mm; right: 4mm; transform: scaleX(-1); }
+.corner.bl { bottom: 4mm; left: 4mm; transform: scaleY(-1); }
+.corner.br { bottom: 4mm; right: 4mm; transform: scale(-1, -1); }
+.crest { top: 9.5mm; left: 50%; width: 40mm; height: 8.4mm; transform: translateX(-50%); }
+.foot { bottom: 13mm; left: 50%; width: 31mm; height: 5.3mm; transform: translateX(-50%); }
+
+.folio {
+    position: absolute;
+    left: 50%;
+    bottom: 5mm;
+    min-width: 15mm;
+    height: 6.6mm;
+    padding: 0 2.5mm;
+    transform: translateX(-50%);
+    border-radius: 1.8mm;
+    background: linear-gradient(180deg, #ebcb94, var(--folio) 60%, #d8ae6d);
+    color: #fff;
+    font: 600 10pt/6.6mm var(--display);
+    letter-spacing: .02em;
+    text-align: center;
+    font-variant-numeric: lining-nums tabular-nums;
+}
+.front .folio { font-family: var(--serif); font-style: italic; font-weight: 500; letter-spacing: .06em; }
+
+.frame {
+    position: absolute;
+    top: var(--m-top);
+    bottom: var(--m-bottom);
+    left: var(--m-side);
+    right: var(--m-side);
+    display: grid;
+    grid-template-columns: 1fr var(--gutter) 1fr;
+}
+.cols-1 .body .frame { grid-template-columns: 1fr; }
+.cols-1 .body .rule, .cols-1 .body .col + .rule + .col { display: none; }
+
+.col { position: relative; min-width: 0; height: 100%; }
+
+.rule {
+    position: relative;
+    justify-self: center;
+    width: 1.1pt;
+    margin: 10mm 0 6mm;
+    background: linear-gradient(180deg, transparent, var(--gold) 14%, var(--gold-hi) 50%, var(--gold) 86%, transparent);
+}
+.rule::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2.2mm;
+    height: 2.2mm;
+    background: var(--paper);
+    border: .8pt solid var(--gold);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.page.half .rule { visibility: hidden; }
+
+/* ---------- offerings ---------- */
+
+.eh { margin: 0 0 .7em; text-align: center; }
+
+.lm {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    margin: .1em 0 .55em;
+    color: var(--gold);
+    font: 600 26pt/1 var(--display);
+}
+.lm::before, .lm::after {
+    content: "";
+    flex: 1;
+    height: .8pt;
+    background: linear-gradient(90deg, transparent, var(--gold));
+}
+.lm::after { transform: scaleX(-1); }
+
+.nm {
+    margin: 0;
+    color: var(--name);
+    font: 600 var(--name-size)/1.22 var(--display);
+    letter-spacing: .005em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+
+.loc {
+    margin: .2em 0 0;
+    color: var(--muted);
+    font-size: .9em;
+    font-style: italic;
+    line-height: 1.3;
+    text-wrap: balance;
+}
+
+.b {
+    margin: 0 0 .5em;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+    orphans: 1;
+    widows: 1;
+}
+.b:last-child { margin-bottom: 0; }
+.b strong { font-weight: 600; font-family: var(--serif-strong); }
+
+.b.verse { text-align: left; hyphens: manual; }
+.b.li { position: relative; padding-left: 1.05em; }
+.b.li::before { content: "•"; position: absolute; left: .15em; color: var(--gold); }
+.b.li.cont::before { content: none; }
+.b.split { text-wrap: wrap; text-align-last: justify; }
+.b.verse.split { text-align-last: left; }
+
+.b:lang(hi), .b:lang(mr), .b:lang(sa), .b:lang(ne) { line-height: 1.55; }
+.b:lang(te), .b:lang(bn), .b:lang(or), .b:lang(gu), .b:lang(kn), .b:lang(ta), .b:lang(ml), .b:lang(pa) { line-height: 1.6; text-align: left; }
+
+.sep { margin: .95em 0 1em; text-align: center; line-height: 0; }
+.sep svg { width: 74%; height: 3.9mm; }
+
+/* ---------- title page ---------- */
+
+.title-page .frame { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6mm 4mm 2mm; }
+.tp-lotus { width: 46mm; height: 29mm; margin: 4mm 0 9mm; }
+.tp-eyebrow { margin: 0; color: var(--muted); font: 500 10.5pt/1.3 var(--display); letter-spacing: .32em; text-transform: uppercase; }
+.tp-title { margin: 3mm 0 0; color: var(--name); font: 600 40pt/1.05 var(--display); letter-spacing: -.005em; }
+.tp-for { margin: 3.5mm 0 0; font-size: 14pt; font-style: italic; color: var(--ink); }
+.tp-range { margin: 15mm 0 0; display: flex; align-items: center; gap: 7mm; color: var(--gold); font: 600 64pt/1 var(--display); }
+.tp-range .to { position: relative; width: 18mm; height: .9pt; background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent); }
+.tp-range .to::after { content: ""; position: absolute; left: 50%; top: 50%; width: 2.4mm; height: 2.4mm; background: var(--gold); transform: translate(-50%, -50%) rotate(45deg); }
+.tp-label {
+    margin: 5mm 0 0;
+    padding: 1.6mm 6mm 1.3mm;
+    border-top: .8pt solid var(--gold);
+    border-bottom: .8pt solid var(--gold);
+    color: var(--name);
+    font: 600 12pt/1.2 var(--display);
+    letter-spacing: .26em;
+    text-transform: uppercase;
+}
+.tp-stats { margin: 6mm 0 0; color: var(--muted); font-size: 11pt; font-style: italic; }
+.tp-verse { margin: auto 0 0; color: var(--ink); }
+.tp-verse p { margin: 0; font: 400 13pt/1.6 "Tiro Devanagari Sanskrit", var(--serif); }
+.tp-verse small { display: block; max-width: 120mm; margin: 2.5mm auto 0; color: var(--muted); font-size: 9.5pt; font-style: italic; line-height: 1.45; }
+.tp-site { margin: 7mm 0 0; color: var(--gold); font: 500 9pt/1 var(--display); letter-spacing: .2em; }
+
+/* ---------- contents ---------- */
+
+.toc .frame { display: block; padding: 0 3mm; }
+.toc-title { margin: 0; color: var(--name); text-align: center; font: 600 22pt/1.1 var(--display); }
+.toc-orn { margin: 1.5mm 0 4mm; }
+.toc-orn svg { width: 46%; }
+.toc-letter {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    margin: 3.2mm 0 1.4mm;
+    color: var(--gold);
+    font: 600 14pt/1 var(--display);
+}
+.toc-letter::after { content: ""; flex: 1; height: .7pt; background: linear-gradient(90deg, var(--gold), transparent); }
+.toc-e {
+    display: block;
+    position: relative;
+    padding: .55mm 9mm .55mm 0;
+    color: inherit;
+    text-decoration: none;
+    font-size: 10.5pt;
+    line-height: 1.3;
+    break-inside: avoid;
+}
+/* Dotted leader along the last line of the name; the name and page number sit on paper over it. */
+.toc-e::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 1mm;
+    bottom: calc(.55mm + .3em);
+    border-bottom: 1.3pt dotted #b9a385;
+}
+.toc-e .t { position: relative; padding-right: 1.4mm; background: var(--paper); font-family: var(--serif-strong); font-weight: 600; text-wrap: pretty; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.toc-e .t em { color: var(--muted); font-weight: 400; font-size: .92em; }
+.toc-e .p { position: absolute; right: 0; bottom: .55mm; padding-left: 1.4mm; background: var(--paper); text-align: right; font-variant-numeric: lining-nums tabular-nums; }
+
+/* ---------- screen / print ---------- */
+
+.status {
+    position: fixed;
+    inset: auto 0 0;
+    padding: 2mm 4mm;
+    background: #2a1d14;
+    color: #f6eedd;
+    font: 12px/1.4 system-ui, sans-serif;
+    z-index: 9;
+}
+.status.done { display: none; }
+
+@media print {
+    body { background: none; }
+    #book { padding: 0; }
+    .page { margin: 0; box-shadow: none; break-after: page; }
+    .status { display: none; }
+}

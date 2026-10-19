@@ -43,6 +43,7 @@ offer.html ──POST──▶ Google Apps Script ──▶ Google Sheet  (moder
 │   ├── 2025/offerings.json     # archived offerings (75th Vyasa Puja)
 │   └── lectures/               # lecture index + per-series JSON
 ├── backend/google-apps-script/ # Code.gs + setup guide for submissions
+├── tools/book/                 # optional Node tool: print-ready PDF book of a year's offerings
 ├── assets/                     # images, favicon, PDFs
 └── CNAME                       # custom domain for GitHub Pages
 ```
@@ -88,6 +89,17 @@ years: [
 4. Add the next year at the top of `years`.
 
 See [data/README.md](data/README.md) for the file formats.
+
+## Printing the offerings book
+
+[`tools/book`](tools/book/README.md) turns a year's offerings into a print-ready PDF in the style of the Vyasa Puja books. The layout has two columns, gold ornaments, a title page and a contents list. You can print one book per letter range, or let the tool split the year into volumes. It reads the same data as the website: the archived JSON plus approved live offerings. It also writes a review report of entries an editor should check before printing.
+
+```bash
+cd tools/book && npm install
+node build.mjs --year 2025 --letters P-R --label "Book 3"
+```
+
+The tool is separate from the site, which still has no build step.
 
 ## Run locally
 

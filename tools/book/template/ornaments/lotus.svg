@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100">
+  <!-- Large lotus for the title page. -->
+  <defs>
+    <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100">
+      <stop offset="0" stop-color="#ecd29c"/>
+      <stop offset=".55" stop-color="#c39650"/>
+      <stop offset="1" stop-color="#8f6428"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#gold)" transform="translate(80 74)">
+    <path d="M0-70C14-52 14-20 0-2-14-20-14-52 0-70Z"/>
+    <path d="M-3-2C-14-18-20-44-12-60-4-44-1-20-3-2Z" opacity=".55"/>
+    <path d="M3-2C14-18 20-44 12-60 4-44 1-20 3-2Z" opacity=".55"/>
+    <path d="M-4 0C-12-20-28-38-46-42-40-24-24-6-4 0Z"/>
+    <path d="M4 0C12-20 28-38 46-42 40-24 24-6 4 0Z"/>
+    <path d="M-6 3C-22-10-46-18-68-14-54 0-30 6-6 3Z"/>
+    <path d="M6 3C22-10 46-18 68-14 54 0 30 6 6 3Z"/>
+    <path fill="none" stroke="url(#gold)" stroke-width="2" stroke-linecap="round" d="M-52 10C-20 22 20 22 52 10M-34 18C-12 24 12 24 34 18"/>
+  </g>
+</svg>
