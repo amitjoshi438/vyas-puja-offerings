@@ -139,12 +139,9 @@ npx serve
 
 ---
 
-## 📊 Analytics (Optional)
+## 📊 Analytics
 
-Add Google Analytics to track visitors:
-
-1. Get tracking ID from [analytics.google.com](https://analytics.google.com)
-2. Add to both HTML files before `</head>`:
+Google Analytics (`G-CS3RYDL2F6`) is already included in the `<head>` of all four pages (`index.html`, `offerings.html`, `offer.html`, `lectures.html`). Each successful submission also sends an `offering_submitted` event. To use a different property, replace the ID in all four files:
 
 ```html
 <!-- Google Analytics -->
@@ -159,18 +156,28 @@ Add Google Analytics to track visitors:
 
 ---
 
+## ✍️ Online Submissions (Google Apps Script)
+
+Hosting stays static. Offerings that devotees write on `offer.html` are saved to a Google Sheet by a small Apps Script web app, and moderators publish them by ticking **Approved**.
+
+1. Follow [backend/google-apps-script/README.md](backend/google-apps-script/README.md) to set up the sheet and deploy the script.
+2. Paste the web-app URL (ending in `/exec`) into `submissionEndpoint` in `scripts/config.js`.
+3. Commit and push. GitHub Pages redeploys in a minute or two.
+
+Until step 2 is done, the site works exactly as before: the archive is readable, and the form explains that offerings are not open yet.
+
+---
+
 ## ✅ Pre-Deployment Checklist
 
-- [ ] Add portrait image (`assets/images/maharaj-portrait.jpg`)
-- [ ] Test locally in browser
-- [ ] Verify all 10,460 offerings load correctly
-- [ ] Test search functionality
-- [ ] Test filters (country/city)
-- [ ] Test modal (click on cards)
-- [ ] Check mobile responsiveness
-- [ ] Update any placeholder text
-- [ ] Add custom domain (optional)
-- [ ] Set up analytics (optional)
+- [ ] Test locally over HTTP (`python -m http.server 8000`)
+- [ ] Home page shows counts and the garland of names
+- [ ] **Read offerings**: year switch, search, country/city filters, reader (←/→, Esc), share link
+- [ ] **Offer yours**: draft is kept after a reload; validation messages; a test offering reaches the sheet
+- [ ] A test offering appears on **Read offerings** after ticking **Approved**, and disappears after unticking
+- [ ] **Lectures**: days, topics expand, PDF opens
+- [ ] Mobile layout (≈375px wide) and keyboard-only navigation
+- [ ] `scripts/config.js`: `currentYear`, `submissionsOpen` and `closesOn` are correct for this season
 
 ---
 

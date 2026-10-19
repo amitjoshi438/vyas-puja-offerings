@@ -7,102 +7,99 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+
       gtag('config', 'G-CS3RYDL2F6');
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="description" content="Initiation Lectures by HH Radhanath Swami Maharaj - Harinām-dīkṣā Ceremonies">
-    <meta name="theme-color" content="#FF9933">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Initiation lectures by His Holiness Radhanath Swami Maharaj — summaries and topics from each day of the Harinām-dīkṣā ceremonies, with the full booklet to read or download.">
+    <meta name="theme-color" content="#120905">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Initiation Lectures - Vyasa Puja 2025</title>
+    <meta property="og:title" content="Initiation lectures — HH Radhanath Swami Maharaj">
+    <meta property="og:description" content="Summaries and topics from each day of the Harinām-dīkṣā ceremonies.">
+    <meta property="og:image" content="assets/images/maharaj-portrait.jpg">
+    <title>Initiation lectures — Vyasa Puja of HH Radhanath Swami Maharaj</title>
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/lectures.css">
+    <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css?v=4">
+    <link rel="stylesheet" href="styles/lectures.css?v=4">
 </head>
 <body class="lectures-page">
-    <!-- Decorative Background -->
-    <div class="background-pattern"></div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Header -->
-    <header class="header sticky">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="site-title">Vyasa Puja 2025</span>
-                </div>
-                <nav class="nav">
-                    <a href="index.html">Home</a>
-                    <a href="offerings.html">Offerings</a>
-                    <a href="lectures.html" class="active">Lectures</a>
-                </nav>
-            </div>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="Vyasa Puja Offerings — home">
+                <span class="brand-mark" aria-hidden="true"></span>
+                <span class="brand-text">Vyāsa Pūjā<em data-current-year>2026</em></span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+                <span></span><span></span><span class="sr-only">Menu</span>
+            </button>
+            <nav class="site-nav" id="site-nav" aria-label="Main">
+                <a href="index.html">Home</a>
+                <a href="offerings.html">Offerings</a>
+                <a href="lectures.html" aria-current="page">Lectures</a>
+                <a href="offer.html" class="nav-cta">Offer yours</a>
+            </nav>
         </div>
     </header>
 
-    <!-- Hero Banner — updated dynamically from selected year -->
-    <section class="lectures-hero">
-        <div class="lectures-hero-bg">
-            <div class="hero-grain"></div>
-            <div class="hero-gradient"></div>
-        </div>
-        <div class="container">
-            <div id="lectures-hero-content" class="lectures-hero-content">
-                <!-- Populated by JS from index.json -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Year Selector — populated dynamically -->
-    <section class="year-selector-section">
-        <div class="container">
-            <div id="year-selector" class="year-selector">
-                <!-- Year tabs inserted by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Series Selector — appears only when a year has multiple series -->
-    <section id="series-selector-section" class="series-selector-section" style="display:none;">
-        <div class="container">
-            <div id="series-selector" class="series-selector">
-                <!-- Series tabs inserted by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Lectures Timeline -->
-    <section class="lectures-timeline-section">
-        <div class="container">
-            <div id="lectures-container" class="lectures-timeline">
-                <!-- Lectures will be dynamically inserted -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-text">
-                    <p class="footer-main">All Glories to Srila Prabhupada</p>
-                    <p class="footer-sub">All Glories to His Holiness Radhanath Swami Maharaj</p>
+    <main id="main">
+        <section class="page-hero lectures-hero" data-deva="दीक्षा" aria-labelledby="page-title">
+            <div class="container">
+                <div class="lectures-hero-content" id="lectures-hero-content" aria-live="polite">
+                    <span class="kicker on-dark">Initiation lectures</span>
+                    <h1 class="page-title" id="page-title">Harinām-<em>dīkṣā</em></h1>
+                    <p class="page-lede">Reflections given by Gurumahārāja during the initiation ceremonies.</p>
                 </div>
-                <div class="footer-mantra">
-                    <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
-                    <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Vyasa Puja Offerings | Made with devotion and love</p>
-                </div>
+                <nav class="year-tabs" id="year-selector" aria-label="Choose a year" hidden></nav>
             </div>
+        </section>
+
+        <!-- Appears only when a year has more than one series -->
+        <section class="series-section" id="series-selector-section" hidden>
+            <div class="container">
+                <h2 class="series-label">Series this year</h2>
+                <div class="series-list" id="series-selector"></div>
+            </div>
+        </section>
+
+        <section class="days-section" aria-label="Lectures">
+            <div class="container">
+                <ol class="days" id="lectures-container">
+                    <li class="days-loading"><div class="spinner"></div><span>Opening the booklet…</span></li>
+                </ol>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-lotus" aria-hidden="true"></div>
+            <div class="footer-glories">
+                <p>All glories to Srila Prabhupada</p>
+                <p>All glories to His Holiness Radhanath Swami Maharaj</p>
+            </div>
+            <div class="footer-mantra">
+                <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
+                <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
+            </div>
+            <nav class="footer-nav" aria-label="Footer">
+                <a href="index.html">Home</a>
+                <a href="offerings.html">Read offerings</a>
+                <a href="offer.html">Offer yours</a>
+            </nav>
+            <p class="footer-fine">&copy; 2025–<span data-current-year>2026</span> Vyasa Puja Offerings · Made with devotion and love</p>
         </div>
     </footer>
 
-    <script src="scripts/main.js?v=3"></script>
-    <script src="scripts/lectures.js"></script>
+    <script src="scripts/config.js?v=4"></script>
+    <script src="scripts/common.js?v=4"></script>
+    <script src="scripts/lectures.js?v=4"></script>
 </body>
 </html>

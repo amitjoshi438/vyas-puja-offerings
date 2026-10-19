@@ -1,271 +1,129 @@
-# 75th Vyasa Puja - HH Radhanath Swami Maharaj
+# Vyasa Puja Offerings — HH Radhanath Swami Maharaj
 
-A beautiful, traditional-themed tribute website displaying heartfelt offerings from disciples worldwide on the occasion of His Holiness Radhanath Swami Maharaj's 75th Appearance Day (2025).
+Every year, disciples and well-wishers from around the world write offerings for His Holiness Radhanath Swami Maharaj's Vyasa Puja, his appearance day. This site gathers them in one place. Devotees can now **write and send their offering directly on the website**. It appears in the garland once a moderator approves it.
 
-## 🙏 Features
+Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. It is a static site on GitHub Pages; submissions go to a Google Sheet through Google Apps Script.
 
-- **Beautiful Traditional Design**: Saffron and gold color palette with lotus decorations
-- **Responsive Layout**: Works perfectly on desktop, tablet, and mobile devices
-- **Advanced Search**: Real-time search across names, cities, and countries
-- **Smart Filtering**: Filter offerings by country and city
-- **Lazy Loading**: Efficient rendering of 10,000+ offerings
-- **Interactive Modal**: Click any card to read the full offering with smooth animations
-- **Statistics Dashboard**: Auto-counting statistics showing total offerings, countries, and cities
-- **Keyboard Navigation**: Navigate through offerings using arrow keys in modal view
+## Pages
 
-## 📁 Project Structure
+| Page | What it does |
+|---|---|
+| `index.html` | Lamp-lit home page with live counts, a moving garland of names, how to offer, and the year-by-year archive. |
+| `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
+| `offer.html` | **Write your offering.** The draft is saved on the device as you type. The form is validated and protected against spam, and the devotee sees a thank-you once it is sent. If no endpoint is configured, the page explains that offerings are not open yet. |
+| `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
+
+## How it fits together
 
 ```
-vyasPujaSite/
-├── index.html              # Homepage with hero section and statistics
-├── offerings.html          # Offerings page with search and grid
-├── data/
-│   ├── README.md          # Data folder documentation
-│   └── 2025/
-│       └── offerings.json # 2025 offerings data
-├── styles/
-│   └── main.css           # All styling (traditional theme)
+scripts/config.js ── years, submission endpoint, limits  (the only file you normally edit)
+       │
+scripts/common.js ── loads each year's offerings and merges two sources:
+       ├─ data/<year>/offerings.json          static archive (GitHub Pages)
+       └─ <Apps Script>/exec?action=list      approved offerings for the open year (live)
+
+offer.html ──POST──▶ Google Apps Script ──▶ Google Sheet  (moderator ticks “Approved” to publish)
+```
+
+## Project structure
+
+```
+├── index.html, offerings.html, offer.html, lectures.html
 ├── scripts/
-│   └── main.js            # All JavaScript functionality
-├── assets/
-│   └── images/
-│       └── maharaj-portrait.jpg  # Portrait image (add your own)
-└── README.md              # This file
+│   ├── config.js        # years, endpoint URL, field limits
+│   ├── common.js        # shared helpers (window.VP): data loading, header, reveal animations
+│   ├── home.js          # home page: counts, garland of names
+│   ├── offerings.js     # browse, search, filter, reader
+│   ├── offer.js         # submission form
+│   └── lectures.js      # lecture series
+├── styles/
+│   ├── main.css         # design system (tokens, type, header/footer, buttons) + home page
+│   ├── offerings.css, offer.css, lectures.css
+├── data/
+│   ├── 2025/offerings.json     # archived offerings (75th Vyasa Puja)
+│   └── lectures/               # lecture index + per-series JSON
+├── backend/google-apps-script/ # Code.gs + setup guide for submissions
+├── assets/                     # images, favicon, PDFs
+└── CNAME                       # custom domain for GitHub Pages
 ```
 
-## 📊 Data Organization
+## Turning on online submissions
 
-Offerings data is organized by year for easy scalability:
+Until a submission endpoint is configured, `offer.html` shows a gentle "not open yet" note and the site displays only the static archive.
 
-- **Current Year**: Data is stored in `data/2025/offerings.json`
-- **Future Years**: Create new folders like `data/2026/` with their own `offerings.json`
-- **Switching Years**: Update `CURRENT_YEAR` constant in `scripts/main.js`
+1. Follow **[backend/google-apps-script/README.md](backend/google-apps-script/README.md)** to create the Google Sheet, add the script and deploy it as a web app.
+2. Paste the web app URL (ending in `/exec`) into `scripts/config.js`:
 
-See `data/README.md` for detailed instructions on adding new years.
-
-## 🚀 Quick Start
-
-### Option 1: Open Locally
-
-1. Simply open `index.html` in your web browser
-2. No build process or dependencies required!
-
-### Option 2: Local Server (Recommended)
-
-Using Python:
-```bash
-# Python 3
-python -m http.server 8000
-
-# Then visit: http://localhost:8000
-```
-
-Using Node.js:
-```bash
-# Install serve globally
-npm install -g serve
-
-# Run server
-serve
-
-# Or use npx (no installation)
-npx serve
-```
-
-## 🌐 Deployment Options
-
-### GitHub Pages (Free & Easy)
-
-1. **Create a GitHub repository**:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit - Vyasa Puja website"
+   ```js
+   submissionEndpoint: 'https://script.google.com/macros/s/AKfy…/exec',
    ```
 
-2. **Push to GitHub**:
-   ```bash
-   git remote add origin https://github.com/YOUR-USERNAME/vyasa-puja-2025.git
-   git branch -M main
-   git push -u origin main
-   ```
+3. Commit and push. Moderators then publish offerings by ticking **Approved** in the sheet.
 
-3. **Enable GitHub Pages**:
-   - Go to repository Settings → Pages
-   - Source: Deploy from branch `main`
-   - Folder: `/ (root)`
-   - Click Save
-   - Your site will be live at: `https://YOUR-USERNAME.github.io/vyasa-puja-2025/`
+## Opening a new year / archiving the last one
 
-### Netlify (Drag & Drop - No Git Required)
+Everything year-related lives in `scripts/config.js`:
 
-1. Go to [netlify.com](https://www.netlify.com/)
-2. Sign up for free
-3. Drag your entire `vyasPujaSite` folder onto the Netlify dashboard
-4. Your site is live in seconds!
-5. Optional: Add custom domain in Site Settings
-
-### Vercel (Fast & Free)
-
-1. Go to [vercel.com](https://vercel.com/)
-2. Import your GitHub repository (or drag & drop folder)
-3. Click Deploy
-4. Done! Your site is live
-
-## 🖼️ Adding Images
-
-### Portrait Image
-
-Replace the placeholder with Maharaj's portrait:
-
-1. Add your image to `assets/images/maharaj-portrait.jpg`
-2. Recommended size: 500x500px or larger (square format)
-3. Supported formats: JPG, PNG, WebP
-
-### Additional Images (Optional)
-
-You can add more images for:
-- Hero background: Update CSS in `.hero` section
-- Gallery section: Create new section in HTML
-- Decorative elements: Add to `assets/images/` folder
-
-## 🎨 Customization
-
-### Colors
-
-Edit `styles/main.css` variables at the top:
-
-```css
-:root {
-    --saffron: #FF9933;        /* Main saffron color */
-    --deep-saffron: #FF6600;   /* Accent color */
-    --gold: #FFD700;           /* Gold highlights */
-    /* ... other colors */
-}
-```
-
-### Fonts
-
-Current fonts:
-- **Poppins**: English text
-- **Noto Sans Devanagari**: Hindi/Sanskrit text
-
-To change fonts, update the Google Fonts link in HTML files.
-
-### Content
-
-- **Homepage text**: Edit `index.html` → `.hero-description` section
-- **About section**: Edit `index.html` → `.about-section`
-- **Footer**: Edit footer section in both HTML files
-
-## 📊 Data Format
-
-The `data/2025/offerings.json` file contains offerings in this format:
-
-```json
-[
-  {
-    "Your Name": "Disciple Name",
-    "Name of City you are from": "City Name",
-    "country": "(Country)",
-    "Your Offering": "Full offering text..."
-  }
+```js
+currentYear: 2026,
+years: [
+  { year: 2026, edition: 76, dataFile: null, live: true, submissionsOpen: true, closesOn: null },
+  { year: 2025, edition: 75, dataFile: 'data/2025/offerings.json', live: false, submissionsOpen: false, closesOn: null }
 ]
 ```
 
-### Updating Data
+| Field | Meaning |
+|---|---|
+| `edition` | Which Vyasa Puja this is (shown as "76th"). |
+| `dataFile` | Static JSON for archived offerings (optional). |
+| `live` | Also fetch approved offerings from the Apps Script. |
+| `submissionsOpen` | Show the form for this year. |
+| `closesOn` | Optional `'YYYY-MM-DD'`. The form closes automatically after this day. |
 
-1. Edit `data/2025/offerings.json` directly, or
-2. Replace with new export from Google Sheets/Excel:
-   - Export as CSV
-   - Convert to JSON using [csvjson.com](https://csvjson.com/)
-   - Replace `data/2025/offerings.json` file
+**At the end of a year**, follow *Closing a year and archiving it* in the [backend guide](backend/google-apps-script/README.md#closing-a-year-and-archiving-it). In short:
 
-## 🔧 Technical Details
+1. Close submissions.
+2. Save `<exec>?action=list&year=YYYY` as `data/YYYY/offerings.json`.
+3. Set `dataFile` and `live: false` for that year.
+4. Add the next year at the top of `years`.
 
-### Browser Support
+See [data/README.md](data/README.md) for the file formats.
 
-- Chrome/Edge: ✅ Latest 2 versions
-- Firefox: ✅ Latest 2 versions
-- Safari: ✅ 13+
-- Mobile browsers: ✅ iOS Safari, Chrome Mobile
+## Run locally
 
-### Performance
+No build step and no dependencies. Serve the folder over HTTP; `fetch` does not work from `file://`.
 
-- **Lazy Loading**: Loads 50 cards at a time
-- **Debounced Search**: 300ms delay for smooth searching
-- **CSS Animations**: GPU-accelerated for smoothness
-- **No Dependencies**: Pure vanilla JavaScript (no jQuery, React, etc.)
+```bash
+python -m http.server 8000
+# visit http://localhost:8000
+```
 
-### Features Implementation
+To try the submission flow locally, point `submissionEndpoint` at a test deployment of the Apps Script.
 
-1. **Search**: Fuzzy search across all fields
-2. **Filters**: Dropdown filters auto-populated from data
-3. **Modal**: Keyboard navigation (Esc, Arrow keys)
-4. **Infinite Scroll**: Auto-loads more as you scroll
-5. **Statistics**: Animated counters on homepage
+## Design
 
-## 🐛 Troubleshooting
+The direction is *"ārati of words"*: night-temple lamplight above, hand-made paper below. Offerings appear as letters on paper.
 
-### Offerings not loading?
+- **Type:**
+  - [Eczar](https://fonts.google.com/specimen/Eczar) for display;
+  - [Newsreader](https://fonts.google.com/specimen/Newsreader) for reading;
+  - [Mukta](https://fonts.google.com/specimen/Mukta) for the interface;
+  - [Tiro Devanagari Sanskrit](https://fonts.google.com/specimen/Tiro+Devanagari+Sanskrit) for Sanskrit and Hindi.
+- **Colour:** night indigo, lamp and marigold, gold, kumkum red and paper tones. All of them are CSS custom properties at the top of `styles/main.css`.
+- **Motion:** gentle reveals and flame flicker. All of it respects `prefers-reduced-motion`.
+- **Accessibility:**
+  - semantic landmarks;
+  - visible focus;
+  - keyboard support throughout (reader, accordions, form);
+  - `aria-live` status messages;
+  - form errors announced and linked to their fields.
 
-1. Check browser console for errors (F12)
-2. Ensure `data/2025/offerings.json` exists in the correct folder structure
-3. If using `file://` protocol, switch to local server (see Quick Start)
+## Deployment
 
-### Images not showing?
-
-1. Verify image path: `assets/images/maharaj-portrait.jpg`
-2. Check image file name matches exactly (case-sensitive)
-3. Try using absolute path for testing
-
-### Search not working?
-
-1. Clear browser cache (Ctrl+Shift+R)
-2. Check that JavaScript is enabled
-3. Open console to see any error messages
-
-## 📱 Mobile Optimization
-
-The website is fully responsive:
-- Touch-friendly card interactions
-- Optimized font sizes for mobile
-- Hamburger menu ready (if needed)
-- Modal swipe support (via arrow buttons)
-
-## 🙏 Credits
-
-**Created with devotion for:**
-His Holiness Radhanath Swami Maharaj's 75th Vyasa Puja
-
-**Technology:**
-- Pure HTML5, CSS3, JavaScript (ES6+)
-- Google Fonts (Poppins, Noto Sans Devanagari)
-- No external frameworks or libraries
-
-**All Glories to Srila Prabhupada**  
-**All Glories to HH Radhanath Swami Maharaj**
+The site deploys from the `main` branch through GitHub Pages; the custom domain is set in `CNAME`. See [DEPLOYMENT.md](DEPLOYMENT.md) for details and alternatives.
 
 ---
 
-## 📞 Support
+**All glories to Śrīla Prabhupāda · All glories to HH Radhanath Swami Maharaj**
 
-For technical issues or questions:
-1. Check this README first
-2. Review browser console for errors
-3. Verify all files are in correct locations
-
-## 🔜 Future Enhancements (Optional)
-
-- [ ] Add year-wise filtering (if data includes multiple years)
-- [ ] Download offerings as PDF
-- [ ] Share individual offerings on social media
-- [ ] Add world map showing disciple locations
-- [ ] Audio player for kirtan/lecture clips
-- [ ] Multi-language support
-- [ ] Dark mode toggle
-
----
-
-**Hare Krishna Hare Krishna Krishna Krishna Hare Hare**  
-**Hare Rama Hare Rama Rama Rama Hare Hare**
+*Hare Kṛṣṇa Hare Kṛṣṇa Kṛṣṇa Kṛṣṇa Hare Hare · Hare Rāma Hare Rāma Rāma Rāma Hare Hare*

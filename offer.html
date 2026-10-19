@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CS3RYDL2F6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CS3RYDL2F6');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Write and offer your Vyasa Puja offering to His Holiness Radhanath Swami Maharaj. Offerings are read by moderators and then published with offerings from around the world.">
+    <meta name="theme-color" content="#120905">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta property="og:title" content="Offer yours — Vyasa Puja of HH Radhanath Swami Maharaj">
+    <meta property="og:description" content="Write your Vyasa Puja offering and add it to the garland of words from around the world.">
+    <meta property="og:image" content="assets/images/maharaj-portrait.jpg">
+    <title>Offer yours — Vyasa Puja of HH Radhanath Swami Maharaj</title>
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css?v=4">
+    <link rel="stylesheet" href="styles/offer.css?v=4">
+</head>
+<body class="offer-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="index.html" aria-label="Vyasa Puja Offerings — home">
+                <span class="brand-mark" aria-hidden="true"></span>
+                <span class="brand-text">Vyāsa Pūjā<em data-current-year>2026</em></span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+                <span></span><span></span><span class="sr-only">Menu</span>
+            </button>
+            <nav class="site-nav" id="site-nav" aria-label="Main">
+                <a href="index.html">Home</a>
+                <a href="offerings.html">Offerings</a>
+                <a href="lectures.html">Lectures</a>
+                <a href="offer.html" class="nav-cta" aria-current="page">Offer yours</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="page-hero offer-hero" data-deva="निवेदन" aria-labelledby="page-title">
+            <div class="container">
+                <span class="kicker on-dark">The <span data-current-edition>76th</span> Vyāsa Pūjā · <span data-current-year>2026</span></span>
+                <h1 class="page-title" id="page-title">Offer your <em>words</em></h1>
+                <p class="page-lede">
+                    Write to Gurumahārāja from your heart. Every offering is read with care and then joins
+                    the garland of words from disciples and well-wishers around the world.
+                </p>
+                <p class="offer-status" id="offer-status" hidden></p>
+            </div>
+        </section>
+
+        <section class="offer-section">
+            <div class="container offer-layout">
+                <div class="offer-main">
+                    <noscript>
+                        <div class="offer-notice">
+                            <p><strong>Please enable JavaScript to send your offering.</strong></p>
+                        </div>
+                    </noscript>
+
+                    <div class="offer-notice" id="offer-notice" hidden></div>
+
+                    <!-- Closed state -->
+                    <div class="offer-closed" id="offer-closed" hidden>
+                        <div class="lotus-rule"><i></i></div>
+                        <h2 class="closed-title" id="closed-title">Offerings are closed</h2>
+                        <p id="closed-text">Thank you for your love. Offerings for this year are no longer being accepted online.</p>
+                        <a class="btn" href="offerings.html">
+                            Read the offerings
+                            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                    </div>
+
+                    <!-- The form is written as a letter -->
+                    <form class="letter-form" id="offer-form" novalidate>
+                        <div class="sheet">
+                            <header class="sheet-head">
+                                <p class="sheet-invocation" lang="sa">श्री गुरु चरण कमलेभ्यो नमः</p>
+                                <div class="sheet-meta">
+                                    <span class="sheet-occasion"><span data-current-edition>76th</span> Vyāsa Pūjā</span>
+                                    <time class="sheet-date" id="sheet-date"></time>
+                                </div>
+                            </header>
+
+                            <div class="field field-letter">
+                                <label class="sheet-label" for="f-offering">Your offering</label>
+                                <textarea id="f-offering" name="offering" rows="12" required
+                                    placeholder="Dear Gurumahārāja, please accept my humble obeisances…"
+                                    aria-describedby="f-offering-meta f-offering-error"></textarea>
+                                <div class="field-meta" id="f-offering-meta">
+                                    <span id="f-offering-count">0 words</span>
+                                    <span class="draft-status" id="draft-status" aria-live="polite"></span>
+                                </div>
+                                <p class="field-error" id="f-offering-error"></p>
+                            </div>
+
+                            <div class="sheet-sign">
+                                <span class="sign-label">Offered by</span>
+                                <div class="field field-name">
+                                    <label class="sr-only" for="f-name">Your name</label>
+                                    <input id="f-name" name="name" type="text" required autocomplete="name"
+                                        placeholder="Your name" aria-describedby="f-name-error">
+                                    <p class="field-error" id="f-name-error"></p>
+                                </div>
+                                <div class="sign-place">
+                                    <div class="field">
+                                        <label class="field-label" for="f-city">City</label>
+                                        <input id="f-city" name="city" type="text" required autocomplete="address-level2"
+                                            aria-describedby="f-city-error">
+                                        <p class="field-error" id="f-city-error"></p>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label" for="f-country">Country</label>
+                                        <input id="f-country" name="country" type="text" required autocomplete="country-name"
+                                            list="country-list" aria-describedby="f-country-error">
+                                        <datalist id="country-list"></datalist>
+                                        <p class="field-error" id="f-country-error"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="envelope">
+                            <div class="field">
+                                <label class="field-label" for="f-email">Email <span class="optional">optional · never published</span></label>
+                                <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email"
+                                    aria-describedby="f-email-hint f-email-error">
+                                <p class="field-hint" id="f-email-hint">Only so the sevaks can reach you if something needs a gentle correction.</p>
+                                <p class="field-error" id="f-email-error"></p>
+                            </div>
+
+                            <!-- Leave empty: helps keep automated spam away -->
+                            <div class="hp-field" aria-hidden="true">
+                                <label for="f-website">Website</label>
+                                <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            <div class="field field-consent">
+                                <label class="consent">
+                                    <input id="f-consent" name="consent" type="checkbox" required aria-describedby="f-consent-error">
+                                    <span class="consent-box" aria-hidden="true"></span>
+                                    <span>I understand my offering, name, city and country will be published on this website after it is reviewed.</span>
+                                </label>
+                                <p class="field-error" id="f-consent-error"></p>
+                            </div>
+
+                            <div class="submit-row">
+                                <button type="submit" class="btn" id="submit-btn">
+                                    <span class="btn-text">Place my offering</span>
+                                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </button>
+                                <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Success -->
+                    <section class="offer-done on-dark" id="offer-done" hidden tabindex="-1" aria-labelledby="done-title">
+                        <svg class="diya" viewBox="0 0 160 150" aria-hidden="true">
+                            <defs>
+                                <radialGradient id="diya-glow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0" stop-color="#ffd27a" stop-opacity=".75"/>
+                                    <stop offset=".45" stop-color="#f2a33a" stop-opacity=".22"/>
+                                    <stop offset="1" stop-color="#f2a33a" stop-opacity="0"/>
+                                </radialGradient>
+                                <radialGradient id="diya-flame-g" cx="50%" cy="78%" r="70%">
+                                    <stop offset="0" stop-color="#fffbe9"/>
+                                    <stop offset=".35" stop-color="#ffe3a3"/>
+                                    <stop offset=".7" stop-color="#f2a33a"/>
+                                    <stop offset="1" stop-color="#e4712a"/>
+                                </radialGradient>
+                                <linearGradient id="diya-clay" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0" stop-color="#c2552a"/>
+                                    <stop offset="1" stop-color="#6e2410"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="diya-glow" cx="80" cy="62" r="62" fill="url(#diya-glow)"/>
+                            <g class="diya-embers" fill="#ffe3a3">
+                                <circle cx="74" cy="40" r="1.4"/>
+                                <circle cx="86" cy="44" r="1.1"/>
+                                <circle cx="80" cy="36" r="1"/>
+                            </g>
+                            <g class="diya-flame">
+                                <path d="M80 30c7 11 11 20 11 28 0 8-5 13-11 13s-11-5-11-13c0-8 4-17 11-28z" fill="url(#diya-flame-g)"/>
+                                <path d="M80 50c3 5 4.5 9 4.5 12.5S82.5 69 80 69s-4.5-3-4.5-6.5S77 55 80 50z" fill="#fffbe9"/>
+                            </g>
+                            <path d="M79.2 70h1.6v6h-1.6z" fill="#2b160b"/>
+                            <path d="M22 80c10 27 106 27 116 0-8 4-28 8-58 8s-50-4-58-8z" fill="url(#diya-clay)"/>
+                            <path d="M22 80c8 4 28 8 58 8s50-4 58-8c-2 3-4 4-4 4-12 5-30 7-54 7s-42-2-54-7c0 0-2-1-4-4z" fill="#3a1408" opacity=".55"/>
+                            <ellipse cx="80" cy="80" rx="58" ry="6.5" fill="#8a3216"/>
+                            <ellipse cx="80" cy="79.5" rx="50" ry="4" fill="#2b160b" opacity=".75"/>
+                            <path d="M138 80c6-4 10-9 12-15-6 1-12 5-16 11z" fill="#a8401b"/>
+                            <path d="M62 105h36l-4 8H66z" fill="#5a1d0c"/>
+                        </svg>
+                        <span class="kicker">Offering received</span>
+                        <h2 class="done-title" id="done-title">Your lamp is <em>lit</em></h2>
+                        <p class="done-text" id="done-text">
+                            Thank you. Your offering will join the garland as soon as the sevaks have read it.
+                        </p>
+                        <figure class="done-card" id="done-card">
+                            <blockquote id="done-excerpt"></blockquote>
+                            <figcaption>
+                                <strong id="done-name"></strong>
+                                <span id="done-place"></span>
+                            </figcaption>
+                        </figure>
+                        <div class="done-actions">
+                            <a class="btn btn-lamp" href="offerings.html" id="done-read">
+                                Read the offerings
+                                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </a>
+                            <button type="button" class="btn btn-ghost" id="done-again">Write another</button>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="offer-aside" aria-labelledby="aside-title">
+                    <h2 class="aside-title" id="aside-title">Its journey</h2>
+                    <ol class="journey">
+                        <li>
+                            <span class="journey-num">१</span>
+                            <div>
+                                <strong>You write</strong>
+                                <p>In any language, in your own words. Your draft is kept safely on this device as you write.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="journey-num">२</span>
+                            <div>
+                                <strong>Sevaks read it</strong>
+                                <p>Every offering is read before it is published. This can take a few days around Vyāsa Pūjā.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="journey-num">३</span>
+                            <div>
+                                <strong>It joins the garland</strong>
+                                <p>Your words appear among the offerings and as a lamp in the circle on the home page.</p>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div class="aside-note">
+                        <h3>Published with your offering</h3>
+                        <p>Your name, city and country. Your email stays private with the sevaks.</p>
+                    </div>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-lotus" aria-hidden="true"></div>
+            <div class="footer-glories">
+                <p>All glories to Srila Prabhupada</p>
+                <p>All glories to His Holiness Radhanath Swami Maharaj</p>
+            </div>
+            <div class="footer-mantra">
+                <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
+                <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
+            </div>
+            <nav class="footer-nav" aria-label="Footer">
+                <a href="index.html">Home</a>
+                <a href="offerings.html">Read offerings</a>
+                <a href="lectures.html">Lectures</a>
+            </nav>
+            <p class="footer-fine">&copy; 2025–<span data-current-year>2026</span> Vyasa Puja Offerings · Made with devotion and love</p>
+        </div>
+    </footer>
+
+    <script src="scripts/config.js?v=4"></script>
+    <script src="scripts/common.js?v=4"></script>
+    <script src="scripts/offer.js?v=4"></script>
+</body>
+</html>

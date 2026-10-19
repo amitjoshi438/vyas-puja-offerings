@@ -13,6 +13,14 @@ let lectureIndex = [];
 let seriesByYear = {};     // { 2026: [entry, entry], 2027: [entry] }
 let selectedYear = null;
 let selectedSeries = null; // the currently active entry from index.json
+let loadToken = 0;
+
+const ICONS = {
+    place: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 18s6-5.2 6-10a6 6 0 10-12 0c0 4.8 6 10 6 10z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="8" r="2.2" stroke="currentColor" stroke-width="1.5"/></svg>',
+    book: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 4.5c2.5-1 5-1 7 .5 2-1.5 4.5-1.5 7-.5v11c-2.5-1-5-1-7 .5-2-1.5-4.5-1.5-7-.5v-11zM10 5v11" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+    download: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    chevron: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.querySelector('.lectures-page')) return;
@@ -26,8 +34,8 @@ async function initLecturesPage() {
         lectureIndex = await res.json();
     } catch (err) {
         console.error('Failed to load lecture index:', err);
-        document.getElementById('lectures-hero-content').innerHTML =
-            '<p style="color:rgba(255,255,255,0.7);padding:2rem;">Unable to load lectures.</p>';
+        document.getElementById('lectures-container').innerHTML =
+            '<li class="days-empty"><p>The lectures could not be loaded just now. Please refresh the page to try again.</p></li>';
         return;
     }
 
@@ -40,38 +48,51 @@ async function initLecturesPage() {
 
     // Sort years descending (newest first)
     const years = Object.keys(seriesByYear).map(Number).sort((a, b) => b - a);
+    if (!years.length) {
+        document.getElementById('lectures-container').innerHTML =
+            '<li class="days-empty"><p>No lectures have been added yet.</p></li>';
+        return;
+    }
 
-    // Build year tabs
     renderYearTabs(years);
 
-    // Select the most recent year by default
-    selectYear(years[0]);
+    const fromUrl = parseInt(new URLSearchParams(location.search).get('year'), 10);
+    selectYear(seriesByYear[fromUrl] ? fromUrl : years[0], false);
 }
 
 // ---- Year Tabs ----
 function renderYearTabs(years) {
     const container = document.getElementById('year-selector');
     container.innerHTML = '';
+    // A single year needs no chooser
+    container.hidden = years.length < 2;
 
     years.forEach(year => {
+        const count = seriesByYear[year].reduce((sum, e) => sum + (e.lectureCount || 0), 0);
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'year-tab';
         btn.dataset.year = year;
-        btn.textContent = year;
-        btn.addEventListener('click', () => selectYear(year));
+        btn.innerHTML = `<b>${year}</b><small>${count} lecture${count !== 1 ? 's' : ''}</small>`;
+        btn.addEventListener('click', () => selectYear(year, true));
         container.appendChild(btn);
     });
 }
 
-function selectYear(year) {
+function selectYear(year, updateUrl) {
     selectedYear = year;
     const entries = seriesByYear[year];
     if (!entries || entries.length === 0) return;
 
-    // Update active year tab
     document.querySelectorAll('.year-tab').forEach(tab => {
-        tab.classList.toggle('active', parseInt(tab.dataset.year, 10) === year);
+        tab.setAttribute('aria-pressed', String(parseInt(tab.dataset.year, 10) === year));
     });
+
+    if (updateUrl) {
+        const url = new URL(location.href);
+        url.searchParams.set('year', year);
+        history.replaceState(null, '', url);
+    }
 
     // Render series selector (shows only when >1 series for the year)
     renderSeriesSelector(entries);
@@ -84,23 +105,18 @@ function selectYear(year) {
 function renderSeriesSelector(entries) {
     const section = document.getElementById('series-selector-section');
     const container = document.getElementById('series-selector');
-
-    if (entries.length <= 1) {
-        container.innerHTML = '';
-        section.style.display = 'none';
-        return;
-    }
-
-    section.style.display = '';
     container.innerHTML = '';
+    section.hidden = entries.length <= 1;
+    if (entries.length <= 1) return;
 
     entries.forEach(entry => {
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'series-tab';
         btn.dataset.id = entry.id;
         btn.innerHTML = `
             <span class="series-tab-title">${escHTML(entry.title)}</span>
-            <span class="series-tab-meta">${entry.lectureCount} lecture${entry.lectureCount !== 1 ? 's' : ''}</span>
+            <span class="series-tab-meta">${escHTML(entry.subtitle || '')}${entry.subtitle ? ' · ' : ''}${entry.lectureCount} lecture${entry.lectureCount !== 1 ? 's' : ''}</span>
         `;
         btn.addEventListener('click', () => selectSeries(entry));
         container.appendChild(btn);
@@ -110,149 +126,153 @@ function renderSeriesSelector(entries) {
 function selectSeries(entry) {
     selectedSeries = entry;
 
-    // Update active series tab
     document.querySelectorAll('.series-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.id === entry.id);
+        tab.setAttribute('aria-pressed', String(tab.dataset.id === entry.id));
     });
 
-    // Update hero
     renderHero(entry);
-
-    // Load lectures
     loadLectures(entry);
 }
 
 // ---- Hero ----
+function titleWithEmphasis(title) {
+    // Set the final word in the italic reading face, as on the other pages
+    const parts = String(title || '').trim().split(/\s+/);
+    if (parts.length < 2) return escHTML(title || '');
+    const last = parts.pop();
+    return `${escHTML(parts.join(' '))} <em>${escHTML(last)}</em>`;
+}
+
 function renderHero(entry) {
     const hero = document.getElementById('lectures-hero-content');
+    const count = entry.lectureCount || 0;
 
-    const pdfButtons = entry.pdf
-        ? `<div class="hero-cta">
-                <a href="${esc(entry.pdf)}" target="_blank" class="pdf-btn pdf-btn-view">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Read Full Booklet
+    const actions = entry.pdf
+        ? `<div class="lectures-actions">
+                <a href="${esc(entry.pdf)}" target="_blank" rel="noopener" class="btn btn-lamp">
+                    ${ICONS.book}
+                    Read the booklet
                 </a>
-                <a href="${esc(entry.pdf)}" download class="pdf-btn pdf-btn-download">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
+                <a href="${esc(entry.pdf)}" download class="btn btn-ghost on-dark">
+                    ${ICONS.download}
                     Download PDF
                 </a>
             </div>`
         : '';
 
     hero.innerHTML = `
-        <p class="hero-eyebrow">${escHTML(entry.subtitle)}</p>
-        <h1 class="lectures-hero-title">
-            <span class="title-sanskrit">दीक्षा</span>
-            <span class="title-english">${escHTML(entry.title)}</span>
-        </h1>
-        <p class="lectures-hero-sub">Reflections by ${escHTML(entry.speaker)}</p>
-        <div class="hero-meta">
-            <span class="meta-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/></svg>
-                ${escHTML(entry.location)}
-            </span>
-            <span class="meta-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                ${entry.lectureCount} Lecture${entry.lectureCount !== 1 ? 's' : ''}
-            </span>
-        </div>
-        ${pdfButtons}
+        <span class="kicker on-dark">${escHTML(entry.subtitle || 'Initiation lectures')}</span>
+        <h1 class="page-title" id="page-title">${titleWithEmphasis(entry.title)}</h1>
+        <p class="page-lede">Reflections by ${escHTML(entry.speaker || 'His Holiness Radhanath Swami Mahārāja')}</p>
+        <dl class="lectures-facts">
+            ${entry.location ? `<div><dt>Where</dt><dd>${escHTML(entry.location)}</dd></div>` : ''}
+            <div><dt>Lectures</dt><dd>${count} ${count === 1 ? 'day' : 'days'}</dd></div>
+        </dl>
+        ${actions}
     `;
+
+    document.title = `${entry.title} — Initiation lectures · Vyasa Puja`;
 }
 
-// ---- Lectures Timeline ----
+// ---- Lectures ----
 async function loadLectures(entry) {
     const container = document.getElementById('lectures-container');
-    container.innerHTML = '<div class="lectures-loading"><div class="spinner"></div><p>Loading lectures...</p></div>';
+    const token = ++loadToken;
+    container.setAttribute('aria-busy', 'true');
+    container.innerHTML = '<li class="days-loading"><div class="spinner"></div><span>Opening the booklet…</span></li>';
 
     try {
         const res = await fetch(entry.dataFile);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const lectures = await res.json();
-        renderLectures(lectures, container);
+        if (token !== loadToken) return;
+        renderLectures(lectures, container, entry);
     } catch (err) {
+        if (token !== loadToken) return;
         console.error('Error loading lectures:', err);
-        container.innerHTML = `
-            <div style="text-align:center;padding:3rem;color:var(--text-medium);">
-                <p>No lecture details available yet.</p>
-            </div>`;
+        container.innerHTML = '<li class="days-empty"><p>No lecture details are available yet.</p></li>';
+    } finally {
+        if (token === loadToken) container.removeAttribute('aria-busy');
     }
 }
 
-function renderLectures(lectures, container) {
+function renderLectures(lectures, container, entry) {
     container.innerHTML = '';
+    if (!Array.isArray(lectures) || !lectures.length) {
+        container.innerHTML = '<li class="days-empty"><p>No lecture details are available yet.</p></li>';
+        return;
+    }
 
     lectures.forEach((lecture, idx) => {
-        const node = document.createElement('div');
-        node.className = 'lecture-node';
+        const n = idx + 1;
+        const topicsId = `topics-${entry.id}-${n}`;
+        const node = document.createElement('li');
+        node.className = 'day';
+        node.setAttribute('data-reveal', '');
+        node.style.setProperty('--reveal-delay', `${Math.min(idx, 3) * 0.06}s`);
 
-        const dateObj = new Date(lecture.date + 'T00:00:00');
-        const dateStr = dateObj.toLocaleDateString('en-GB', {
-            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-        });
+        const date = lecture.date ? new Date(lecture.date + 'T00:00:00') : null;
+        const valid = date && !isNaN(date);
+        const dayOfMonth = valid ? date.getDate() : '';
+        const month = valid ? date.toLocaleDateString('en-GB', { month: 'long' }) : '';
+        const weekday = valid ? date.toLocaleDateString('en-GB', { weekday: 'long' }) : '';
+        const year = valid ? date.getFullYear() : '';
+        const longDate = valid ? date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        const topics = Array.isArray(lecture.topics) ? lecture.topics : [];
 
-        const topicsHTML = lecture.topics.map(t =>
-            `<div class="topic-item">${escHTML(t)}</div>`
-        ).join('');
+        const topicsHTML = topics.length ? `
+            <button type="button" class="topics-toggle" aria-expanded="false" aria-controls="${topicsId}">
+                <span class="topics-toggle-label">${topics.length} topics covered</span>
+                ${ICONS.chevron}
+            </button>
+            <div class="topics" id="${topicsId}">
+                <div class="topics-inner">
+                    <ol class="topic-list">
+                        ${topics.map(t => `<li>${escHTML(t)}</li>`).join('')}
+                    </ol>
+                </div>
+            </div>` : '';
 
         node.innerHTML = `
-            <div class="lecture-date-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                    <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                ${dateStr}
+            <div class="day-mark">
+                <span class="day-count">Day <b>${n}</b></span>
+                ${valid ? `<time class="day-date" datetime="${esc(lecture.date)}" aria-label="${esc(longDate)}">
+                    <span class="day-dom">${dayOfMonth}</span>
+                    <span class="day-month">${escHTML(month)} ${year}</span>
+                    <span class="day-week">${escHTML(weekday)}</span>
+                </time>` : ''}
             </div>
-            <div class="lecture-card">
-                <div class="lecture-card-inner">
-                    <div class="lecture-card-top">
-                        <span class="lecture-type">${escHTML(lecture.type)}</span>
-                        <span class="lecture-day-num">Day ${idx + 1}</span>
-                    </div>
-                    <h2 class="lecture-title">${escHTML(lecture.title)}</h2>
-                    <p class="lecture-subtitle">${escHTML(lecture.subtitle)}</p>
-                    <p class="lecture-summary">${escHTML(lecture.summary)}</p>
-                    <button class="lecture-topics-toggle" aria-expanded="false">
-                        <span>View ${lecture.topics.length} topics covered</span>
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <div class="lecture-topics-list">
-                        <div class="lecture-topics-inner">
-                            ${topicsHTML}
-                        </div>
-                    </div>
-                    <div class="lecture-location">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
-                        </svg>
-                        ${escHTML(lecture.location)}
-                    </div>
-                </div>
-                <div class="lecture-card-accent"></div>
-            </div>
+            <span class="day-lamp" aria-hidden="true"></span>
+            <article class="day-card" aria-labelledby="day-title-${entry.id}-${n}">
+                ${lecture.type ? `<p class="day-type">${escHTML(lecture.type)}</p>` : ''}
+                <h2 class="day-title" id="day-title-${entry.id}-${n}">${escHTML(lecture.title)}</h2>
+                ${lecture.subtitle ? `<p class="day-sub">${escHTML(lecture.subtitle)}</p>` : ''}
+                ${lecture.summary ? `<p class="day-summary">${escHTML(lecture.summary)}</p>` : ''}
+                ${topicsHTML}
+                ${lecture.location ? `<p class="day-place">${ICONS.place}<span>${escHTML(lecture.location)}</span></p>` : ''}
+            </article>
         `;
 
         container.appendChild(node);
 
-        // Toggle topics accordion
-        const toggleBtn = node.querySelector('.lecture-topics-toggle');
-        const topicsList = node.querySelector('.lecture-topics-list');
-        toggleBtn.addEventListener('click', () => {
-            const isExpanded = topicsList.classList.contains('expanded');
-            topicsList.classList.toggle('expanded');
-            toggleBtn.classList.toggle('expanded');
-            toggleBtn.setAttribute('aria-expanded', !isExpanded);
-        });
+        const toggleBtn = node.querySelector('.topics-toggle');
+        if (toggleBtn) {
+            const topicsList = node.querySelector('.topics');
+            const label = toggleBtn.querySelector('.topics-toggle-label');
+            toggleBtn.addEventListener('click', () => {
+                const open = toggleBtn.getAttribute('aria-expanded') !== 'true';
+                toggleBtn.setAttribute('aria-expanded', String(open));
+                topicsList.classList.toggle('is-open', open);
+                label.textContent = open ? 'Hide topics' : `${topics.length} topics covered`;
+            });
+        }
     });
+
+    if (window.VP && typeof VP.initReveal === 'function') {
+        VP.initReveal(container);
+    } else {
+        container.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-visible'));
+    }
 }
 
 // ---- Utilities ----
@@ -263,5 +283,5 @@ function escHTML(text) {
 }
 
 function esc(text) {
-    return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
