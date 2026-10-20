@@ -135,7 +135,7 @@ The direction is *"ārati of words"*: night-temple lamplight above, hand-made pa
 
 ## Deployment
 
-The site deploys from the `main` branch through GitHub Pages; the custom domain is set in `CNAME`. See [DEPLOYMENT.md](DEPLOYMENT.md) for details and alternatives.
+The site deploys from the `main` branch through GitHub Pages; the custom domain is set in `CNAME`. To share a branch with testers before it goes live, see [Sharing a test version first](DEPLOYMENT.md#-sharing-a-test-version-first). See [DEPLOYMENT.md](DEPLOYMENT.md) for details and alternatives.
 
 ---
 

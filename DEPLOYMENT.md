@@ -104,6 +104,45 @@ npx serve
 
 ---
 
+## 🧪 Sharing a test version first
+
+The live site deploys from `main`. Keep changes on a branch until they are approved, and give testers a link to that branch.
+
+### Private preview links (recommended): Cloudflare Pages + Access
+
+Every branch you push gets its own link, and only people you invite can open it. Cloudflare Access is free for up to 50 people.
+
+1. Push the branch to GitHub.
+2. In the [Cloudflare dashboard](https://dash.cloudflare.com/), go to **Workers & Pages → Create → Pages → Connect to Git** and pick this repository. Use these settings:
+   - **Production branch:** `main`
+   - **Framework preset:** None
+   - **Build command:** leave empty
+   - **Build output directory:** leave empty
+3. In the project, open **Settings → General** and turn on **Enable access policy** for preview deployments.
+4. Under **Zero Trust → Access → Applications**, edit that policy so it allows the testers' email addresses. Testers sign in with a one-time code sent to their email.
+5. After each push, the project's **Deployments** list shows a link such as `my-branch.<project>.pages.dev`. Share that link.
+
+The `main` copy at `<project>.pages.dev` stays public; it is the same as the live site. Production still deploys through GitHub Pages.
+
+### Quick link with no setup: Netlify Drop
+
+This creates a public link that only people you send it to will know about. Package the current branch, leaving out the book tool:
+
+```bash
+git archive --format=zip -o vyasa-puja-preview.zip HEAD -- . ":(exclude)tools" ":(exclude).github"
+```
+
+Drag `vyasa-puja-preview.zip` onto [app.netlify.com/drop](https://app.netlify.com/drop). Without an account the link is temporary; sign in (free) to keep it and update it later.
+
+### Testing submissions on a test copy
+
+- A test copy sends offerings to the Apps Script set in `submissionEndpoint` in `scripts/config.js`. While it is empty, the form says offerings are not open yet.
+- Pointing a test copy at the real script is safe, because nothing is published until a moderator ticks **Approved**. Use a name like *TEST* and delete those rows afterwards.
+- For a fully separate sandbox, deploy a second sheet and script (see the [backend guide](backend/google-apps-script/README.md)). Put its URL in `config.js` on the test branch only, and switch it back before merging.
+- Test visits are counted in Google Analytics. Filter by hostname to leave them out.
+
+---
+
 ## 📝 Custom Domain Setup
 
 ### For GitHub Pages:
