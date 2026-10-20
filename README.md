@@ -10,7 +10,7 @@ Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. 
 |---|---|
 | `index.html` | Lamp-lit home page with live counts, a moving garland of names, how to offer, and the year-by-year archive. |
 | `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
-| `offer.html` | **Write your offering.** The draft is saved on the device as you type. The form is validated and protected against spam, and the devotee sees a thank-you once it is sent. If no endpoint is configured, the page explains that offerings are not open yet. |
+| `offer.html` | **Write your offering.** The draft is saved on the device as you type. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. The form is validated and protected against spam, and the devotee sees a thank-you once it is sent. If no endpoint is configured, the page explains that offerings are not open yet. |
 | `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
 
 ## How it fits together
@@ -35,15 +35,18 @@ offer.html ──POST──▶ Google Apps Script ──▶ Google Sheet  (moder
 │   ├── home.js          # home page: counts, garland of names
 │   ├── offerings.js     # browse, search, filter, reader
 │   ├── offer.js         # submission form
+│   ├── places.js        # country/town search and the dropdowns on the form
 │   └── lectures.js      # lecture series
 ├── styles/
 │   ├── main.css         # design system (tokens, type, header/footer, buttons) + home page
 │   ├── offerings.css, offer.css, lectures.css
 ├── data/
 │   ├── 2025/offerings.json     # archived offerings (75th Vyasa Puja)
-│   └── lectures/               # lecture index + per-series JSON
+│   ├── lectures/               # lecture index + per-series JSON
+│   └── places/                 # generated country and town lists (GeoNames)
 ├── backend/google-apps-script/ # Code.gs + setup guide for submissions
 ├── tools/book/                 # optional Node tool: print-ready PDF book of a year's offerings
+├── tools/places/               # Node script that generates data/places/
 ├── .github/workflows/          # "Offerings book": builds that PDF on GitHub on demand
 ├── assets/                     # images, favicon, PDFs
 └── CNAME                       # custom domain for GitHub Pages
@@ -103,6 +106,16 @@ node build.mjs --year 2025 --letters P-R --label "Book 3"
 Or, without installing anything, go to **Actions → Offerings book → Run workflow** on GitHub and download the PDFs from the run's artifacts.
 
 The tool is separate from the site, which still has no build step.
+
+## Country and town lists
+
+The form's dropdowns read `data/places/`: 246 countries and about 169,000 towns from [GeoNames](https://www.geonames.org) (CC BY 4.0). Each country's towns load only when it is chosen. To add a missing town, an ISKCON community or another spelling, edit `tools/places/extra.json` and run:
+
+```bash
+node tools/places/build.mjs
+```
+
+This also updates the country list in `Code.gs`; paste that file into Apps Script and deploy a new version. See [tools/places/README.md](tools/places/README.md).
 
 ## Run locally
 

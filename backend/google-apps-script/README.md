@@ -17,7 +17,8 @@ offerings.html ◀──GET ?action=list── only rows with Approved ☑ (emai
    - `CURRENT_YEAR`: must equal `currentYear` in `scripts/config.js`.
    - `NOTIFY_EMAIL` (optional): addresses to email whenever a new offering arrives.
    - `CLOSES_ON` (optional): last day to accept offerings, as `'YYYY-MM-DD'`.
-4. **Run `setup`.** Pick `setup` in the function dropdown and click **Run**. Approve the permissions prompt (it is your own script). This:
+   - `CHECK_EMAIL_DOMAIN`: when `true` (the default), an email whose domain cannot receive mail (such as `gmial.com`) is refused. See [Email check](#email-check).
+4. **Run `setup`.** Pick `setup` in the function dropdown and click **Run**. Approve the permissions prompt (it is your own script). Google lists "Connect to an external service": that is the email check. This:
    - creates the **Offerings** tab with its header row;
    - links the script to this spreadsheet;
    - installs a trigger so that ticking **Approved** publishes immediately.
@@ -46,7 +47,7 @@ Each offering arrives as a new row in **Offerings**:
 - **To publish an offering, tick Approved. To hide it again, untick it.** The website updates on its next page load.
 - You can fix typos directly in *Name*, *City*, *Country* or *Offering*.
 - **Email** is private. It is never sent to the website and is only for contacting the devotee.
-- **Notes** is free for moderators, e.g. who reviewed the offering.
+- **Notes** is free for moderators, e.g. who reviewed the offering. When a devotee's town wasn't in the form's list and they typed it themselves, the script writes *City typed by the devotee (not in the town list) — check the spelling.* here, so you can check *City* before approving.
 - **To add an offering received by post or WhatsApp**, type a new row with *Name*, *City*, *Country* and *Offering*, then tick *Approved*. *Year*, *Id* and *Timestamp* can be left empty.
 - **Do not insert, delete or reorder the first 11 columns.** If the header row changes, the script stops saving and listing rather than risk publishing the wrong column, such as emails. Add any extra columns of your own *after* **Notes**. If something goes wrong, restore the headers and run **Vyasa Puja → Set up / repair this sheet**.
 - **The Vyasa Puja menu** in the sheet:
@@ -56,6 +57,8 @@ Each offering arrives as a new row in **Offerings**:
 ## Built-in protection
 
 - **Validation:** the server enforces the same length and required-field rules as the form.
+- **Country:** must be one of the names the form offers (the `COUNTRIES` list at the end of `Code.gs`), so the sheet never holds "USA" in one row and "United States" in the next.
+- **Email:** the address must be well formed, and with `CHECK_EMAIL_DOMAIN` its domain must be able to receive mail (see below).
 - **Spam:** a hidden honeypot field, plus a minimum time on the page before sending.
 - **Duplicates:** the same name and offering text for the same year is stored once. The devotee still sees a thank-you.
 - **Rate limit:** at most 5 offerings per name + city in 10 minutes.
@@ -63,9 +66,23 @@ Each offering arrives as a new row in **Offerings**:
 - **Concurrency:** a script lock prevents two submissions from overwriting the same row.
 - **Speed:** the published list is cached for up to 15 minutes, and any edit to the sheet clears that cache.
 
+## Email check
+
+The form already suggests fixes for common typos ("Did you mean ram@gmail.com?"). The server then asks Google Public DNS (`dns.google`) whether the email's domain can receive mail: it needs a mail (MX) record, or failing that an address record.
+
+- Domains that don't exist, or that say "no mail here", are refused with a friendly message. Well-known providers (Gmail, Yahoo, Outlook…) skip the lookup.
+- Results are cached for 6 hours.
+- **If the lookup itself fails, the offering is accepted.** The check never blocks an offering because of a network problem.
+- Only the domain is checked, not the mailbox: `nobody123@gmail.com` still passes.
+- To turn it off, set `CHECK_EMAIL_DOMAIN: false` and deploy a new version.
+
 ## Changing the script later
 
 After editing `Code.gs`, choose **Deploy → Manage deployments → ✏️ Edit**, set **Version: New version**, then **Deploy**. Editing the existing deployment keeps the same `/exec` URL. Creating a *new deployment* gives a new URL, which you would then have to paste into `config.js` again.
+
+> **Updating from a version without the email check?** After pasting the new `Code.gs`, run `setup` once and approve the new "Connect to an external service" permission *before* deploying. Until that permission is approved, the web app answers every request (sending and listing) with an authorisation error.
+
+The `COUNTRIES` list at the end of `Code.gs` is generated with the website's country list (`node tools/places/build.mjs`). If you regenerate the lists, paste the updated `Code.gs` and deploy a new version so that the form and the server agree.
 
 ## Closing a year and archiving it
 
@@ -80,7 +97,9 @@ After editing `Code.gs`, choose **Deploy → Manage deployments → ✏️ Edit*
 |---|---|
 | `GET /exec` | `{ ok, service, currentYear, submissionsOpen }` |
 | `GET /exec?action=list&year=YYYY` | `{ ok, year, count, offerings: [{ id, name, city, country, offering, submittedAt }] }` (approved only) |
-| `POST /exec` with `Content-Type: text/plain` and body `{ action: "submit", year, name, city, country, email, offering, consent: true, website: "", elapsedMs }` | `{ ok: true, id }` or `{ ok: true, duplicate: true, id }` or `{ ok: false, code, field?, error? }` |
+| `POST /exec` with `Content-Type: text/plain` and body `{ action: "submit", year, name, city, cityListed, country, email, offering, consent: true, website: "", elapsedMs }` | `{ ok: true, id }` or `{ ok: true, duplicate: true, id }` or `{ ok: false, code, field?, error? }` |
+
+`cityListed` is `true` when the town was chosen from the form's list; otherwise the row is flagged in **Notes**. `country` must match a name in `COUNTRIES`.
 
 Error `code` values: `invalid` (with `field`), `closed`, `too_fast`, `rate_limited`, `busy`, `error`.
 

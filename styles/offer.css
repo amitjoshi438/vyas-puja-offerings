@@ -205,7 +205,7 @@
 
 /* Signature */
 .sheet-sign {
-    width: min(100%, 440px);
+    width: min(100%, 480px);
     margin: 2.75rem 0 0 auto;
     padding-top: 1.4rem;
     border-top: 1px solid var(--paper-edge);
@@ -249,6 +249,202 @@
     margin-top: 1.25rem;
 }
 .sign-place input { font-family: var(--font-read); font-size: 1.1rem; }
+
+/* Place pickers — a searchable list that drops from the signature line like a slip of paper */
+.cb { position: relative; }
+.cb input { padding-right: 2rem; text-overflow: ellipsis; }
+.cb.is-plain input { padding-right: .1rem; }
+.cb.is-open input { border-bottom-color: var(--kumkum); }
+.sheet input:disabled {
+    color: var(--ink-3);
+    border-bottom-style: dashed;
+    cursor: not-allowed;
+}
+.sheet input:disabled::placeholder { font-style: italic; }
+.cb-toggle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 44px;
+    color: var(--ink-3);
+    transition: color .2s ease;
+}
+.cb-toggle[hidden] { display: none; }
+.cb-toggle:hover { color: var(--kumkum); }
+.cb-toggle svg { width: 12px; height: 12px; transition: transform .25s var(--ease-out); }
+.cb.is-open .cb-toggle svg { transform: rotate(180deg); }
+.cb:has(input:disabled) .cb-toggle { opacity: .4; pointer-events: none; }
+
+.cb-pop {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 6px);
+    left: 0;
+    width: max(100%, 19.5rem);
+    max-width: calc(100vw - 2.5rem);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .55), transparent 5rem),
+        var(--paper-hi);
+    border: 1px solid var(--paper-edge);
+    border-top: 2px solid var(--marigold);
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: 0 2px 4px rgba(42, 25, 16, .06), 0 22px 40px -18px rgba(42, 25, 16, .45);
+    transform-origin: top center;
+    animation: slipIn .18s var(--ease-out);
+}
+.cb-pop[hidden] { display: none; }
+.cb-end .cb-pop { left: auto; right: 0; }
+.cb.opens-up .cb-pop {
+    top: auto;
+    bottom: calc(100% + 6px);
+    border-top: 1px solid var(--paper-edge);
+    border-bottom: 2px solid var(--marigold);
+    border-radius: var(--radius) var(--radius) 0 0;
+    transform-origin: bottom center;
+}
+.cb-list {
+    max-height: 17rem;
+    margin: 0;
+    padding: .3rem 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--paper-edge) transparent;
+}
+.cb-list[hidden] { display: none; }
+.cb-option {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .5rem .9rem .5rem 1.25rem;
+    font-family: var(--font-read);
+    font-size: 1.02rem;
+    line-height: 1.3;
+    color: var(--ink);
+    cursor: pointer;
+}
+.cb-option[aria-selected='true'] { background: rgba(242, 163, 58, .18); }
+/* The marigold diamond that marks places elsewhere on the sheet, in kumkum for the one under the cursor */
+.cb-option[aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    left: .5rem;
+    top: calc(.5rem + .65em);
+    width: 5px;
+    height: 5px;
+    background: var(--kumkum);
+    transform: translateY(-50%) rotate(45deg);
+}
+.cb-main { min-width: 0; }
+.cb-name b { font-weight: 600; color: var(--kumkum); }
+.cb-option.is-current .cb-name::after {
+    content: '✓';
+    content: '✓' / '';
+    margin-left: .45rem;
+    font-family: var(--font-ui);
+    font-size: .85em;
+    color: var(--kumkum);
+}
+.cb-note {
+    display: block;
+    margin-top: .05rem;
+    font-size: .84rem;
+    font-style: italic;
+    color: var(--ink-3);
+}
+.cb-detail {
+    flex-shrink: 0;
+    max-width: 48%;
+    overflow: hidden;
+    font-family: var(--font-ui);
+    font-size: .74rem;
+    letter-spacing: .05em;
+    color: var(--ink-3);
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cb-option.has-divider { margin-top: .55rem; }
+.cb-option.has-divider::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    top: -.3rem;
+    border-top: 1px solid var(--paper-edge);
+}
+/* "My town isn't in the list" — keep the devotee's own spelling */
+.cb-option.is-typed {
+    margin-top: .3rem;
+    padding-top: .6rem;
+    font-style: italic;
+    border-top: 1px dashed var(--paper-edge);
+}
+.cb-option.is-typed .cb-name::before {
+    content: '✎';
+    content: '✎' / '';
+    display: inline-block;
+    margin-right: .4rem;
+    font-style: normal;
+    color: var(--kumkum);
+}
+.cb-option.is-typed .cb-note { font-style: normal; font-family: var(--font-ui); font-size: .78rem; letter-spacing: .02em; }
+.cb-empty {
+    margin: 0;
+    padding: .85rem 1rem;
+    font-style: italic;
+    color: var(--ink-3);
+}
+.cb-empty[hidden] { display: none; }
+
+.place-region {
+    margin-top: .35rem;
+    font-family: var(--font-ui);
+    font-size: .76rem;
+    letter-spacing: .08em;
+    color: var(--ink-3);
+}
+.place-region::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin: 0 .45rem .12em 0;
+    background: var(--marigold);
+    transform: rotate(45deg);
+}
+.place-region:empty { display: none; }
+.place-typed {
+    margin-top: .45rem;
+    font-size: .92rem;
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--ink-2);
+}
+.place-typed[hidden] { display: none; }
+.place-relist {
+    margin-left: .2rem;
+    font-family: var(--font-ui);
+    font-size: .82rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--kumkum);
+    border-bottom: 1px solid currentColor;
+}
+.place-relist[hidden] { display: none; }
+.place-relist:hover { color: var(--ink); }
+
+@keyframes slipIn {
+    from { opacity: 0; transform: translateY(-4px) scaleY(.97); }
+    to { opacity: 1; transform: none; }
+}
 
 .has-error input,
 .sheet .has-error input { border-bottom-color: var(--kumkum); }
@@ -311,6 +507,50 @@
     font-size: .95rem;
     font-style: italic;
     color: var(--ink-3);
+}
+
+/* "Did you mean …@gmail.com?" */
+.email-suggest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .9rem;
+    max-width: 30rem;
+    margin-top: .65rem;
+    padding: .7rem .9rem .75rem;
+    background: var(--paper-hi);
+    border: 1px dashed rgba(214, 162, 74, .85);
+    border-radius: var(--radius);
+}
+.email-suggest:empty { display: none; }
+.email-suggest p { flex: 1 1 100%; color: var(--ink-2); }
+.email-suggest strong { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.email-suggest button {
+    min-height: 36px;
+    font-family: var(--font-ui);
+    font-size: .86rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+.suggest-use {
+    padding: .4rem .85rem .35rem;
+    color: var(--paper-hi);
+    background: var(--kumkum);
+    border-radius: var(--radius);
+    transition: background-color .2s ease;
+}
+.suggest-use:hover { background: var(--ink); }
+.suggest-keep { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.suggest-keep:hover { color: var(--kumkum); }
+.email-suggest.is-nudged {
+    border-style: solid;
+    border-color: var(--kumkum);
+    animation: nudge .45s ease;
+}
+@keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    60% { transform: translateX(4px); }
 }
 
 .hp-field {
@@ -635,6 +875,8 @@
     .field-name input,
     .field-name .field-error { text-align: left; }
     .sign-place { grid-template-columns: 1fr; }
+    .cb-pop { width: 100%; max-width: none; }
+    .cb-list { max-height: 14.5rem; }
     .submit-row .btn { width: 100%; }
     .done-actions .btn { width: 100%; }
 }

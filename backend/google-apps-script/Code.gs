@@ -18,6 +18,7 @@ const CONFIG = {
   SUBMISSIONS_OPEN: true,    // set to false to stop accepting new offerings
   CLOSES_ON: '',             // optional 'YYYY-MM-DD' — last day offerings are accepted (script time zone)
   NOTIFY_EMAIL: '',          // optional — comma-separated addresses to email on every new offering
+  CHECK_EMAIL_DOMAIN: true,  // look up the email's domain and refuse addresses that cannot receive mail
   SHEET_NAME: 'Offerings',
   CACHE_SECONDS: 900,        // how long the published list is cached (changes in the sheet clear it)
   MIN_ELAPSED_MS: 3000,      // offerings sent sooner than this after opening the page are treated as bots
@@ -38,6 +39,7 @@ const COL = HEADERS.reduce((map, h, i) => { map[h.toLowerCase()] = i + 1; return
 
 const CACHE_CHUNK_CHARS = 25000;   // CacheService values are capped at 100 KB (UTF-8)
 const MAX_BODY_CHARS = 100000;
+const UNLISTED_CITY_NOTE = 'City typed by the devotee (not in the town list) — check the spelling.';
 
 // ============================================
 // Web app entry points
@@ -91,6 +93,12 @@ function handleSubmit_(p) {
   const checked = validate_(p);
   if (checked.error) return { ok: false, code: 'invalid', field: checked.field, error: checked.error };
   const o = checked.value;
+  if (o.email && CONFIG.CHECK_EMAIL_DOMAIN && !emailDomainReceivesMail_(o.email)) {
+    return {
+      ok: false, code: 'invalid', field: 'email',
+      error: `We couldn’t find “${o.email.split('@')[1]}” — please check the spelling of your email, or leave it empty.`
+    };
+  }
 
   const fingerprint = sha256_([CONFIG.CURRENT_YEAR, o.name.toLowerCase(), o.offering.replace(/\s+/g, ' ').toLowerCase()].join('|'));
   const rateKey = 'rl:' + sha256_([o.name.toLowerCase(), o.city.toLowerCase()].join('|')).slice(0, 40);
@@ -125,7 +133,8 @@ function validate_(p) {
     city: oneLine_(p.city),
     country: oneLine_(p.country),
     email: oneLine_(p.email),
-    offering: multiLine_(p.offering)
+    offering: multiLine_(p.offering),
+    cityListed: p.cityListed === true || p.cityListed === 'true'
   };
   const fail = (field, error) => ({ field, error });
 
@@ -137,7 +146,8 @@ function validate_(p) {
   if (!v.city) return fail('city', 'Which city are you writing from?');
   if (v.city.length > L.cityMax) return fail('city', `Please keep the city under ${L.cityMax} characters.`);
   if (!v.country) return fail('country', 'Which country are you writing from?');
-  if (v.country.length > L.countryMax) return fail('country', `Please keep the country under ${L.countryMax} characters.`);
+  v.country = canonicalCountry_(v.country);
+  if (!v.country) return fail('country', 'Please choose your country from the list.');
   if (v.email && (!isEmail_(v.email) || v.email.length > L.emailMax)) return fail('email', 'This email doesn’t look quite right — or leave it empty.');
   if (p.consent !== true && p.consent !== 'true') return fail('consent', 'Please confirm so we can publish your offering.');
   return { value: v };
@@ -163,7 +173,7 @@ function appendOffering_(sheet, o, id, fingerprint) {
     false,
     id,
     fingerprint,
-    ''
+    o.cityListed ? '' : UNLISTED_CITY_NOTE
   ]]);
   sheet.getRange(row, COL.approved).insertCheckboxes();
 }
@@ -188,7 +198,7 @@ function notify_(o, id) {
       name: 'Vyasa Puja Offerings',
       body: [
         `${o.name} (${o.city}, ${o.country}) has placed an offering. It is waiting for approval.`,
-        '',
+        o.cityListed ? '' : `\nThe city "${o.city}" was typed in by hand (it isn't in the town list) — please check its spelling.\n`,
         excerpt,
         '',
         `Id: ${id}`,
@@ -399,8 +409,82 @@ function multiLine_(v) {
     .trim();
 }
 
+// Same rules as emailProblem() in scripts/offer.js.
 function isEmail_(v) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  const at = v.indexOf('@');
+  if (at < 1 || at !== v.lastIndexOf('@')) return false;
+  const local = v.slice(0, at);
+  const domain = v.slice(at + 1).toLowerCase();
+  if (local.length > 64 || domain.length > 253) return false;
+  if (!/^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+$/.test(local) || /^\.|\.$|\.\./.test(local)) return false;
+  const labels = domain.split('.');
+  if (labels.length < 2) return false;
+  if (!labels.every(l => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(l))) return false;
+  return /^(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})$/.test(labels[labels.length - 1]);
+}
+
+// Well-known providers skip the DNS lookup.
+const KNOWN_MAIL_DOMAINS = [
+  'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.in', 'yahoo.in', 'yahoo.co.uk', 'ymail.com', 'rocketmail.com',
+  'hotmail.com', 'hotmail.co.uk', 'outlook.com', 'outlook.in', 'live.com', 'live.in', 'msn.com', 'icloud.com', 'me.com',
+  'mac.com', 'aol.com', 'rediffmail.com', 'protonmail.com', 'proton.me', 'zoho.com', 'mail.com', 'gmx.com', 'gmx.de',
+  'web.de', 'yandex.com', 'yandex.ru', 'mail.ru', 'comcast.net', 'verizon.net', 'att.net', 'sbcglobal.net',
+  'btinternet.com', 'sky.com', 'bigpond.com', 'shaw.ca', 'rogers.com'
+];
+
+// Asks public DNS whether the email's domain can receive mail (an MX record, or else an address).
+// Misspelt domains like "gmial.com" usually fail. Any lookup problem lets the offering through.
+function emailDomainReceivesMail_(email) {
+  const domain = email.slice(email.indexOf('@') + 1).toLowerCase();
+  if (KNOWN_MAIL_DOMAINS.indexOf(domain) >= 0) return true;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = 'mx:' + domain;
+  const cached = cache.get(cacheKey);
+  if (cached) return cached === 'yes';
+
+  let receives;
+  try {
+    const mx = dnsQuery_(domain, 'MX');
+    if (mx.Status === 3) {
+      receives = false;                                   // NXDOMAIN — the domain doesn't exist
+    } else if (mx.Status !== 0) {
+      return true;
+    } else {
+      const records = (mx.Answer || []).filter(a => a.type === 15).map(a => String(a.data).trim());
+      if (records.length) {
+        receives = !records.every(r => /^0\s+\.?$/.test(r));   // "0 ." is a null MX: "no mail here"
+      } else {
+        receives = hasAddress_(domain, 'A') || hasAddress_(domain, 'AAAA');
+      }
+    }
+  } catch (err) {
+    console.warn('Email domain lookup failed', domain, err);
+    return true;
+  }
+  cache.put(cacheKey, receives ? 'yes' : 'no', 21600);
+  return receives;
+}
+
+function hasAddress_(domain, type) {
+  const res = dnsQuery_(domain, type);
+  if (res.Status !== 0) throw new Error('DNS status ' + res.Status);
+  return (res.Answer || []).some(a => a.type === (type === 'A' ? 1 : 28));
+}
+
+function dnsQuery_(name, type) {
+  const url = 'https://dns.google/resolve?name=' + encodeURIComponent(name) + '&type=' + type;
+  const res = UrlFetchApp.fetch(url, { muteHttpExceptions: true, headers: { Accept: 'application/dns-json' } });
+  if (res.getResponseCode() !== 200) throw new Error('DNS lookup HTTP ' + res.getResponseCode());
+  return JSON.parse(res.getContentText());
+}
+
+// The form only offers names from COUNTRIES; anything else is refused.
+function canonicalCountry_(value) {
+  const wanted = String(value).toLowerCase();
+  for (let i = 0; i < COUNTRIES.length; i++) {
+    if (COUNTRIES[i].toLowerCase() === wanted) return COUNTRIES[i];
+  }
+  return '';
 }
 
 // Guard against spreadsheet formula injection.
@@ -422,3 +506,46 @@ function sha256_(text) {
 function newId_() {
   return Utilities.getUuid().replace(/-/g, '').slice(0, 12);
 }
+
+// ============================================
+// Countries the form offers. Regenerate with: node tools/places/build.mjs
+// ============================================
+// <countries> — generated from GeoNames by tools/places/build.mjs; edit tools/places/extra.json instead
+const COUNTRIES = [
+  "Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola",
+  "Anguilla", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria",
+  "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
+  "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil",
+  "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso",
+  "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Caribbean Netherlands", "Cayman Islands",
+  "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands",
+  "Colombia", "Comoros", "Cook Islands", "Costa Rica", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czechia",
+  "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador",
+  "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia",
+  "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia",
+  "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece",
+  "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau",
+  "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq",
+  "Ireland", "Isle of Man", "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jersey", "Jordan",
+  "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
+  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Madagascar",
+  "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania",
+  "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro",
+  "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands",
+  "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island",
+  "North Korea", "North Macedonia", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau",
+  "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland",
+  "Portugal", "Puerto Rico", "Qatar", "Republic of the Congo", "Réunion", "Romania", "Russia", "Rwanda",
+  "Saint Barthélemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin",
+  "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino",
+  "São Tomé and Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone",
+  "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa",
+  "South Georgia and the South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka",
+  "Sudan", "Suriname", "Svalbard and Jan Mayen", "Sweden", "Switzerland", "Syria", "Taiwan",
+  "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago",
+  "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "U.S. Virgin Islands",
+  "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay",
+  "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara",
+  "Yemen", "Zambia", "Zimbabwe"
+];
+// </countries>
