@@ -29,6 +29,21 @@ node build.mjs --year 2025 --letters P-R --label "Book 3"
 
 This writes `out/vyasa-puja-2025-book-3-P-R.pdf`, plus an `.html` preview you can open in a browser.
 
+## Running it on GitHub (nothing to install)
+
+1. Open the repository on GitHub and go to **Actions → Offerings book → Run workflow**.
+2. Choose the branch and fill in:
+   - the year;
+   - either **letters** for one book (for example `P-R`) or **volumes** for several (for example `A-C,D-J,K-N,P-R,S,T-Z`, or `auto`);
+   - optionally a label, the paper size, or "review only".
+3. When the run finishes (a few minutes), download `offerings-book-<year>` from **Artifacts** at the bottom of the run page. It holds the PDFs and the review report for 30 days.
+
+Leave both letters and volumes empty for the whole year in one book.
+
+The workflow uses the edits file committed on the branch you choose, so commit `edits/<year>.json` first. The **Run workflow** button only appears once [`.github/workflows/offerings-book.yml`](../../.github/workflows/offerings-book.yml) is on the default branch.
+
+The repository is public, so anyone signed in to GitHub can download the artifacts. They contain only offerings that are already published on the website.
+
 ## The yearly workflow
 
 1. **Collect.** By default (`--source auto`) the tool loads what the website shows for that year:

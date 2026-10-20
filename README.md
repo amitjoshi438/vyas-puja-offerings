@@ -44,6 +44,7 @@ offer.html ──POST──▶ Google Apps Script ──▶ Google Sheet  (moder
 │   └── lectures/               # lecture index + per-series JSON
 ├── backend/google-apps-script/ # Code.gs + setup guide for submissions
 ├── tools/book/                 # optional Node tool: print-ready PDF book of a year's offerings
+├── .github/workflows/          # "Offerings book": builds that PDF on GitHub on demand
 ├── assets/                     # images, favicon, PDFs
 └── CNAME                       # custom domain for GitHub Pages
 ```
@@ -98,6 +99,8 @@ See [data/README.md](data/README.md) for the file formats.
 cd tools/book && npm install
 node build.mjs --year 2025 --letters P-R --label "Book 3"
 ```
+
+Or, without installing anything, go to **Actions → Offerings book → Run workflow** on GitHub and download the PDFs from the run's artifacts.
 
 The tool is separate from the site, which still has no build step.
 
