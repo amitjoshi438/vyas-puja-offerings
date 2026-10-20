@@ -48,7 +48,16 @@
         doneName: $('done-name'),
         donePlace: $('done-place'),
         doneRead: $('done-read'),
-        doneAgain: $('done-again')
+        doneAgain: $('done-again'),
+        confirm: $('confirm'),
+        confirmTitle: $('confirm-title'),
+        confirmLetter: $('confirm-letter'),
+        confirmText: $('confirm-text'),
+        confirmName: $('confirm-name'),
+        confirmPlace: $('confirm-place'),
+        confirmEmail: $('confirm-email'),
+        confirmEdit: $('confirm-edit'),
+        confirmSend: $('confirm-send')
     };
 
     const yearConfig = VP.currentYear();
@@ -611,7 +620,7 @@
             }
             case 'name': {
                 const t = oneLine(v);
-                if (t.length < 2) msg = 'Please sign with your name.';
+                if (t.length < 2) msg = 'Please sign with your initiated or official name.';
                 else if (t.length > limits.nameMax) msg = `Please keep your name under ${limits.nameMax} characters.`;
                 break;
             }
@@ -717,7 +726,7 @@
 
     async function onSubmit(e) {
         e.preventDefault();
-        if (submitting) return;
+        if (submitting || (els.confirm && els.confirm.open)) return;
         showStatus('');
 
         const invalid = validateAll();
@@ -742,8 +751,7 @@
             email: els.email.value.trim(),
             offering: multiLine(els.offering.value),
             consent: true,
-            website: els.website.value,
-            elapsedMs: Date.now() - loadedAt
+            website: els.website.value
         };
 
         if (payload.website) {
@@ -751,6 +759,58 @@
             showSuccess(payload, false);
             return;
         }
+        askToConfirm(payload);
+    }
+
+    // ---------- Confirm ----------
+    let pendingPayload = null;
+
+    function askToConfirm(payload) {
+        const placeLine = [payload.city, payload.country].filter(Boolean).join(', ');
+        if (!els.confirm || typeof els.confirm.showModal !== 'function') {
+            if (window.confirm(`Place your offering now?\n\nIt will be published as:\n${payload.name}, ${placeLine}`)) sendOffering(payload);
+            return;
+        }
+        pendingPayload = payload;
+        els.confirmText.textContent = payload.offering;
+        els.confirmName.textContent = payload.name;
+        els.confirmPlace.textContent = placeLine;
+        els.confirmEmail.textContent = payload.email
+            ? `Your email, ${payload.email}, stays private with the sevaks.`
+            : 'No email given, so the sevaks won’t be able to reach you if something needs a correction.';
+        // returnValue survives from the last close, and Esc doesn't reset it.
+        els.confirm.returnValue = '';
+        document.documentElement.classList.add('confirm-open');
+        els.confirm.showModal();
+        els.confirmLetter.scrollTop = 0;
+        els.confirmTitle.focus();
+    }
+
+    function onConfirmClosed() {
+        document.documentElement.classList.remove('confirm-open');
+        const payload = pendingPayload;
+        pendingPayload = null;
+        if (els.confirm.returnValue === 'send' && payload) sendOffering(payload);
+    }
+
+    function setupConfirm() {
+        if (!els.confirm) return;
+        els.confirmEdit.addEventListener('click', () => els.confirm.close('edit'));
+        els.confirmSend.addEventListener('click', () => els.confirm.close('send'));
+        // A click on the dimmed backdrop lands on the dialog itself. Ignore drags that began
+        // inside the letter (selecting text) and ended on the backdrop.
+        let pressedBackdrop = false;
+        els.confirm.addEventListener('pointerdown', e => { pressedBackdrop = e.target === els.confirm; });
+        els.confirm.addEventListener('click', e => {
+            if (pressedBackdrop && e.target === els.confirm) els.confirm.close('edit');
+            pressedBackdrop = false;
+        });
+        els.confirm.addEventListener('close', onConfirmClosed);
+    }
+
+    async function sendOffering(payload) {
+        if (submitting) return;
+        payload.elapsedMs = Date.now() - loadedAt;
         if (payload.elapsedMs < MIN_ELAPSED_MS) {
             showStatus(SERVER_MESSAGES.too_fast, 'error');
             return;
@@ -903,6 +963,7 @@
 
         els.form.addEventListener('submit', onSubmit);
         els.doneAgain.addEventListener('click', writeAnother);
+        setupConfirm();
 
         window.addEventListener('beforeunload', () => {
             if (draftTimer) {
