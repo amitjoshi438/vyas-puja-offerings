@@ -300,10 +300,12 @@ function setup() {
   PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
   ensureSheet_(ss);
 
+  const handlers = ['onSheetEdit', 'onSheetChange'];
   ScriptApp.getProjectTriggers()
-    .filter(t => t.getHandlerFunction() === 'onSheetEdit')
+    .filter(t => handlers.includes(t.getHandlerFunction()))
     .forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('onSheetEdit').forSpreadsheet(ss).onEdit().create();
+  ScriptApp.newTrigger('onSheetChange').forSpreadsheet(ss).onChange().create();
 
   bumpListGeneration_();
   console.log(`Ready. Sheet "${CONFIG.SHEET_NAME}" is set up. Now deploy as a web app (see README.md).`);
@@ -312,6 +314,12 @@ function setup() {
 /** Installable trigger (created by setup): publishes approval changes immediately. */
 function onSheetEdit(e) {
   if (e && e.range && e.range.getSheet().getName() !== CONFIG.SHEET_NAME) return;
+  bumpListGeneration_();
+}
+
+/** Installable trigger (created by setup): deleting, inserting or sorting rows doesn't fire onEdit. */
+function onSheetChange(e) {
+  if (e && (e.changeType === 'EDIT' || e.changeType === 'FORMAT')) return;
   bumpListGeneration_();
 }
 

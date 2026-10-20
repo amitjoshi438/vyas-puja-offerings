@@ -21,7 +21,7 @@ offerings.html ◀──GET ?action=list── only rows with Approved ☑ (emai
 4. **Run `setup`.** Pick `setup` in the function dropdown and click **Run**. Approve the permissions prompt (it is your own script). Google lists "Connect to an external service": that is the email check. This:
    - creates the **Offerings** tab with its header row;
    - links the script to this spreadsheet;
-   - installs a trigger so that ticking **Approved** publishes immediately.
+   - installs triggers so that ticking **Approved**, or deleting a row, publishes immediately.
 5. **Deploy.** Click **Deploy → New deployment**, choose type **Web app**, and set:
    - *Execute as*: **Me**
    - *Who has access*: **Anyone**
@@ -45,6 +45,7 @@ Each offering arrives as a new row in **Offerings**:
 |---|---|---|---|---|---|---|---|---|---|---|
 
 - **To publish an offering, tick Approved. To hide it again, untick it.** The website updates on its next page load.
+- **Prefer unticking to deleting.** Deleting a row also removes the site's copy straight away, but it loses the record, and the duplicate check with it: the same offering sent again would be stored again. Years already saved to `data/<year>/offerings.json` are served from that file, so edit the file to remove an offering there.
 - You can fix typos directly in *Name*, *City*, *Country* or *Offering*.
 - **Email** is private. It is never sent to the website and is only for contacting the devotee.
 - **Notes** is free for moderators, e.g. who reviewed the offering. When a devotee's town wasn't in the form's list and they typed it themselves, the script writes *City typed by the devotee (not in the town list) — check the spelling.* here, so you can check *City* before approving.
@@ -80,7 +81,7 @@ The form already suggests fixes for common typos ("Did you mean ram@gmail.com?")
 
 After editing `Code.gs`, choose **Deploy → Manage deployments → ✏️ Edit**, set **Version: New version**, then **Deploy**. Editing the existing deployment keeps the same `/exec` URL. Creating a *new deployment* gives a new URL, which you would then have to paste into `config.js` again.
 
-> **Updating from a version without the email check?** After pasting the new `Code.gs`, run `setup` once and approve the new "Connect to an external service" permission *before* deploying. Until that permission is approved, the web app answers every request (sending and listing) with an authorisation error.
+> **After pasting a new `Code.gs`, run `setup` once before deploying.** It refreshes the triggers (the one that publishes deleted rows immediately was added later) and asks for any new permission. Updating from a version without the email check? Approve the new "Connect to an external service" permission; until you do, the web app answers every request (sending and listing) with an authorisation error. `setup` never touches existing rows.
 
 The `COUNTRIES` list at the end of `Code.gs` is generated with the website's country list (`node tools/places/build.mjs`). If you regenerate the lists, paste the updated `Code.gs` and deploy a new version so that the form and the server agree.
 
