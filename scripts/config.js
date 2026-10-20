@@ -11,7 +11,7 @@
 
 window.VYASA_CONFIG = {
     // Google Apps Script web-app URL (ends in /exec). Leave empty to disable online submissions.
-    submissionEndpoint: '',
+    submissionEndpoint: 'https://script.google.com/macros/s/AKfycbwyo-Ok-5nY-bULwOkj5p9JGWkIXj2gHRgmU2w3QsDHWTb9CK9jw3sZL0NEddQ6xsR0/exec',
 
     currentYear: 2026,
 
