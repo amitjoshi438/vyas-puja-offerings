@@ -126,13 +126,18 @@ The `main` copy at `<project>.pages.dev` stays public; it is the same as the liv
 
 ### Quick link with no setup: Netlify Drop
 
-This creates a public link that only people you send it to will know about. Package the current branch, leaving out the book tool:
+This creates a link that only people you send it to will know about. Package the current branch, leaving out the book tool:
 
 ```bash
 git archive --format=zip -o vyasa-puja-preview.zip HEAD -- . ":(exclude)tools" ":(exclude).github"
 ```
 
-Drag `vyasa-puja-preview.zip` onto [app.netlify.com/drop](https://app.netlify.com/drop). Without an account the link is temporary; sign in (free) to keep it and update it later.
+1. Sign in (free) at [app.netlify.com](https://app.netlify.com). Dropping without an account also works, but the link then asks for a temporary password until you claim the site.
+2. Drag `vyasa-puja-preview.zip` onto [app.netlify.com/drop](https://app.netlify.com/drop). The link ends in `.netlify.app`.
+3. If testers see a Netlify login page, the site is private (the default for some free accounts). Go to **Project configuration → General → Visitor access → Project visibility** and choose **Public**. Password protection needs a paid plan.
+4. To update the test copy, make a new zip and drop it on the site's **Production deploys** area. The link stays the same.
+
+The zip only contains committed work, so commit first.
 
 ### Testing submissions on a test copy
 

@@ -36,3 +36,6 @@ build/
 
 # Generated offerings books (tools/book)
 tools/book/out/
+
+# Netlify Drop test package (DEPLOYMENT.md)
+vyasa-puja-preview.zip
