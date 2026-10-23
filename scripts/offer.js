@@ -674,7 +674,7 @@
         submitting = on;
         els.submit.disabled = on || !canSubmit;
         els.submit.classList.toggle('is-busy', on);
-        els.submitText.textContent = on ? 'Placing your offering…' : 'Place my offering';
+        els.submitText.textContent = on ? 'Offering to Gurudev…' : 'Offer to Gurudev';
         els.form.setAttribute('aria-busy', String(on));
     }
 
@@ -768,7 +768,7 @@
     function askToConfirm(payload) {
         const placeLine = [payload.city, payload.country].filter(Boolean).join(', ');
         if (!els.confirm || typeof els.confirm.showModal !== 'function') {
-            if (window.confirm(`Place your offering now?\n\nIt will be published as:\n${payload.name}, ${placeLine}`)) sendOffering(payload);
+            if (window.confirm(`Offer to Gurudev now?\n\nIt will be published as:\n${payload.name}, ${placeLine}`)) sendOffering(payload);
             return;
         }
         pendingPayload = payload;
@@ -854,9 +854,9 @@
             els.form.hidden = true;
             els.notice.hidden = true;
             els.done.hidden = false;
-            els.done.classList.remove('is-lit');
+            els.done.classList.remove('is-offered');
             void els.done.offsetWidth;
-            els.done.classList.add('is-lit');
+            els.done.classList.add('is-offered');
             els.done.scrollIntoView({ behavior: VP.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
             els.done.focus({ preventScroll: true });
         };
@@ -875,7 +875,7 @@
         els.form.classList.remove('is-sending');
         els.form.hidden = false;
         els.done.hidden = true;
-        els.done.classList.remove('is-lit');
+        els.done.classList.remove('is-offered');
         showStatus('');
         updateCount();
         autosize();

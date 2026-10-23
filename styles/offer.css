@@ -632,7 +632,7 @@
 .letter-form.is-sending .sheet { animation: sendAway .5s cubic-bezier(.5, 0, .75, 0) forwards; }
 .letter-form.is-sending .envelope { animation: fadeAway .35s ease-in forwards; }
 
-/* ---------- Lamp lit ---------- */
+/* ---------- A flower for the garland ---------- */
 .offer-done {
     position: relative;
     padding: clamp(2.25rem, 6vw, 3.75rem) clamp(1.25rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4rem);
@@ -647,40 +647,49 @@
     scroll-margin-top: calc(var(--header-h) + 1.5rem);
 }
 .offer-done:focus { outline: none; }
-.diya {
+.garland-art {
     display: block;
-    width: clamp(150px, 30vw, 200px);
+    width: clamp(250px, 58vw, 360px);
     height: auto;
-    margin: 0 auto .75rem;
+    margin: 0 auto .5rem;
     overflow: visible;
 }
-.diya-flame,
-.diya-glow {
+.ga-f, .ga-leaf, .ga-ring, .ga-open, .ga-glow, .ga-petals ellipse {
     transform-box: fill-box;
-    opacity: 0;
+    transform-origin: 50% 50%;
 }
-.diya-flame { transform-origin: 50% 100%; transform: scale(0); }
-.diya-glow { transform-origin: 50% 50%; }
-.diya-embers circle { opacity: 0; }
+.ga-thread { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.ga-bead { opacity: 0; }
+.ga-f { opacity: 0; transform: scale(0); }
+.ga-leaf { opacity: 0; }
+.ga-fall { transform: translateY(-62px); }
+.ga-open { opacity: 0; transform: scale(.05); }
+.ga-ring { transform: scale(.2) rotate(-40deg); }
+.ga-glow { opacity: 0; }
+.ga-petals ellipse { opacity: 0; }
 
-.offer-done.is-lit .diya-flame {
-    animation: ignite 1.1s .3s var(--ease-out) forwards, flicker 3.2s 1.45s ease-in-out infinite;
-}
-.offer-done.is-lit .diya-glow {
-    animation: glowIn 1.6s .45s ease-out forwards, glowPulse 3.6s 2.1s ease-in-out infinite;
-}
-.offer-done.is-lit .diya-embers circle { animation: ember 3s ease-out infinite; }
-.offer-done.is-lit .diya-embers circle:nth-child(1) { animation-delay: 1.5s; }
-.offer-done.is-lit .diya-embers circle:nth-child(2) { animation-delay: 2.4s; }
-.offer-done.is-lit .diya-embers circle:nth-child(3) { animation-delay: 3.3s; }
+.offer-done.is-offered .ga-thread { animation: threadIn 1s .1s ease-out forwards; }
+.offer-done.is-offered .ga-bead { animation: fadeIn .5s .5s ease-out forwards; }
+.offer-done.is-offered .ga-leaf { animation: fadeIn .6s ease-out forwards; animation-delay: calc(.6s + var(--i) * .08s); }
+.offer-done.is-offered .ga-f { animation: flowerPop .65s var(--ease-out) forwards; animation-delay: calc(.35s + var(--i) * .1s); }
+.offer-done.is-offered .ga-open { animation: bloomOpen .8s 1s var(--ease-out) forwards; }
+.offer-done.is-offered .ga-ring-3 { animation: unfurl .9s 1s var(--ease-out) forwards; }
+.offer-done.is-offered .ga-ring-2 { animation: unfurl .9s 1.12s var(--ease-out) forwards; }
+.offer-done.is-offered .ga-ring-1 { animation: unfurl .9s 1.24s var(--ease-out) forwards; }
+.offer-done.is-offered .ga-fall { animation: settle .8s 2s cubic-bezier(.45, 0, .2, 1) forwards; }
+.offer-done.is-offered .ga-glow { animation: glowIn 1.4s 1.1s ease-out forwards, glowPulse 3.6s 2.8s ease-in-out infinite; }
+.offer-done.is-offered .ga-petals ellipse { animation: petalDrift 4.2s ease-out infinite; }
+.offer-done.is-offered .ga-petals ellipse:nth-child(1) { animation-delay: 2.9s; }
+.offer-done.is-offered .ga-petals ellipse:nth-child(2) { animation-delay: 3.8s; }
+.offer-done.is-offered .ga-petals ellipse:nth-child(3) { animation-delay: 4.7s; }
 
-.offer-done > :not(.diya) { opacity: 0; }
-.offer-done.is-lit > :not(.diya) { animation: rise .8s var(--ease-out) forwards; }
-.offer-done.is-lit > .kicker { animation-delay: .9s; }
-.offer-done.is-lit > .done-title { animation-delay: 1s; }
-.offer-done.is-lit > .done-text { animation-delay: 1.1s; }
-.offer-done.is-lit > .done-card { animation-name: cardIn; animation-delay: 1.25s; }
-.offer-done.is-lit > .done-actions { animation-delay: 1.4s; }
+.offer-done > :not(.garland-art) { opacity: 0; }
+.offer-done.is-offered > :not(.garland-art) { animation: rise .8s var(--ease-out) forwards; }
+.offer-done.is-offered > .kicker { animation-delay: 1.3s; }
+.offer-done.is-offered > .done-title { animation-delay: 1.4s; }
+.offer-done.is-offered > .done-text { animation-delay: 1.5s; }
+.offer-done.is-offered > .done-card { animation-name: cardIn; animation-delay: 1.65s; }
+.offer-done.is-offered > .done-actions { animation-delay: 1.8s; }
 
 .done-title {
     margin-top: .7rem;
@@ -991,23 +1000,22 @@ html.confirm-open { overflow: hidden; }
 @keyframes sendAway { to { opacity: 0; transform: translateY(-40px) rotate(-1.5deg) scale(.96); } }
 @keyframes fadeAway { to { opacity: 0; transform: translateY(10px); } }
 @keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
-@keyframes ignite {
-    0% { opacity: 0; transform: scale(.1, .05); }
-    35% { opacity: 1; transform: scale(.55, .85); }
+@keyframes threadIn { to { stroke-dashoffset: 0; } }
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes flowerPop {
+    0% { opacity: 0; transform: scale(0); }
+    60% { opacity: 1; transform: scale(1.18); }
     100% { opacity: 1; transform: scale(1); }
 }
-@keyframes flicker {
-    0%, 100% { opacity: 1; transform: scale(1) skewX(0); }
-    22% { opacity: 1; transform: scale(.97, 1.04) skewX(1.6deg); }
-    48% { opacity: 1; transform: scale(1.02, .97) skewX(-1.2deg); }
-    74% { opacity: 1; transform: scale(.99, 1.03) skewX(.8deg); }
-}
+@keyframes bloomOpen { to { opacity: 1; transform: scale(1); } }
+@keyframes unfurl { to { transform: scale(1) rotate(0); } }
+@keyframes settle { to { transform: translateY(0); } }
 @keyframes glowIn { from { opacity: 0; transform: scale(.35); } to { opacity: 1; transform: scale(1); } }
 @keyframes glowPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .78; transform: scale(.93); } }
-@keyframes ember {
-    0% { opacity: 0; transform: translateY(0); }
+@keyframes petalDrift {
+    0% { opacity: 0; transform: translate(0, 0) rotate(0); }
     20% { opacity: .9; }
-    100% { opacity: 0; transform: translateY(-36px); }
+    100% { opacity: 0; transform: translate(10px, 40px) rotate(120deg); }
 }
 @keyframes cardIn { from { opacity: 0; transform: translateY(24px) rotate(2deg); } to { opacity: 1; transform: rotate(-1.4deg); } }
 @keyframes confirmIn { from { opacity: 0; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: none; } }
@@ -1045,4 +1053,9 @@ html.confirm-open { overflow: hidden; }
     .confirm-paper { max-height: calc(100vh - 1rem); max-height: calc(100dvh - 1rem); }
     .confirm-actions { flex-direction: column-reverse; }
     .confirm-actions .btn { width: 100%; }
+}
+
+/* The garland arrives in order; without motion, show the finished state straight away */
+@media (prefers-reduced-motion: reduce) {
+    .offer-done *, .offer-done > * { animation-delay: 0s !important; }
 }

@@ -1,6 +1,6 @@
 // ============================================
-// Home page: lamp mandala, stats, garland, year cards
-// Every lamp in the mandala is one published offering.
+// Home page: flower garland, stats, names strip, year cards
+// Every flower in the garland is one published offering.
 // ============================================
 (function () {
     'use strict';
@@ -8,9 +8,9 @@
     const VP = window.VP;
     if (!VP) return;
 
-    const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
-    // Newest year first: bright lamp-light, then marigold, saffron, kumkum…
-    const YEAR_COLORS = ['#FFE7B0', '#F2A33A', '#E0662A', '#C8432B', '#D9B26A', '#B8875A'];
+    const TAU = Math.PI * 2;
+    // Newest year first: fresh champa-gold, then marigold, saffron, rose…
+    const YEAR_COLORS = ['#FFE2A0', '#F2A33A', '#E8702A', '#D9534A', '#E8C46A', '#C9899A'];
     const COUNTRY_ALIASES = {
         'usa': 'united states', 'us': 'united states', 'u s a': 'united states', 'united states of america': 'united states', 'america': 'united states',
         'uk': 'united kingdom', 'u k': 'united kingdom', 'england': 'united kingdom', 'great britain': 'united kingdom', 'britain': 'united kingdom', 'scotland': 'united kingdom', 'wales': 'united kingdom',
@@ -25,7 +25,7 @@
     async function init() {
         renderYearCards(null);
         renderSubmissionStatus();
-        const mandala = createMandala();
+        const garland = createGarland();
 
         const results = await VP.loadAllYears();
         const byYear = new Map(results.map(r => [r.year, r.offerings]));
@@ -37,10 +37,10 @@
         state.all = state.years.flatMap(y => y.offerings);
 
         renderStats();
-        renderGarland();
+        renderNameStrip();
         renderYearCards(state.years);
         renderLegend();
-        if (mandala) mandala.setYears(state.years);
+        if (garland) garland.setYears(state.years);
     }
 
     // ---------- Helpers ----------
@@ -92,19 +92,19 @@
         countUp(document.getElementById('stat-cities'), cities.size);
     }
 
-    // ---------- Garland of names ----------
-    function renderGarland() {
-        const track = document.getElementById('garland-track');
+    // ---------- Strip of names ----------
+    function renderNameStrip() {
+        const track = document.getElementById('name-track');
         if (!track) return;
         const current = state.years[0];
         const pool = current && current.offerings.length >= 24 ? current.offerings : state.all;
         if (!pool.length) {
-            track.closest('.garland').hidden = true;
+            track.closest('.name-strip').hidden = true;
             return;
         }
         const picks = shuffle(pool).slice(0, 36);
         const html = picks.map(o => `
-            <a class="garland-item" href="${VP.offeringUrl(o)}" tabindex="-1">
+            <a class="name-item" href="${VP.offeringUrl(o)}" tabindex="-1">
                 <span><b>${VP.escapeHtml(o.name)}</b>${o.city || o.country ? `<small>${VP.escapeHtml(o.city || o.country)}</small>` : ''}</span>
             </a>`).join('');
         // Two identical halves → seamless translateX(-50%) loop
@@ -175,61 +175,55 @@
 
     // ---------- Legend ----------
     function renderLegend() {
-        const el = document.getElementById('mandala-legend');
+        const el = document.getElementById('garland-legend');
         if (!el) return;
+        // Same order as the garland: this year's flowers hang closest to Maharaj
         el.innerHTML = state.years
             .filter(y => y.offerings.length)
-            .slice()
-            .reverse()
             .map(y => `<span><i style="--c:${y.color}"></i>${y.year} · ${VP.formatNumber(y.offerings.length)}</span>`)
             .join('');
-        const hint = document.querySelector('.mandala-hint');
+        const hint = document.querySelector('.garland-hint');
         if (hint && window.matchMedia('(hover: none)').matches) {
-            hint.textContent = 'Each lamp is an offering — tap one to see whose.';
+            hint.textContent = 'Each flower is an offering — tap one to see whose.';
         }
     }
 
-    // ---------- Mandala ----------
-    function createMandala() {
+    // ---------- Flower garland ----------
+    // Garlands hang in strands around the arch of Maharaj's portrait, like a torana. Each flower is one
+    // offering. The newest year hangs closest to him, crowning the arch from its apex, and older years
+    // hang outside it. The band keeps a fixed footprint: as offerings grow the flowers become smaller,
+    // down to a floor, after which the outer strands simply run past the edge of the hero.
+    function createGarland() {
         const hero = document.getElementById('hero');
-        const canvas = document.getElementById('mandala');
+        const canvas = document.getElementById('hero-garland');
         const portrait = document.getElementById('hero-portrait');
-        const tip = document.getElementById('lamp-tip');
+        const tip = document.getElementById('flower-tip');
         if (!hero || !canvas || !canvas.getContext) return null;
 
         const ctx = canvas.getContext('2d');
         const reduced = VP.prefersReducedMotion();
         const sprites = new Map();
-        let lamps = [];
-        let years = [];
+        const SPRITE = 72;
+        const VARIANTS = 3;
+        const FRAME_GAP = 14; // the gold frame sits this far outside the photo (see .hero-portrait::before)
+        let flowers = [];
+        let strands = [];
         let W = 0, H = 0, dpr = 1;
-        let cx = 0, cy = 0, r0 = 0, rOuter = 0, spacing = 10;
-        let rotation = 0;
-        let lastTime = 0;
-        let igniteStart = 0;
+        let cx = 0, halfW = 0, archY = 0, endY = 0, dLimit = 0, pitch = 12;
+        let bloomStart = 0;
         let running = false;
         let inView = true;
         let rafId = 0;
         let hovered = -1;
         let touchPinned = -1;
-        let ring = null;
+        let base = null;
 
-        function sprite(color) {
-            if (sprites.has(color)) return sprites.get(color);
-            const size = 64;
-            const c = document.createElement('canvas');
-            c.width = c.height = size;
-            const g = c.getContext('2d');
-            const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-            grad.addColorStop(0, 'rgba(255,250,235,1)');
-            grad.addColorStop(0.12, 'rgba(255,240,205,0.95)');
-            grad.addColorStop(0.28, hexToRgba(color, 0.55));
-            grad.addColorStop(0.6, hexToRgba(color, 0.12));
-            grad.addColorStop(1, hexToRgba(color, 0));
-            g.fillStyle = grad;
-            g.fillRect(0, 0, size, size);
-            sprites.set(color, c);
-            return c;
+        function shade(hex, amount) {
+            const n = parseInt(hex.slice(1), 16);
+            const target = amount >= 0 ? 255 : 0;
+            const k = Math.abs(amount);
+            const mix = v => Math.round(v + (target - v) * k);
+            return `rgb(${mix((n >> 16) & 255)},${mix((n >> 8) & 255)},${mix(n & 255)})`;
         }
 
         function hexToRgba(hex, a) {
@@ -237,8 +231,98 @@
             return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
         }
 
-        // Centre of the portrait in hero coordinates (offset-based, so entry transforms don't skew it)
-        function portraitCentre() {
+        // A marigold: three rings of petals, deeper at the rim, with a small dark heart
+        function flowerSprite(color, variant) {
+            const key = color + variant;
+            if (sprites.has(key)) return sprites.get(key);
+            const c = document.createElement('canvas');
+            c.width = c.height = SPRITE;
+            const g = c.getContext('2d');
+            const R = SPRITE / 2 - 2;
+            g.translate(SPRITE / 2, SPRITE / 2);
+            const layers = [
+                { n: 13, len: 1, tone: -0.1, turn: 0 },
+                { n: 11, len: 0.76, tone: 0.1, turn: Math.PI / 11 },
+                { n: 8, len: 0.52, tone: 0.34, turn: 0.2 }
+            ];
+            layers.forEach((L, li) => {
+                const len = R * L.len;
+                const half = Math.max(2.2, len * Math.sin(Math.PI / L.n) * 1.05);
+                g.fillStyle = shade(color, L.tone);
+                g.strokeStyle = shade(color, L.tone - 0.3);
+                g.lineWidth = 0.9;
+                for (let i = 0; i < L.n; i++) {
+                    g.save();
+                    g.rotate(L.turn + variant * (0.37 + li * 0.11) + (i / L.n) * TAU);
+                    g.beginPath();
+                    g.ellipse(0, -len * 0.52, half, len * 0.5, 0, 0, TAU);
+                    g.fill();
+                    g.stroke();
+                    g.restore();
+                }
+            });
+            g.fillStyle = shade(color, -0.5);
+            g.beginPath();
+            g.arc(0, 0, R * 0.15, 0, TAU);
+            g.fill();
+            g.fillStyle = shade(color, 0.55);
+            g.beginPath();
+            g.arc(-R * 0.04, -R * 0.04, R * 0.06, 0, TAU);
+            g.fill();
+            sprites.set(key, c);
+            return c;
+        }
+
+        // A pair of tulasi leaves pointing up, for the thread between flowers
+        function leafSprite() {
+            if (sprites.has('leaf')) return sprites.get('leaf');
+            const size = 56;
+            const c = document.createElement('canvas');
+            c.width = c.height = size;
+            const g = c.getContext('2d');
+            g.translate(size / 2, size * 0.62);
+            [-1, 1].forEach(side => {
+                g.save();
+                g.rotate(side * 0.72);
+                g.beginPath();
+                g.moveTo(0, 0);
+                g.bezierCurveTo(9, -6, 9, -22, 0, -28);
+                g.bezierCurveTo(-9, -22, -9, -6, 0, 0);
+                g.fillStyle = '#6a9a52';
+                g.fill();
+                g.strokeStyle = 'rgba(30, 58, 24, .7)';
+                g.lineWidth = 1;
+                g.stroke();
+                g.beginPath();
+                g.moveTo(0, -2);
+                g.lineTo(0, -22);
+                g.strokeStyle = 'rgba(214, 240, 180, .55)';
+                g.stroke();
+                g.restore();
+            });
+            sprites.set('leaf', c);
+            return c;
+        }
+
+        function glowSprite(color) {
+            const key = 'glow' + color;
+            if (sprites.has(key)) return sprites.get(key);
+            const size = 64;
+            const c = document.createElement('canvas');
+            c.width = c.height = size;
+            const g = c.getContext('2d');
+            const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+            grad.addColorStop(0, hexToRgba(color, 0.55));
+            grad.addColorStop(0.45, hexToRgba(color, 0.16));
+            grad.addColorStop(1, hexToRgba(color, 0));
+            g.fillStyle = grad;
+            g.fillRect(0, 0, size, size);
+            sprites.set(key, c);
+            return c;
+        }
+
+        // Centre and size of the portrait in hero coordinates (offset-based, so entry transforms don't skew it)
+        function portraitBox() {
             if (!portrait) return { x: W * 0.7, y: H * 0.5, w: 260, h: 340 };
             let x = 0, y = 0, el = portrait;
             while (el && el !== hero) {
@@ -249,6 +333,54 @@
             return { x: x + portrait.offsetWidth / 2, y: y + portrait.offsetHeight / 2, w: portrait.offsetWidth, h: portrait.offsetHeight };
         }
 
+        // ---------- Geometry ----------
+        // A strand at radius R follows the portrait's arch: up the left side, over the top, down the right.
+        function strandLength(R) {
+            return 2 * (endY - archY) + Math.PI * R;
+        }
+
+        function strandPoint(R, s) {
+            const side = endY - archY;
+            if (s < side) return { x: cx - R, y: endY - s, nx: -1, ny: 0 };
+            s -= side;
+            const arc = Math.PI * R;
+            if (s < arc) {
+                const th = Math.PI + s / R;
+                const c = Math.cos(th);
+                const sn = Math.sin(th);
+                return { x: cx + c * R, y: archY + sn * R, nx: c, ny: sn };
+            }
+            return { x: cx + R, y: archY + (s - arc), nx: 1, ny: 0 };
+        }
+
+        function slotsOn(R) {
+            return Math.max(6, Math.floor(strandLength(R) / pitch));
+        }
+
+        // Right-hand edge of the hero text, so a garland beside it never runs behind the words
+        function textRight() {
+            const left = hero.getBoundingClientRect().left;
+            let right = 0;
+            hero.querySelectorAll('.hero-verse p, .hero-title .t-big, .hero-for, .hero-lede, .hero-actions').forEach(el => {
+                const range = document.createRange();
+                range.selectNodeContents(el);
+                right = Math.max(right, range.getBoundingClientRect().right - left);
+            });
+            return right;
+        }
+
+        // Distance from the frame needed by the outermost strand when `n` flowers hang at pitch `p`
+        function outerOffset(p, n) {
+            let d = p * 0.9;
+            let left = n;
+            for (;;) {
+                const L = strandLength(halfW + d);
+                left -= Math.max(6, Math.floor(L / p));
+                if (left <= 0) return d;
+                d += p * 1.22;
+            }
+        }
+
         function layout() {
             const rect = hero.getBoundingClientRect();
             W = Math.max(1, Math.round(rect.width));
@@ -257,136 +389,237 @@
             canvas.width = Math.round(W * dpr);
             canvas.height = Math.round(H * dpr);
 
-            const p = portraitCentre();
-            cx = p.x;
-            cy = p.y;
-            const mobile = W < 960;
-            r0 = Math.hypot(p.w, p.h) / 2 + (mobile ? 16 : 26);
+            const b = portraitBox();
+            cx = b.x;
+            halfW = b.w / 2 + FRAME_GAP;
+            const frameTop = b.y - b.h / 2 - FRAME_GAP;
+            archY = frameTop + halfW;
+            endY = b.y + b.h / 2 + 22;
 
-            const n = lamps.length;
-            const minSpacing = mobile ? 6.5 : 8.5;
-            const maxSpacing = mobile ? 16 : 22;
+            const mobile = W < 960;
+            const dTop = frameTop - 6;
+            const dSide = Math.min(cx, W - cx) - halfW - 4;
+            const dText = cx - halfW - textRight() - 10;
+            // Desktop may overrun the side edge slightly; on a phone the arch rises off the top and the text sits
+            // below, so only the sides count
+            dLimit = mobile ? Math.max(30, dSide) : Math.max(60, Math.min(dTop, dSide + 22, dText));
+
+            const n = flowers.length;
+            const pMax = mobile ? 14 : 17;
+            const pMin = mobile ? 6.5 : 8;
+            pitch = pMax;
             if (n) {
-                const edge = Math.min(cx, W - cx, cy, H - cy);
-                const target = Math.max(r0 + (mobile ? 50 : 80), edge - 12);
-                const ideal = Math.sqrt(Math.PI * (target * target - r0 * r0) / n);
-                spacing = Math.max(minSpacing, Math.min(maxSpacing, ideal));
-                const c2 = Math.pow(spacing / 1.77, 2);
-                lamps.forEach((l, i) => {
-                    l.r = Math.sqrt(r0 * r0 + c2 * (i + 0.5)) + l.jitter * spacing * 0.22;
-                });
-                rOuter = Math.sqrt(r0 * r0 + c2 * n);
-            } else {
-                rOuter = r0 + 60;
+                // Largest flowers that still keep every strand inside the hero; stop at the floor
+                for (let t = pMax; t >= pMin; t -= 0.25) {
+                    pitch = t;
+                    if (outerOffset(t, n) <= dLimit) break;
+                }
             }
-            buildRing();
+            stringFlowers();
+            buildBase();
             if (!running) draw(performance.now());
         }
 
-        // Static yantra: fine gold circles and petal ticks framing the lamps
-        function buildRing() {
-            ring = document.createElement('canvas');
-            ring.width = canvas.width;
-            ring.height = canvas.height;
-            const g = ring.getContext('2d');
-            g.scale(dpr, dpr);
-            g.translate(cx, cy);
-            g.strokeStyle = 'rgba(242, 209, 140, 0.22)';
-            g.lineWidth = 1;
-            const inner = r0 - 10;
-            g.beginPath();
-            g.arc(0, 0, inner, 0, Math.PI * 2);
-            g.stroke();
-
-            const petals = 24;
-            g.strokeStyle = 'rgba(242, 209, 140, 0.14)';
-            for (let i = 0; i < petals; i++) {
-                const a0 = (i / petals) * Math.PI * 2;
-                const a1 = ((i + 1) / petals) * Math.PI * 2;
-                const am = (a0 + a1) / 2;
-                const outer = rOuter + 22;
-                g.beginPath();
-                g.moveTo(Math.cos(a0) * (outer - 4), Math.sin(a0) * (outer - 4));
-                g.quadraticCurveTo(Math.cos(am) * (outer + 30), Math.sin(am) * (outer + 30), Math.cos(a1) * (outer - 4), Math.sin(a1) * (outer - 4));
-                g.stroke();
+        function stringFlowers() {
+            strands = [];
+            const n = flowers.length;
+            let d = pitch * 0.9;
+            let i = 0;
+            let k = 0;
+            while (i < n) {
+                const R = halfW + d;
+                const L = strandLength(R);
+                const slots = slotsOn(R);
+                const spacing = L / slots;
+                const slotList = [];
+                for (let j = 0; j < slots; j++) slotList.push({ j, s: (j + 0.25 + (k % 2) * 0.5) * spacing });
+                // Fill from the apex outwards, so a part-filled strand sits centred over the portrait
+                slotList.sort((a, b) => Math.abs(a.s - L / 2) - Math.abs(b.s - L / 2));
+                const count = Math.min(slots, n - i);
+                let sMin = L;
+                let sMax = 0;
+                for (let m = 0; m < count; m++, i++) {
+                    const f = flowers[i];
+                    const slot = slotList[m];
+                    const pt = strandPoint(R, slot.s);
+                    f.x = pt.x;
+                    f.y = pt.y;
+                    f.nx = pt.nx;
+                    f.ny = pt.ny;
+                    f.d = d;
+                    f.leafAt = pitch >= 8.5 && slot.j % 4 === 2 ? slot.s + spacing / 2 : -1;
+                    f.R = R;
+                    sMin = Math.min(sMin, slot.s);
+                    sMax = Math.max(sMax, slot.s);
+                }
+                strands.push({ R, L, d, sMin, sMax, full: count >= slots });
+                d += pitch * 1.22;
+                k++;
             }
-            g.setLineDash([1, 7]);
-            g.strokeStyle = 'rgba(242, 209, 140, 0.3)';
-            g.beginPath();
-            g.arc(0, 0, rOuter + 12, 0, Math.PI * 2);
-            g.stroke();
+        }
+
+        // Static layer: the thread, tulasi leaves and a scalloped border. Flowers are drawn over it.
+        function buildBase() {
+            base = document.createElement('canvas');
+            base.width = canvas.width;
+            base.height = canvas.height;
+            const g = base.getContext('2d');
+            g.scale(dpr, dpr);
+
+            g.lineWidth = 1;
+            g.lineCap = 'round';
+            g.strokeStyle = 'rgba(242, 209, 140, 0.4)';
+            g.fillStyle = 'rgba(242, 209, 140, 0.85)';
+            strands.forEach(st => {
+                const from = st.full ? 0 : Math.max(0, st.sMin - pitch * 0.5);
+                const to = st.full ? st.L : Math.min(st.L, st.sMax + pitch * 0.5);
+                g.beginPath();
+                for (let s = from; s <= to; s += 4) {
+                    const pt = strandPoint(st.R, s);
+                    if (s === from) g.moveTo(pt.x, pt.y); else g.lineTo(pt.x, pt.y);
+                }
+                g.stroke();
+                if (st.full) {
+                    // Each full strand ends in a small gold bead
+                    [cx - st.R, cx + st.R].forEach(x => {
+                        g.beginPath();
+                        g.moveTo(x, endY);
+                        g.lineTo(x, endY + 5);
+                        g.stroke();
+                        g.beginPath();
+                        g.arc(x, endY + 7, 2.2, 0, TAU);
+                        g.fill();
+                    });
+                }
+            });
+
+            if (pitch >= 8.5) {
+                const leaf = leafSprite();
+                const ls = pitch * 2;
+                flowers.forEach(f => {
+                    if (f.leafAt < 0) return;
+                    const pt = strandPoint(f.R, f.leafAt);
+                    g.save();
+                    g.translate(pt.x, pt.y);
+                    g.rotate(Math.atan2(pt.ny, pt.nx) + Math.PI / 2);
+                    g.globalAlpha = 0.9;
+                    g.drawImage(leaf, -ls / 2, -ls * 0.62, ls, ls);
+                    g.restore();
+                });
+            }
+
+            // Lotus-petal scallops along the outside of the outermost strand
+            if (strands.length) {
+                const outer = strands[strands.length - 1];
+                const Ro = outer.R + pitch * 1.1 + 8;
+                const Lo = strandLength(Ro);
+                const petals = Math.max(8, Math.round(Lo / 56));
+                g.strokeStyle = 'rgba(242, 209, 140, 0.16)';
+                for (let m = 0; m < petals; m++) {
+                    const s0 = (m / petals) * Lo;
+                    const s1 = ((m + 1) / petals) * Lo;
+                    const a = strandPoint(Ro, s0);
+                    const b = strandPoint(Ro, s1);
+                    const mid = strandPoint(Ro, (s0 + s1) / 2);
+                    g.beginPath();
+                    g.moveTo(a.x, a.y);
+                    g.quadraticCurveTo(mid.x + mid.nx * 40, mid.y + mid.ny * 40, b.x, b.y);
+                    g.stroke();
+                }
+            }
         }
 
         function setYears(list) {
-            years = list;
-            // Oldest year innermost, like the rings of a tree
-            const ordered = list.slice().reverse();
-            lamps = [];
-            ordered.forEach(y => {
+            // Newest year first, so it hangs closest to Maharaj
+            const current = VP.currentYear();
+            flowers = [];
+            list.forEach(y => {
                 y.offerings.forEach(o => {
-                    lamps.push({
+                    flowers.push({
                         o,
                         color: y.color,
-                        size: 0.85 + Math.min(1, (o.text || '').length / 4500) * 0.75,
-                        phase: Math.random() * Math.PI * 2,
-                        speed: 0.0018 + Math.random() * 0.0026,
-                        jitter: Math.random() - 0.5,
-                        r: 0,
+                        fresh: !!current && y.year === current.year,
+                        variant: Math.floor(Math.random() * VARIANTS),
+                        size: 0.9 + Math.min(1, (o.text || '').length / 4500) * 0.2,
+                        phase: Math.random() * TAU,
+                        speed: 0.0012 + Math.random() * 0.0018,
+                        x: 0, y: 0, nx: 0, ny: 0, d: 0, R: 0, leafAt: -1,
+                        life: 0, fade: 1, sx: 0, sy: 0,
                         delay: 0
                     });
                 });
             });
-            const n = lamps.length;
-            lamps.forEach((l, i) => { l.delay = (i / Math.max(1, n)) * 2400 + Math.random() * 260; });
+            const n = flowers.length;
+            flowers.forEach((f, i) => { f.delay = (i / Math.max(1, n)) * 2600 + Math.random() * 300; });
             layout();
-            igniteStart = performance.now();
+            bloomStart = performance.now();
             start();
         }
 
-        function lampPos(i, rot) {
-            const l = lamps[i];
-            const a = i * GOLDEN_ANGLE + rot;
-            return { x: cx + Math.cos(a) * l.r, y: cy + Math.sin(a) * l.r };
+        function easeOutBack(t) {
+            const c1 = 1.5;
+            const c3 = c1 + 1;
+            return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
         }
 
         function draw(now) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (ring) ctx.drawImage(ring, 0, 0);
-            if (!lamps.length) return;
+            if (base) ctx.drawImage(base, 0, 0);
+            if (!flowers.length) return;
 
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            ctx.globalCompositeOperation = 'lighter';
-            const base = spacing * 1.9;
-            const elapsed = reduced ? Infinity : now - igniteStart;
+            const elapsed = reduced ? Infinity : now - bloomStart;
+            const fadeFrom = dLimit + 8;
+            const margin = pitch * 2;
+            const visible = [];
 
-            for (let i = 0; i < lamps.length; i++) {
-                const l = lamps[i];
-                const life = Math.min(1, Math.max(0, (elapsed - l.delay) / 500));
+            for (let i = 0; i < flowers.length; i++) {
+                const f = flowers[i];
+                const life = Math.min(1, Math.max(0, (elapsed - f.delay) / 650));
                 if (life <= 0) continue;
-                const flicker = reduced ? 0.92 : 0.8 + 0.2 * Math.sin(now * l.speed + l.phase);
-                const a = i * GOLDEN_ANGLE + rotation;
-                const x = cx + Math.cos(a) * l.r;
-                const y = cy + Math.sin(a) * l.r;
-                if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
-                const s = base * l.size * (0.85 + 0.15 * flicker) * (0.6 + 0.4 * life);
-                ctx.globalAlpha = 0.62 * flicker * life;
-                ctx.drawImage(sprite(l.color), x - s / 2, y - s / 2, s, s);
+                // A gentle sway, as if in a breeze
+                const sway = reduced ? 0 : Math.sin(now * 0.0007 + f.phase) * pitch * 0.12;
+                f.sx = f.x + f.nx * sway;
+                f.sy = f.y + f.ny * sway;
+                if (f.sx < -margin || f.sy < -margin || f.sx > W + margin || f.sy > H + margin) continue;
+                f.life = life;
+                f.fade = f.d > fadeFrom ? Math.max(0, 1 - (f.d - fadeFrom) / 80) : 1;
+                if (f.fade > 0) visible.push(f);
+            }
+
+            // A soft glow behind this year's flowers
+            ctx.globalCompositeOperation = 'lighter';
+            for (const f of visible) {
+                if (!f.fresh) continue;
+                const s = pitch * 3.2 * f.life;
+                ctx.globalAlpha = 0.5 * f.fade;
+                ctx.drawImage(glowSprite(f.color), f.sx - s / 2, f.sy - s / 2, s, s);
+            }
+            ctx.globalCompositeOperation = 'source-over';
+
+            for (const f of visible) {
+                const breathe = reduced ? 1 : 1 + 0.035 * Math.sin(now * f.speed + f.phase);
+                const s = pitch * 1.02 * f.size * easeOutBack(f.life) * breathe;
+                ctx.globalAlpha = f.life * f.fade;
+                ctx.drawImage(flowerSprite(f.color, f.variant), f.sx - s / 2, f.sy - s / 2, s, s);
             }
 
             const active = touchPinned >= 0 ? touchPinned : hovered;
-            if (active >= 0 && lamps[active]) {
-                const p = lampPos(active, rotation);
-                const s = Math.max(34, base * 3.4);
+            if (active >= 0 && flowers[active]) {
+                const f = flowers[active];
+                const s = Math.max(26, pitch * 2.6);
                 ctx.globalAlpha = 1;
-                ctx.drawImage(sprite('#FFE7B0'), p.x - s / 2, p.y - s / 2, s, s);
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.drawImage(glowSprite('#FFE7B0'), f.x - s * 1.3, f.y - s * 1.3, s * 2.6, s * 2.6);
                 ctx.globalCompositeOperation = 'source-over';
+                ctx.drawImage(flowerSprite(f.color, f.variant), f.x - s / 2, f.y - s / 2, s, s);
                 ctx.strokeStyle = 'rgba(255, 231, 176, 0.85)';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, Math.max(9, spacing * 0.9), 0, Math.PI * 2);
+                ctx.arc(f.x, f.y, s * 0.62, 0, TAU);
                 ctx.stroke();
-                placeTip(p);
+                placeTip(f);
             }
             ctx.globalAlpha = 1;
             ctx.globalCompositeOperation = 'source-over';
@@ -394,10 +627,6 @@
 
         function frame(now) {
             if (!running) return;
-            const dt = lastTime ? Math.min(64, now - lastTime) : 16;
-            lastTime = now;
-            // Hold still while a lamp is being read
-            if (hovered < 0 && touchPinned < 0) rotation += dt * 0.000012;
             draw(now);
             rafId = requestAnimationFrame(frame);
         }
@@ -406,7 +635,6 @@
             if (reduced) { draw(performance.now()); return; }
             if (running || !inView || document.hidden) return;
             running = true;
-            lastTime = 0;
             rafId = requestAnimationFrame(frame);
         }
 
@@ -417,13 +645,12 @@
 
         // ---------- Interaction ----------
         function nearest(x, y) {
-            const radius = Math.max(14, spacing * 1.1);
+            const radius = Math.max(12, pitch * 0.8);
             let best = -1;
             let bestD = radius * radius;
-            for (let i = 0; i < lamps.length; i++) {
-                const p = lampPos(i, rotation);
-                const dx = p.x - x;
-                const dy = p.y - y;
+            for (let i = 0; i < flowers.length; i++) {
+                const dx = flowers[i].x - x;
+                const dy = flowers[i].y - y;
                 const d = dx * dx + dy * dy;
                 if (d < bestD) { bestD = d; best = i; }
             }
@@ -436,16 +663,16 @@
         }
 
         function blocked(target) {
-            return !!(target && target.closest && target.closest('.hero-copy, .hero-portrait, .lamp-tip, a, button'));
+            return !!(target && target.closest && target.closest('.hero-copy, .hero-portrait, .flower-tip, a, button'));
         }
 
         function showTip(i) {
-            const l = lamps[i];
-            if (!l || !tip) return;
-            const where = VP.formatLocation(l.o);
-            tip.innerHTML = `<strong>${VP.escapeHtml(l.o.name)}</strong>`
+            const f = flowers[i];
+            if (!f || !tip) return;
+            const where = VP.formatLocation(f.o);
+            tip.innerHTML = `<strong>${VP.escapeHtml(f.o.name)}</strong>`
                 + (where ? `<span>${VP.escapeHtml(where)}</span>` : '')
-                + `<em>${l.o.year} · ${matchMedia('(hover: none)').matches ? 'Tap again to read' : 'Click to read'}</em>`;
+                + `<em>${f.o.year} · ${matchMedia('(hover: none)').matches ? 'Tap again to read' : 'Click to read'}</em>`;
             tip.classList.add('is-visible');
         }
 
@@ -468,13 +695,13 @@
         function setHover(i) {
             if (i === hovered) return;
             hovered = i;
-            hero.classList.toggle('is-lamp-hover', i >= 0);
+            hero.classList.toggle('is-flower-hover', i >= 0);
             if (i >= 0) showTip(i); else if (touchPinned < 0) hideTip();
             if (!running) draw(performance.now());
         }
 
         hero.addEventListener('pointermove', e => {
-            if (e.pointerType === 'touch' || !lamps.length) return;
+            if (e.pointerType === 'touch' || !flowers.length) return;
             if (blocked(e.target)) { setHover(-1); return; }
             const pt = localPoint(e);
             setHover(nearest(pt.x, pt.y));
@@ -482,7 +709,7 @@
         hero.addEventListener('pointerleave', () => setHover(-1));
 
         hero.addEventListener('click', e => {
-            if (!lamps.length || blocked(e.target)) return;
+            if (!flowers.length || blocked(e.target)) return;
             const pt = localPoint(e);
             const i = nearest(pt.x, pt.y);
             const touch = matchMedia('(hover: none)').matches;
@@ -498,7 +725,7 @@
                 if (!running) draw(performance.now());
                 return;
             }
-            window.location.href = VP.offeringUrl(lamps[i].o);
+            window.location.href = VP.offeringUrl(flowers[i].o);
         });
 
         // ---------- Lifecycle ----------

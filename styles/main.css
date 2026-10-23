@@ -1,14 +1,14 @@
 /* ==========================================================================
-   Vyasa Puja Offerings — "Ārati of words"
-   Night-temple lamplight for the occasion, hand-made paper for the words.
+   Vyasa Puja Offerings — "A garland of words"
+   Night-temple glow for the occasion, marigolds strung above, hand-made paper for the words.
    ========================================================================== */
 
 :root {
-    /* Night & lamplight */
+    /* Night & marigold */
     --night: #120905;
     --night-2: #1c0e07;
     --night-3: #2b160b;
-    --lamp: #ffe3a3;
+    --glow: #ffe3a3;
     --marigold: #f2a33a;
     --saffron: #e4712a;
     --gold: #d6a24a;
@@ -46,6 +46,10 @@
 
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .1 0 0 0 0 .05 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     --lotus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M24 3c4 5 6 10 6 15s-2 9-6 11c-4-2-6-6-6-11s2-10 6-15z'/%3E%3Cpath d='M24 29c-3-1-9-3-12-9-1.5-3-1.5-6-1-8 5 1 10 4 13 9'/%3E%3Cpath d='M24 29c3-1 9-3 12-9 1.5-3 1.5-6 1-8-5 1-10 4-13 9'/%3E%3Cpath d='M24 29c-6 1-14 0-20-5 3-2 7-3 11-2'/%3E%3Cpath d='M24 29c6 1 14 0 20-5-3-2-7-3-11-2'/%3E%3C/svg%3E");
+    --blossom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg transform='translate(12 12)' fill='black'%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(45)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(90)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(135)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(180)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(225)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(270)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(315)'/%3E%3C/g%3E%3C/svg%3E");
+    /* Marigolds strung along the top and bottom edge of the strip of names (half of each flower shows) */
+    --bloom-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cg transform='translate(12 0)'%3E%3Cg fill='%23f2a33a' stroke='%23a85a17' stroke-width='.5'%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(45)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(90)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(135)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(180)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(225)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(270)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(315)'/%3E%3C/g%3E%3Cg fill='%23ffcf6b'%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(22)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(67)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(112)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(157)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(202)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(247)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(292)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(337)'/%3E%3C/g%3E%3Ccircle r='1.7' fill='%238c3a10'/%3E%3C/g%3E%3C/svg%3E");
+    --bloom-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cg transform='translate(12 12)'%3E%3Cg fill='%23f2a33a' stroke='%23a85a17' stroke-width='.5'%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(45)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(90)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(135)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(180)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(225)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(270)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(315)'/%3E%3C/g%3E%3Cg fill='%23ffcf6b'%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(22)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(67)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(112)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(157)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(202)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(247)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(292)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(337)'/%3E%3C/g%3E%3Ccircle r='1.7' fill='%238c3a10'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* ---------- Reset & base ---------- */
@@ -220,8 +224,8 @@ button { cursor: pointer; background: none; border: 0; }
 .btn:active { transform: translateY(0); }
 .btn[disabled], .btn[aria-disabled='true'] { opacity: .55; cursor: not-allowed; transform: none; }
 
-.btn-lamp { --btn-bg: var(--marigold); --btn-fg: var(--night); box-shadow: inset 0 0 0 3px var(--btn-bg), inset 0 0 0 4px rgba(18, 9, 5, .28), 0 0 40px -6px rgba(242, 163, 58, .55); }
-.btn-lamp:hover { --btn-bg: var(--gold-2); }
+.btn-marigold { --btn-bg: var(--marigold); --btn-fg: var(--night); box-shadow: inset 0 0 0 3px var(--btn-bg), inset 0 0 0 4px rgba(18, 9, 5, .28), 0 0 40px -6px rgba(242, 163, 58, .55); }
+.btn-marigold:hover { --btn-bg: var(--gold-2); }
 
 .btn-ghost {
     --btn-bg: transparent;
@@ -469,7 +473,7 @@ button { cursor: pointer; background: none; border: 0; }
     .hero { min-height: max(640px, calc(100svh - var(--header-h))); }
 }
 
-.mandala {
+.hero-garland {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -497,7 +501,7 @@ button { cursor: pointer; background: none; border: 0; }
     pointer-events: none;
 }
 .hero-grid a, .hero-grid button, .hero-copy > *, .hero-portrait { pointer-events: auto; }
-.hero.is-lamp-hover { cursor: pointer; }
+.hero.is-flower-hover { cursor: pointer; }
 
 .hero-verse {
     max-width: 34rem;
@@ -539,7 +543,7 @@ button { cursor: pointer; background: none; border: 0; }
 .hero-title .t-big {
     display: block;
     font-size: clamp(3.4rem, min(9vw, 13vh), 7.6rem);
-    color: var(--lamp);
+    color: var(--glow);
     text-shadow: 0 0 42px rgba(242, 163, 58, .38), 0 0 2px rgba(255, 227, 163, .4);
     padding-bottom: .08em;
 }
@@ -586,7 +590,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-size: clamp(1.8rem, 3vw, 2.5rem);
     font-weight: 600;
     line-height: 1;
-    color: var(--lamp);
+    color: var(--glow);
     font-variant-numeric: tabular-nums;
 }
 .hero-stat span {
@@ -645,7 +649,7 @@ button { cursor: pointer; background: none; border: 0; }
     color: rgba(246, 238, 221, .55);
 }
 
-.mandala-legend {
+.garland-legend {
     position: absolute;
     right: var(--gutter);
     bottom: 1.4rem;
@@ -658,14 +662,15 @@ button { cursor: pointer; background: none; border: 0; }
     color: rgba(246, 238, 221, .6);
     z-index: 2;
 }
-.mandala-legend span { display: inline-flex; align-items: center; gap: .5rem; }
-.mandala-legend i {
-    width: 8px; height: 8px;
-    border-radius: 50%;
+.garland-legend span { display: inline-flex; align-items: center; gap: .5rem; }
+.garland-legend i {
+    width: 14px; height: 14px;
     background: var(--c);
-    box-shadow: 0 0 10px 2px var(--c);
+    -webkit-mask: var(--blossom) center / contain no-repeat;
+    mask: var(--blossom) center / contain no-repeat;
+    filter: drop-shadow(0 0 5px var(--c));
 }
-.mandala-hint {
+.garland-hint {
     position: absolute;
     left: var(--gutter);
     bottom: 1.4rem;
@@ -676,7 +681,7 @@ button { cursor: pointer; background: none; border: 0; }
     z-index: 2;
 }
 
-.lamp-tip {
+.flower-tip {
     position: absolute;
     z-index: 5;
     min-width: 180px;
@@ -692,8 +697,8 @@ button { cursor: pointer; background: none; border: 0; }
     transform-origin: bottom center;
     transition: opacity .18s ease, transform .18s ease;
 }
-.lamp-tip.is-visible { opacity: 1; transform: translate(-50%, calc(-100% - 18px)); }
-.lamp-tip::after {
+.flower-tip.is-visible { opacity: 1; transform: translate(-50%, calc(-100% - 18px)); }
+.flower-tip::after {
     content: '';
     position: absolute;
     left: 50%; bottom: -6px;
@@ -701,41 +706,41 @@ button { cursor: pointer; background: none; border: 0; }
     background: inherit;
     transform: translateX(-50%) rotate(45deg);
 }
-.lamp-tip.is-below { transform: translate(-50%, 14px) scale(.96); transform-origin: top center; }
-.lamp-tip.is-below.is-visible { transform: translate(-50%, 18px); }
-.lamp-tip.is-below::after { bottom: auto; top: -6px; }
-.lamp-tip::after { left: var(--arrow-x, 50%); }
-.lamp-tip strong { display: block; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
-.lamp-tip span { display: block; margin-top: .2rem; font-family: var(--font-ui); font-size: .75rem; letter-spacing: .08em; color: var(--ink-3); }
-.lamp-tip em { display: block; margin-top: .35rem; font-size: .8rem; color: var(--kumkum); }
+.flower-tip.is-below { transform: translate(-50%, 14px) scale(.96); transform-origin: top center; }
+.flower-tip.is-below.is-visible { transform: translate(-50%, 18px); }
+.flower-tip.is-below::after { bottom: auto; top: -6px; }
+.flower-tip::after { left: var(--arrow-x, 50%); }
+.flower-tip strong { display: block; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+.flower-tip span { display: block; margin-top: .2rem; font-family: var(--font-ui); font-size: .75rem; letter-spacing: .08em; color: var(--ink-3); }
+.flower-tip em { display: block; margin-top: .35rem; font-size: .8rem; color: var(--kumkum); }
 
-/* Garland of names */
-.garland {
+/* Strip of names, strung with marigolds */
+.name-strip {
     position: relative;
     overflow: hidden;
     background: var(--kumkum);
     color: #fbe9c9;
-    padding: 1.15rem 0 1.05rem;
+    padding: 1.3rem 0 1.2rem;
     border-top: 1px solid rgba(242, 209, 140, .4);
 }
-.garland::before, .garland::after {
+.name-strip::before, .name-strip::after {
     content: '';
     position: absolute;
     left: 0; right: 0;
-    height: 9px;
-    background-size: 18px 9px;
+    height: 12px;
+    background-size: 24px 12px;
     background-repeat: repeat-x;
     z-index: 1;
 }
-.garland::before { top: 0; background-image: radial-gradient(circle at 50% 0, var(--marigold) 4.5px, transparent 5px); }
-.garland::after { bottom: 0; background-image: radial-gradient(circle at 50% 100%, var(--marigold) 4.5px, transparent 5px); }
-.garland-track {
+.name-strip::before { top: 0; background-image: var(--bloom-top); }
+.name-strip::after { bottom: 0; background-image: var(--bloom-bottom); }
+.name-track {
     display: flex;
     width: max-content;
-    animation: garland 120s linear infinite;
+    animation: nameScroll 120s linear infinite;
 }
-.garland:hover .garland-track { animation-play-state: paused; }
-.garland-item {
+.name-strip:hover .name-track { animation-play-state: paused; }
+.name-item {
     display: inline-flex;
     align-items: center;
     gap: 1.5rem;
@@ -746,17 +751,17 @@ button { cursor: pointer; background: none; border: 0; }
     font-size: 1.12rem;
     text-decoration: none;
 }
-.garland-item b { font-family: var(--font-display); font-style: normal; font-weight: 600; }
-.garland-item small { font-family: var(--font-ui); font-style: normal; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; opacity: .7; margin-left: .55rem; }
-.garland-item::after {
+.name-item b { font-family: var(--font-display); font-style: normal; font-weight: 600; }
+.name-item small { font-family: var(--font-ui); font-style: normal; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; opacity: .7; margin-left: .55rem; }
+.name-item::after {
     content: '';
-    width: 22px; height: 15px;
+    width: 17px; height: 17px;
     background: var(--gold-2);
-    -webkit-mask: var(--lotus) center / contain no-repeat;
-    mask: var(--lotus) center / contain no-repeat;
-    opacity: .85;
+    -webkit-mask: var(--blossom) center / contain no-repeat;
+    mask: var(--blossom) center / contain no-repeat;
+    opacity: .9;
 }
-.garland-item:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.name-item:hover b { text-decoration: underline; text-underline-offset: 3px; }
 
 /* Sections */
 .section { padding: clamp(4.5rem, 10vw, 8rem) 0; position: relative; }
@@ -1070,7 +1075,7 @@ button { cursor: pointer; background: none; border: 0; }
 @keyframes breathe { 0%, 100% { opacity: .75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(68, 101, 58, .5); } 80%, 100% { box-shadow: 0 0 0 10px rgba(68, 101, 58, 0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes garland { to { transform: translateX(-50%); } }
+@keyframes nameScroll { to { transform: translateX(-50%); } }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
@@ -1090,8 +1095,8 @@ button { cursor: pointer; background: none; border: 0; }
     }
     .how-grid, .about-grid { grid-template-columns: 1fr; }
     .how-intro { position: static; }
-    .mandala-hint { display: none; }
-    .mandala-legend { left: var(--gutter); right: auto; }
+    .garland-hint { display: none; }
+    .garland-legend { left: var(--gutter); right: auto; }
 }
 
 @media (max-width: 560px) {
@@ -1110,6 +1115,6 @@ button { cursor: pointer; background: none; border: 0; }
         transition-duration: .001ms !important;
         scroll-behavior: auto !important;
     }
-    .garland-track { animation: none; }
-    .garland { overflow-x: auto; }
+    .name-track { animation: none; }
+    .name-strip { overflow-x: auto; }
 }

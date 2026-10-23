@@ -149,7 +149,7 @@ function renderHero(entry) {
 
     const actions = entry.pdf
         ? `<div class="lectures-actions">
-                <a href="${esc(entry.pdf)}" target="_blank" rel="noopener" class="btn btn-lamp">
+                <a href="${esc(entry.pdf)}" target="_blank" rel="noopener" class="btn btn-marigold">
                     ${ICONS.book}
                     Read the booklet
                 </a>
@@ -242,7 +242,7 @@ function renderLectures(lectures, container, entry) {
                     <span class="day-week">${escHTML(weekday)}</span>
                 </time>` : ''}
             </div>
-            <span class="day-lamp" aria-hidden="true"></span>
+            <span class="day-flower" aria-hidden="true"></span>
             <article class="day-card" aria-labelledby="day-title-${entry.id}-${n}">
                 ${lecture.type ? `<p class="day-type">${escHTML(lecture.type)}</p>` : ''}
                 <h2 class="day-title" id="day-title-${entry.id}-${n}">${escHTML(lecture.title)}</h2>

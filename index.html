@@ -18,14 +18,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta property="og:title" content="Vyasa Puja Offerings — HH Radhanath Swami Maharaj">
-    <meta property="og:description" content="Every lamp is an offering. Read words of gratitude from disciples worldwide, and offer your own.">
+    <meta property="og:description" content="Every offering is a flower in the garland around Maharaj. Read words of gratitude from disciples worldwide, and offer your own.">
     <meta property="og:image" content="assets/images/maharaj-portrait.jpg">
     <title>Vyasa Puja Offerings — HH Radhanath Swami Maharaj</title>
     <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css?v=4">
+    <link rel="stylesheet" href="styles/main.css?v=5">
 </head>
 <body class="home">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -49,9 +49,9 @@
     </header>
 
     <main id="main">
-        <!-- Hero: every lamp is a published offering -->
+        <!-- Hero: every flower in the garland is a published offering -->
         <section class="hero on-dark" id="hero" aria-labelledby="hero-title">
-            <canvas class="mandala" id="mandala" aria-hidden="true"></canvas>
+            <canvas class="hero-garland" id="hero-garland" aria-hidden="true"></canvas>
             <div class="hero-shade" aria-hidden="true"></div>
 
             <div class="container hero-grid">
@@ -67,12 +67,12 @@
                     </h1>
                     <p class="hero-for">of His Holiness Radhanath Swami Maharaj</p>
                     <p class="hero-lede">
-                        Every lamp around Maharaj is an offering — words of gratitude from disciples and
-                        well-wishers across the world. Add your light for his <span data-current-edition>76th</span> appearance day.
+                        Every offering is a flower in the garland around Maharaj — words of gratitude from disciples and
+                        well-wishers across the world. Add yours for his <span data-current-edition>76th</span> appearance day.
                     </p>
 
                     <div class="hero-actions">
-                        <a class="btn btn-lamp" href="offer.html">
+                        <a class="btn btn-marigold" href="offer.html">
                             Offer your words
                             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
@@ -92,14 +92,14 @@
                 </figure>
             </div>
 
-            <div class="lamp-tip" id="lamp-tip" aria-hidden="true"></div>
-            <p class="mandala-hint" aria-hidden="true">Each lamp is an offering — hover to see whose.</p>
-            <div class="mandala-legend" id="mandala-legend" aria-hidden="true"></div>
+            <div class="flower-tip" id="flower-tip" aria-hidden="true"></div>
+            <p class="garland-hint" aria-hidden="true">Each flower is an offering — hover to see whose.</p>
+            <div class="garland-legend" id="garland-legend" aria-hidden="true"></div>
         </section>
 
-        <!-- Garland of names -->
-        <section class="garland" aria-label="Names of devotees who have offered">
-            <div class="garland-track" id="garland-track" aria-hidden="true"></div>
+        <!-- Strip of names -->
+        <section class="name-strip" aria-label="Names of devotees who have offered">
+            <div class="name-track" id="name-track" aria-hidden="true"></div>
         </section>
 
         <!-- How to offer -->
@@ -110,7 +110,7 @@
                     <h2 class="section-title" id="how-title">A letter to <em>Gurudev</em>, from wherever you are.</h2>
                     <p>
                         Each year, disciples and well-wishers write to Maharaj for his appearance day.
-                        Your words are gathered here with thousands of others and placed at his lotus feet.
+                        Your words are gathered here with thousands of devotees to make a garland to honour Gurudev.
                     </p>
                     <a class="btn" href="offer.html">
                         Write your offering
@@ -137,8 +137,8 @@
                     <li class="step" data-reveal style="--reveal-delay:.16s">
                         <span class="step-num" aria-hidden="true">३</span>
                         <div>
-                            <h3>Placed at his lotus feet</h3>
-                            <p>Once approved, your offering appears among devotees from around the world — and a new lamp is lit in the mandala above.</p>
+                            <h3>Offer to Gurudev</h3>
+                            <p>Once approved, your offering appears along with those of devotees from around the world — and a new flower is added to the garland above.</p>
                         </div>
                     </li>
                 </ol>
@@ -175,7 +175,7 @@
                     <p>
                         Vyāsa Pūjā is the most auspicious occasion to honour and glorify the spiritual master, who represents
                         the disciplic succession dating back to Lord Krishna Himself. On this sacred day, disciples from all
-                        corners of the world offer their heartfelt prayers, gratitude and devotion at the lotus feet of
+                        corners of the world                         offer their heartfelt prayers, gratitude and devotion to
                         His Holiness Radhanath Swami Maharaj.
                     </p>
                     <p>
@@ -209,6 +209,6 @@
 
     <script src="scripts/config.js?v=5"></script>
     <script src="scripts/common.js?v=4"></script>
-    <script src="scripts/home.js?v=4"></script>
+    <script src="scripts/home.js?v=5"></script>
 </body>
 </html>

@@ -387,7 +387,7 @@
         els.lettersState.innerHTML = `
             <div class="empty-mark" aria-hidden="true"></div>
             <p><strong>No offerings have been published for ${state.year} yet.</strong></p>
-            <p>${open ? 'Be among the first to place your words at Maharaj’s lotus feet.' : 'Please check back soon.'}</p>
+            <p>${open ? 'Be among the first to offer your words to Gurudev.' : 'Please check back soon.'}</p>
             ${open ? '<a class="btn" href="offer.html">Write your offering</a>' : ''}`;
     }
 
