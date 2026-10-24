@@ -375,7 +375,7 @@ html.reader-open { overflow: hidden; }
 }
 .reader:not([open]) { display: none; }
 .reader::backdrop {
-    background: rgba(18, 9, 5, .86);
+    background: rgba(44, 11, 9, .9);
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
 }
@@ -419,7 +419,7 @@ html.reader-open { overflow: hidden; }
     width: 44px; height: 44px;
     border-radius: 50%;
     color: var(--paper);
-    background: rgba(18, 9, 5, .6);
+    background: rgba(44, 11, 9, .6);
     border: 1px solid rgba(242, 209, 140, .35);
     transition: background-color .2s ease, color .2s ease, border-color .2s ease;
 }

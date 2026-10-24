@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Vyasa Puja offerings to His Holiness Radhanath Swami Maharaj — read heartfelt offerings from disciples around the world and offer your own.">
-    <meta name="theme-color" content="#120905">
+    <meta name="theme-color" content="#2c0b09">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css?v=8">
+    <link rel="stylesheet" href="styles/main.css?v=12">
 </head>
 <body class="home">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -50,33 +50,37 @@
     </header>
 
     <main id="main">
-        <!-- Hero: every flower in the garland is a published offering -->
+        <!-- Hero: a sanctum of garlands around Maharaj. The flowers on the two pillars are recent offerings. -->
         <section class="hero" id="hero" aria-labelledby="hero-title">
             <canvas class="hero-garland" id="hero-garland" aria-hidden="true"></canvas>
 
             <div class="container hero-grid">
-                <div class="hero-copy">
-                    <div class="hero-verse">
-                        <p lang="sa">ॐ अज्ञानतिमिरान्धस्य ज्ञानाञ्जनशलाकया ।<br>चक्षुरुन्मीलितं येन तस्मै श्रीगुरवे नमः ॥</p>
-                        <small>To the spiritual master, who opened my eyes — blinded by the darkness of ignorance — with the torch of knowledge, I offer my respectful obeisances.</small>
-                    </div>
-
+                <div class="hero-heading">
                     <h1 class="hero-title" id="hero-title">
                         <span class="t-small">The <span data-current-edition>76th</span></span>
-                        <span class="t-big">Vyāsa Pūjā</span>
+                        <span class="t-big"><span>Vyāsa</span> <span>Pūjā</span></span>
                     </h1>
                     <p class="hero-for">of His Holiness Radhanath Swami Maharaj</p>
+                </div>
+
+                <div class="hero-stage" id="hero-stage">
+                    <figure class="hero-portrait" id="hero-portrait">
+                        <img src="assets/images/maharaj-seated.webp?v=2" alt="His Holiness Radhanath Swami Maharaj, seated and smiling, in saffron robes" width="840" height="1120" fetchpriority="high">
+                    </figure>
+                </div>
+
+                <div class="hero-side">
                     <p class="hero-lede">
-                        Every offering is a flower in the garland around Maharaj — words of gratitude from disciples and
-                        well-wishers across the world. Add yours for his <span data-current-edition>76th</span> appearance day.
+                        Every offering is a flower in the garland of words we are making for Maharaj — gratitude from
+                        disciples and well-wishers across the world. Add yours for his <span data-current-edition>76th</span> appearance day.
                     </p>
 
                     <div class="hero-actions">
-                        <a class="btn" href="offer.html">
+                        <a class="btn btn-marigold" href="offer.html">
                             Offer your words
                             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
-                        <a class="btn btn-ghost" href="offerings.html">Read the offerings</a>
+                        <a class="btn btn-ghost on-dark" href="offerings.html">Read the offerings</a>
                     </div>
 
                     <div class="hero-stats">
@@ -86,17 +90,18 @@
                     </div>
                     <p class="hero-note" id="hero-note" hidden></p>
                 </div>
-
-                <figure class="hero-portrait" id="hero-portrait">
-                    <img src="assets/images/maharaj-seated.webp?v=2" alt="His Holiness Radhanath Swami Maharaj, seated and smiling, in saffron robes" width="840" height="1120" fetchpriority="high">
-                    <figcaption>HH Radhanath Swami<span class="caption-hint">Each flower is an offering — tap one to see whose.</span></figcaption>
-                </figure>
             </div>
+
+            <canvas class="hero-garland-front" id="hero-garland-front" aria-hidden="true"></canvas>
+
+            <div class="hero-inscription">
+                <p lang="sa">ॐ अज्ञानतिमिरान्धस्य ज्ञानाञ्जनशलाकया ।<br>चक्षुरुन्मीलितं येन तस्मै श्रीगुरवे नमः ॥</p>
+                <small>To the spiritual master, who opened my eyes — blinded by the darkness of ignorance — with the torch of knowledge, I offer my respectful obeisances.</small>
+            </div>
+            <p class="garland-hint" id="garland-hint" aria-hidden="true" hidden>The flowers on the two pillars are recent offerings — hover one to see whose.</p>
 
             <p class="sr-only" id="garland-sr"></p>
             <div class="flower-tip" id="flower-tip" aria-hidden="true"></div>
-            <p class="garland-hint" aria-hidden="true">Each flower is an offering — hover to see whose.</p>
-            <div class="garland-legend" id="garland-legend" aria-hidden="true"></div>
         </section>
 
         <!-- Strip of names -->
@@ -106,53 +111,49 @@
 
         <!-- How to offer -->
         <section class="section how" id="how" aria-labelledby="how-title">
-            <div class="container how-grid">
+            <div class="container">
                 <div class="how-intro" data-reveal>
-                    <span class="kicker">Offer your words</span>
                     <h2 class="section-title" id="how-title">A letter to <em>Gurudev</em>, from wherever you are.</h2>
                     <p>
                         Each year, disciples and well-wishers write to Maharaj for his appearance day.
                         Your words are gathered here with thousands of devotees to make a garland to honour Gurudev.
                     </p>
-                    <a class="btn" href="offer.html">
-                        Write your offering
-                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </a>
-                    <p class="status-line" id="submission-status"><span class="status-dot"></span><span>Receiving offerings for <span data-current-year>2026</span></span></p>
                 </div>
 
                 <ol class="steps">
                     <li class="step" data-reveal>
                         <span class="step-num" aria-hidden="true">१</span>
-                        <div>
-                            <h3>Write from the heart</h3>
-                            <p>Share your gratitude, realisations or a prayer — in any language, as short or as long as you wish. Your draft is kept safely on your device while you write.</p>
-                        </div>
+                        <h3>Write from the heart</h3>
+                        <p>Share your gratitude, realisations or a prayer — in any language, as short or as long as you wish. Your draft is kept safely on your device while you write.</p>
                     </li>
                     <li class="step" data-reveal style="--reveal-delay:.08s">
                         <span class="step-num" aria-hidden="true">२</span>
-                        <div>
-                            <h3>Read with care</h3>
-                            <p>A small team of sevaks reads every offering before it is published, so that this remains a prayerful space.</p>
-                        </div>
+                        <h3>Read with care</h3>
+                        <p>A small team of sevaks reads every offering before it is published, so that this remains a prayerful space.</p>
                     </li>
                     <li class="step" data-reveal style="--reveal-delay:.16s">
                         <span class="step-num" aria-hidden="true">३</span>
-                        <div>
-                            <h3>Offer to Gurudev</h3>
-                            <p>Once approved, your offering appears along with those of devotees from around the world — and a new flower is added to the garland above.</p>
-                        </div>
+                        <h3>Offer to Gurudev</h3>
+                        <p>Once approved, your offering appears along with those of devotees from around the world — and a new flower is added to the garland above.</p>
                     </li>
                 </ol>
+
+                <div class="how-cta" data-reveal>
+                    <a class="btn btn-marigold" href="offer.html">
+                        Write your offering
+                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                    <p class="status-line" id="submission-status"><span class="status-dot"></span><span>Receiving offerings for <span data-current-year>2026</span></span></p>
+                </div>
             </div>
         </section>
 
+        <div class="garland-seam" aria-hidden="true"></div>
         <!-- Years -->
         <section class="section years" id="years" aria-labelledby="years-title">
             <div class="container">
                 <div class="years-head" data-reveal>
                     <div>
-                        <span class="kicker">Through the years</span>
                         <h2 class="section-title" id="years-title">Offerings, <em>year by year</em></h2>
                     </div>
                     <p>Every Vyāsa Pūjā gathers a new garland of words. Revisit past celebrations, or add yours to this year's.</p>
@@ -161,9 +162,11 @@
             </div>
         </section>
 
+        <div class="garland-seam" aria-hidden="true"></div>
+
         <!-- About -->
         <section class="section about" id="about" aria-labelledby="about-title">
-            <div class="container about-grid">
+            <div class="container about-inner">
                 <div class="about-quote" data-reveal>
                     <div class="lotus-rule"><i></i></div>
                     <blockquote>
@@ -172,12 +175,11 @@
                     </blockquote>
                 </div>
                 <div class="about-text" data-reveal style="--reveal-delay:.1s">
-                    <span class="kicker">About Vyāsa Pūjā</span>
                     <h2 class="section-title" id="about-title">Honouring the <em>spiritual master</em></h2>
                     <p>
                         Vyāsa Pūjā is the most auspicious occasion to honour and glorify the spiritual master, who represents
                         the disciplic succession dating back to Lord Krishna Himself. On this sacred day, disciples from all
-                        corners of the world                         offer their heartfelt prayers, gratitude and devotion to
+                        corners of the world offer their heartfelt prayers, gratitude and devotion to
                         His Holiness Radhanath Swami Maharaj.
                     </p>
                     <p>
@@ -186,8 +188,7 @@
                     </p>
                 </div>
             </div>
-        </section>
-    </main>
+        </section>    </main>
 
     <footer class="site-footer">
         <div class="container">
@@ -211,6 +212,6 @@
 
     <script src="scripts/config.js?v=5"></script>
     <script src="scripts/common.js?v=4"></script>
-    <script src="scripts/home.js?v=8"></script>
+    <script src="scripts/home.js?v=11"></script>
 </body>
 </html>
