@@ -47,9 +47,6 @@
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .1 0 0 0 0 .05 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     --lotus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 32' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M24 3c4 5 6 10 6 15s-2 9-6 11c-4-2-6-6-6-11s2-10 6-15z'/%3E%3Cpath d='M24 29c-3-1-9-3-12-9-1.5-3-1.5-6-1-8 5 1 10 4 13 9'/%3E%3Cpath d='M24 29c3-1 9-3 12-9 1.5-3 1.5-6 1-8-5 1-10 4-13 9'/%3E%3Cpath d='M24 29c-6 1-14 0-20-5 3-2 7-3 11-2'/%3E%3Cpath d='M24 29c6 1 14 0 20-5-3-2-7-3-11-2'/%3E%3C/svg%3E");
     --blossom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg transform='translate(12 12)' fill='black'%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(45)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(90)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(135)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(180)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(225)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(270)'/%3E%3Cellipse cy='-6.2' rx='3.6' ry='5.8' transform='rotate(315)'/%3E%3C/g%3E%3C/svg%3E");
-    /* Marigolds strung along the top and bottom edge of the strip of names (half of each flower shows) */
-    --bloom-top: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cg transform='translate(12 0)'%3E%3Cg fill='%23f2a33a' stroke='%23a85a17' stroke-width='.5'%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(45)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(90)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(135)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(180)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(225)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(270)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(315)'/%3E%3C/g%3E%3Cg fill='%23ffcf6b'%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(22)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(67)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(112)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(157)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(202)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(247)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(292)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(337)'/%3E%3C/g%3E%3Ccircle r='1.7' fill='%238c3a10'/%3E%3C/g%3E%3C/svg%3E");
-    --bloom-bottom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cg transform='translate(12 12)'%3E%3Cg fill='%23f2a33a' stroke='%23a85a17' stroke-width='.5'%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(45)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(90)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(135)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(180)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(225)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(270)'/%3E%3Cellipse cy='-5.8' rx='3.3' ry='5.6' transform='rotate(315)'/%3E%3C/g%3E%3Cg fill='%23ffcf6b'%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(22)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(67)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(112)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(157)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(202)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(247)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(292)'/%3E%3Cellipse cy='-3.4' rx='2.1' ry='3.4' transform='rotate(337)'/%3E%3C/g%3E%3Ccircle r='1.7' fill='%238c3a10'/%3E%3C/g%3E%3C/svg%3E");
     --garland-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='28' viewBox='0 0 144 28'%3E%3Cpath d='M0 14H144' stroke='%23c79a3a' stroke-width='1.4' fill='none'/%3E%3Cg fill='%235e9246'%3E%3Cpath d='M30 14c3-1 6-4 6-9-4 1-7 4-6 9z'/%3E%3Cpath d='M30 14c3 1 6 4 6 9-4-1-7-4-6-9z'/%3E%3Cpath d='M66 14c3-1 6-4 6-9-4 1-7 4-6 9z'/%3E%3Cpath d='M66 14c3 1 6 4 6 9-4-1-7-4-6-9z'/%3E%3Cpath d='M102 14c3-1 6-4 6-9-4 1-7 4-6 9z'/%3E%3Cpath d='M102 14c3 1 6 4 6 9-4-1-7-4-6-9z'/%3E%3C/g%3E%3Cg transform='translate(12 14)'%3E%3Ccircle r='9' fill='%23f08a1c' stroke='%23a85a17' stroke-width='.8'/%3E%3Ccircle r='6' fill='%23f7b23a'/%3E%3Ccircle r='3.2' fill='%23fbd05a'/%3E%3Ccircle r='1.6' fill='%238c3a10'/%3E%3C/g%3E%3Cg transform='translate(48 14)'%3E%3Ccircle r='9' fill='%23f7c52c' stroke='%23a87a17' stroke-width='.8'/%3E%3Ccircle r='6' fill='%23fbd86a'/%3E%3Ccircle r='3.2' fill='%23fff0a0'/%3E%3Ccircle r='1.6' fill='%238c3a10'/%3E%3C/g%3E%3Cg transform='translate(84 14)'%3E%3Ccircle r='8' fill='%23e0557f' stroke='%23a82a52' stroke-width='.8'/%3E%3Ccircle r='5.2' fill='%23cf3f6b'/%3E%3Ccircle r='2.6' fill='%23b02c58'/%3E%3C/g%3E%3Cg transform='translate(120 14)' fill='%23fffbef' stroke='%23cfa968' stroke-width='.7'%3E%3Cellipse cy='-5' rx='3' ry='4.6'/%3E%3Cellipse cy='-5' rx='3' ry='4.6' transform='rotate(72)'/%3E%3Cellipse cy='-5' rx='3' ry='4.6' transform='rotate(144)'/%3E%3Cellipse cy='-5' rx='3' ry='4.6' transform='rotate(216)'/%3E%3Cellipse cy='-5' rx='3' ry='4.6' transform='rotate(288)'/%3E%3Ccircle r='1.8' fill='%23e9b544' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
 }
 
@@ -483,10 +480,10 @@ button { cursor: pointer; background: none; border: 0; }
    HOME
    ========================================================================== */
 .hero {
-    --valance-h: 24px;
+    --valance-h: 18px;
     --pw: clamp(250px, 22vw, 380px);
-    --pillar: clamp(52px, 5.2vw, 88px);
-    --pgap: 14px;
+    --pillar: clamp(34px, 3.4vw, 52px);
+    --pgap: 30px;
     position: relative;
     display: block;
     overflow: hidden;
@@ -504,14 +501,13 @@ button { cursor: pointer; background: none; border: 0; }
     content: '';
     position: absolute;
     left: 0; right: 0; top: 0;
-    height: calc(var(--valance-h) + 18px);
+    height: calc(var(--valance-h) + 14px);
     z-index: -3;
     background:
-        radial-gradient(circle at 18px 15px, var(--gold-2) 0 2.2px, transparent 2.7px) 0 calc(var(--valance-h) - 1px) / 36px 18px repeat-x,
-        radial-gradient(circle at 18px 0, #a3231b 0 17px, transparent 17.6px) 0 calc(var(--valance-h) - 1px) / 36px 18px repeat-x,
-        linear-gradient(var(--gold), var(--gold)) 0 calc(var(--valance-h) - 8px) / 100% 2px no-repeat,
-        linear-gradient(#a3231b, #a3231b) 0 0 / 100% var(--valance-h) no-repeat;
-    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .45));
+        radial-gradient(circle at 18px 0, #8f1f17 0 17px, transparent 17.6px) 0 calc(var(--valance-h) - 1px) / 36px 14px repeat-x,
+        linear-gradient(var(--gold), var(--gold)) 0 calc(var(--valance-h) - 4px) / 100% 1px no-repeat,
+        linear-gradient(#8f1f17, #8f1f17) 0 0 / 100% var(--valance-h) no-repeat;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .4));
 }
 
 /* A faint gold lattice on the sanctum wall, fading toward the edges */
@@ -522,8 +518,8 @@ button { cursor: pointer; background: none; border: 0; }
     z-index: -4;
     pointer-events: none;
     background:
-        repeating-linear-gradient(45deg, rgba(242, 209, 140, .07) 0 1px, transparent 1px 28px),
-        repeating-linear-gradient(-45deg, rgba(242, 209, 140, .07) 0 1px, transparent 1px 28px);
+        repeating-linear-gradient(45deg, rgba(242, 209, 140, .04) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(-45deg, rgba(242, 209, 140, .04) 0 1px, transparent 1px 28px);
     -webkit-mask-image: radial-gradient(70% 80% at 50% 45%, #000 0, transparent 100%);
     mask-image: radial-gradient(70% 80% at 50% 45%, #000 0, transparent 100%);
 }
@@ -613,6 +609,20 @@ button { cursor: pointer; background: none; border: 0; }
     animation: rise 1.2s var(--ease-out) .72s both;
 }
 .hero-actions .btn { width: 100%; }
+/* The second action is a quiet link, so the one primary button leads */
+.hero-actions .btn-ghost {
+    width: auto;
+    min-height: 40px;
+    justify-self: start;
+    padding: .5rem .1rem;
+    border-color: transparent;
+    border-bottom: 1px solid rgba(242, 209, 140, .5);
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    color: var(--gold-2);
+}
+.hero-actions .btn-ghost:hover { background: transparent; color: #fff4dc; border-bottom-color: #fff4dc; transform: none; }
 
 .hero-stats {
     display: flex;
@@ -676,7 +686,7 @@ button { cursor: pointer; background: none; border: 0; }
     inset: -30% -80% -8%;
     z-index: 0;
     pointer-events: none;
-    background: repeating-conic-gradient(from -4deg at 50% 44%, rgba(255, 205, 120, .2) 0 5deg, rgba(255, 205, 120, 0) 5deg 10deg);
+    background: repeating-conic-gradient(from -4deg at 50% 44%, rgba(255, 205, 120, .11) 0 5deg, rgba(255, 205, 120, 0) 5deg 10deg);
     -webkit-mask-image: radial-gradient(closest-side at 50% 44%, #000 0, rgba(0, 0, 0, .5) 42%, transparent 80%);
     mask-image: radial-gradient(closest-side at 50% 44%, #000 0, rgba(0, 0, 0, .5) 42%, transparent 80%);
 }
@@ -686,7 +696,7 @@ button { cursor: pointer; background: none; border: 0; }
     inset: -4% -30% -2%;
     z-index: 0;
     pointer-events: none;
-    background: radial-gradient(closest-side at 50% 50%, rgba(255, 190, 90, .5) 0, rgba(255, 190, 90, .16) 52%, rgba(255, 190, 90, 0) 78%);
+    background: radial-gradient(closest-side at 50% 50%, rgba(255, 190, 90, .4) 0, rgba(255, 190, 90, .12) 52%, rgba(255, 190, 90, 0) 78%);
     animation: breathe 6s ease-in-out infinite;
 }
 
@@ -710,19 +720,20 @@ button { cursor: pointer; background: none; border: 0; }
     margin-top: .3rem;
     font-family: var(--font-read);
     font-style: italic;
-    font-size: .98rem;
+    font-size: .95rem;
     line-height: 1.5;
-    color: rgba(246, 230, 194, .78);
+    color: rgba(246, 230, 194, .74);
 }
 .garland-hint {
     position: relative;
-    margin: .9rem auto 0;
+    margin: .7rem auto 0;
     padding: 0 var(--gutter);
     text-align: center;
-    font-family: var(--font-read);
-    font-style: italic;
-    font-size: .95rem;
-    color: rgba(246, 230, 194, .78);
+    font-family: var(--font-ui);
+    font-size: .74rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(246, 230, 194, .66);
 }
 .garland-hint[hidden] { display: none; }
 
@@ -765,20 +776,10 @@ button { cursor: pointer; background: none; border: 0; }
     overflow: hidden;
     background: var(--kumkum);
     color: #fbe9c9;
-    padding: 1.3rem 0 1.2rem;
+    padding: 1.05rem 0 1rem;
     border-top: 1px solid rgba(242, 209, 140, .4);
+    border-bottom: 1px solid rgba(242, 209, 140, .4);
 }
-.name-strip::before, .name-strip::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0;
-    height: 12px;
-    background-size: 24px 12px;
-    background-repeat: repeat-x;
-    z-index: 1;
-}
-.name-strip::before { top: 0; background-image: var(--bloom-top); }
-.name-strip::after { bottom: 0; background-image: var(--bloom-bottom); }
 .name-track {
     display: flex;
     width: max-content;
@@ -1144,7 +1145,7 @@ button { cursor: pointer; background: none; border: 0; }
 
 /* Between tablet and wide desktop the side columns are narrow, so the flanking garlands slim down */
 @media (min-width: 961px) and (max-width: 1180px) {
-    .hero { --pw: clamp(210px, 20vw, 250px); --pillar: clamp(44px, 4.4vw, 52px); }
+    .hero { --pw: clamp(210px, 20vw, 250px); --pillar: clamp(30px, 3.4vw, 38px); --pgap: 22px; padding-top: calc(var(--valance-h) + 6.2rem); }
     .hero-grid { gap: 0 1.4rem; }
     .hero-side { padding-left: .9rem; }
     .hero-heading { padding-right: .6rem; }
@@ -1154,7 +1155,7 @@ button { cursor: pointer; background: none; border: 0; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
-    .hero { --pw: min(56vw, 300px); }
+    .hero { --pw: min(56vw, 300px); --pgap: 8px; }
     .hero-grid {
         grid-template-columns: 1fr;
         gap: 0;
@@ -1176,7 +1177,7 @@ button { cursor: pointer; background: none; border: 0; }
 
 @media (max-width: 560px) {
     :root { --header-h: 62px; }
-    .hero { --valance-h: 20px; }
+    .hero { --valance-h: 16px; }
     .hero-stat { padding: 0 1rem; }
     .step { grid-template-columns: 3.6rem minmax(0, 1fr); gap: 1rem; }
     .step-num { font-size: 3.4rem; }

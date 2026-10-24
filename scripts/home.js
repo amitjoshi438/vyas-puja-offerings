@@ -229,10 +229,9 @@
         const sprites = new Map();
         const SPR = 112;
         const KINDS = [
-            { id: 'orange', weight: 34, shape: 'pom', color: '#F08A1C' },
-            { id: 'yellow', weight: 26, shape: 'pom', color: '#F7C52C' },
-            { id: 'rose', weight: 13, shape: 'rose', color: '#E0557F' },
-            { id: 'red', weight: 7, shape: 'rose', color: '#C2332A' },
+            { id: 'orange', weight: 42, shape: 'pom', color: '#F08A1C' },
+            { id: 'yellow', weight: 30, shape: 'pom', color: '#F7C52C' },
+            { id: 'rose', weight: 8, shape: 'rose', color: '#E0557F' },
             { id: 'jasmine', weight: 20, shape: 'jasmine', color: '#FFFBEF' }
         ];
         const KIND_WEIGHT = KINDS.reduce((sum, k) => sum + k.weight, 0);
@@ -493,31 +492,32 @@
             ph = p.h;
             py = p.y;
             cx = p.x + pw / 2;
-            gap = mobile ? 6 : 14;
+            const pg = parseFloat(getComputedStyle(hero).getPropertyValue('--pgap'));
+            gap = Number.isFinite(pg) ? pg : (mobile ? 6 : 14);
             pillarW = Math.max(28, (s.w - pw) / 2 - gap);
-            S = pillarW >= 72 ? 3 : 2;
-            D = clamp(pillarW / (0.9 * S + 0.1), 13, mobile ? 28 : 30);
-            Df = mobile ? clamp(W / 19, 17, 21) : clamp(W / 50, 20, 27);
-            Ds = Df * 1.15;
+            S = 1;
+            D = clamp(pillarW * 0.86, 24, mobile ? 28 : 34);
+            Df = mobile ? clamp(W / 17, 19, 24) : clamp(W / 46, 24, 32);
+            Ds = Df * 1.05;
             const v = parseFloat(getComputedStyle(hero).getPropertyValue('--valance-h'));
-            valance = Number.isFinite(v) ? v : 24;
+            valance = Number.isFinite(v) ? v : 18;
             hemY = py + ph * 0.955;
             floorY = hemY + 4;
 
-            y0 = valance + 8;
-            swagN = Math.max(3, Math.round(W / (mobile ? 150 : 240)));
+            y0 = valance + 10;
+            swagN = Math.max(2, Math.round(W / (mobile ? 190 : 380)));
             span = W / swagN;
-            depth = clamp(span * 0.2, 20, 50);
+            depth = clamp(span * 0.15, 18, 52);
         }
 
         // ---------- Building ----------
         function buildPillars(rnd) {
             pillars = [];
             metas = [];
-            const pitchY = D * 0.84;
+            const pitchY = D * 1.22;
             [-1, 1].forEach(side => {
                 const pcx = cx + side * (pw / 2 + gap + pillarW / 2);
-                const top = swagY(pcx) + Df * 0.95;
+                const top = swagY(pcx) + Df * 1.65;
                 const bottom = floorY + 6;
                 const meta = { x: pcx, top, bottom, side, strands: [] };
                 for (let si = 0; si < S; si++) {
@@ -550,16 +550,13 @@
         }
 
         function seatRows(rnd) {
-            const seatW = pw * 1.1;
+            const seatW = pw * 1.04;
             const rows = [
-                { y: hemY - 30, w: 0.62, front: false },
-                { y: hemY - 17, w: 0.82, front: false },
-                { y: hemY - 3, w: 0.98, front: true },
-                { y: hemY + 11, w: 1.06, front: true }
+                { y: hemY + 5, w: 1, front: true }
             ];
             return rows.map(row => {
                 const half = (seatW * row.w) / 2;
-                const step = Ds * 0.78;
+                const step = Ds * 0.98;
                 const n = Math.max(3, Math.round((half * 2) / step));
                 const items = [];
                 for (let i = 0; i < n; i++) {
@@ -590,24 +587,7 @@
             g.fill();
         }
 
-        function drawRibbons(g, x, y, len) {
-            g.lineWidth = 1;
-            [-1, 1].forEach(sd => {
-                g.beginPath();
-                g.moveTo(x + sd * 3, y + 6);
-                g.lineTo(x + sd * 13, y + 6);
-                g.lineTo(x + sd * 21, y + len);
-                g.lineTo(x + sd * 14, y + len - 7);
-                g.lineTo(x + sd * 7, y + len + 2);
-                g.closePath();
-                g.fillStyle = '#b3261e';
-                g.fill();
-                g.strokeStyle = '#d6a24a';
-                g.stroke();
-            });
-        }
-
-        // Everything that does not move: the festoons, the tassels, the pillar caps and the back of the seat
+        // Everything that does not move: the festoons, the pillar caps and the back of the seat
         function buildBase(rnd, seat) {
             base = document.createElement('canvas');
             base.width = back.width;
@@ -629,52 +609,31 @@
 
             // Leaves peep out behind the flowers
             const leaf = leafSprite();
-            const ls = Df * 1.7;
+            const ls = Df * 1.6;
             curves.forEach(c => {
-                walk(c, Df * 2.6, 16).forEach((pt, m) => {
+                walk(c, Df * 2.1, 16).forEach((pt, m) => {
                     g.save();
-                    g.translate(pt.x + pt.nx * Df * 0.5, pt.y + pt.ny * Df * 0.5);
+                    g.translate(pt.x + pt.nx * Df * 0.45, pt.y + pt.ny * Df * 0.45);
                     g.rotate(Math.atan2(pt.ny, pt.nx) + Math.PI / 2 + (m % 2 ? 0.4 : -0.4));
                     g.drawImage(leaf, -ls / 2, -ls * 0.64, ls, ls);
                     g.restore();
                 });
             });
 
-            // A thick mala: two rows of flowers, interleaved
+            // A single mala of flowers along each festoon, each one clear of the next (and of the pillar caps)
+            const nearPillar = x => metas.some(m => Math.abs(x - m.x) < Df * 1.15);
             curves.forEach(c => {
-                walk(c, Df * 0.74, 20).forEach((pt, m) => {
-                    const off = (m % 2 ? 1 : -1) * Df * 0.26;
-                    stamp(g, pickKind(rnd), Math.floor(rnd() * 3), pt.x + pt.nx * off, pt.y + pt.ny * off, Df * (0.98 + rnd() * 0.1));
+                walk(c, Df * 1.12, 22).forEach(pt => {
+                    const k = pickKind(rnd), vv = Math.floor(rnd() * 3), sz = Df * (0.96 + rnd() * 0.1);
+                    if (!nearPillar(pt.x)) stamp(g, k, vv, pt.x, pt.y, sz);
                 });
             });
 
-            // Hanging strands and silk at each junction (never across the words)
-            const words = [hero.querySelector('.hero-heading'), hero.querySelector('.hero-side')]
-                .filter(Boolean)
-                .map(offsetBox);
-            for (let i = 0; i <= swagN; i++) {
-                const x = i * span;
-                const ribbonLen = mobile ? 30 : 42;
-                drawRibbons(g, x, y0 + 2, ribbonLen);
-                const clear = metas.every(m => Math.abs(x - m.x) > pillarW / 2 + Df)
-                    && (mobile || words.every(b => x < b.x - 10 || x > b.x + b.w + 10 || y0 + 8 + 100 < b.y - 6));
-                if (i > 0 && i < swagN && clear) {
-                    const len = (i % 2 ? 80 : 56) * (mobile ? 0.8 : 1);
-                    const size = Df * 0.8;
-                    const n = Math.floor(len / (size * 0.78));
-                    g.strokeStyle = 'rgba(242, 209, 140, .7)';
-                    g.beginPath();
-                    g.moveTo(x, y0 + 8);
-                    g.lineTo(x, y0 + 8 + len);
-                    g.stroke();
-                    for (let k = 0; k < n; k++) stamp(g, pickKind(rnd), Math.floor(rnd() * 3), x, y0 + 14 + k * size * 0.78, size);
-                    drawTassel(g, x, y0 + 12 + n * size * 0.78);
-                }
-                drawRosette(g, x, y0 + 2, Df * 1.9);
-            }
+            // A small rosette where each festoon meets the next
+            for (let i = 0; i <= swagN; i++) drawRosette(g, i * span, y0 + 2, Df * 1.45);
 
             // A rosette caps each pillar where it hangs from the festoon
-            metas.forEach(m => drawRosette(g, m.x, m.top - Df * 0.6, Df * 1.7));
+            metas.forEach(m => drawRosette(g, m.x, m.top - Df * 0.95, Df * 1.45));
 
             // The glow of the lamps beneath, and the back of the seat of flowers
             g.save();
@@ -683,7 +642,7 @@
             g.translate(cx, hemY + 8);
             g.scale(1, 0.18);
             const grad = g.createRadialGradient(0, 0, 0, 0, 0, gw);
-            grad.addColorStop(0, 'rgba(255, 175, 70, .55)');
+            grad.addColorStop(0, 'rgba(255, 175, 70, .4)');
             grad.addColorStop(1, 'rgba(255, 175, 70, 0)');
             g.fillStyle = grad;
             g.beginPath();
@@ -700,12 +659,6 @@
             fctx.clearRect(0, 0, front.width, front.height);
             fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             seat.filter(r => r.front).forEach(r => r.items.forEach(f => stamp(fctx, f.kind, f.v, f.x, f.y, f.size)));
-            // A few loose flowers rest on the floor beside the seat
-            const rnd = mulberry(31);
-            for (let i = 0; i < 7; i++) {
-                const side = i % 2 ? 1 : -1;
-                stamp(fctx, pickKind(rnd), i % 3, cx + side * (pw * 0.62 + i * Ds * 0.4), hemY + 20 + (i % 3) * 3, Ds * 0.8);
-            }
         }
 
         function layout() {
@@ -761,7 +714,7 @@
             bctx.strokeStyle = 'rgba(242, 209, 140, .65)';
             bctx.beginPath();
             metas.forEach(m => m.strands.forEach(st => {
-                st.items.forEach((f, k) => { if (k) bctx.lineTo(f.sx, f.sy); else bctx.moveTo(f.sx, m.top - Df * 0.4); });
+                st.items.forEach((f, k) => { if (k) bctx.lineTo(f.sx, f.sy); else bctx.moveTo(f.sx, m.top - Df * 0.95); });
             }));
             bctx.stroke();
             metas.forEach(m => m.strands.forEach(st => {
@@ -780,15 +733,18 @@
             }
             bctx.globalCompositeOperation = 'source-over';
 
+            // A pair of leaves between every other flower
             const leaf = leafSprite();
             for (const f of pillars) {
-                if (f.life <= 0 || f.si !== 0 || f.r % 3 !== 1) continue;
+                if (f.life <= 0 || f.r % 2 !== 0) continue;
                 bctx.globalAlpha = f.life;
-                bctx.save();
-                bctx.translate(f.sx + (f.side > 0 ? 1 : -1) * D * 0.55, f.sy + D * 0.3);
-                bctx.rotate(Math.PI / 2 * (f.side > 0 ? 1 : -1) + 0.3);
-                bctx.drawImage(leaf, -D * 0.8, -D * 1.0, D * 1.6, D * 1.6);
-                bctx.restore();
+                [-1, 1].forEach(sd => {
+                    bctx.save();
+                    bctx.translate(f.sx + sd * D * 0.34, f.sy + D * 0.6);
+                    bctx.rotate(sd * (Math.PI / 2 - 0.35));
+                    bctx.drawImage(leaf, -D * 0.6, -D * 0.78, D * 1.2, D * 1.2);
+                    bctx.restore();
+                });
             }
             for (const f of pillars) {
                 if (f.life <= 0) continue;
