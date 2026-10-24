@@ -200,7 +200,7 @@
         const sprites = new Map();
         const SPRITE = 80;
         const VARIANTS = 3;
-        const FRAME_GAP = 14; // the gold frame sits this far outside the photo (see .hero-portrait::before)
+        const FRAME_GAP = 6; // clearance between the strands and the edge of the portrait box
         const KINDS = [
             { id: 'orange', weight: 36, shape: 'pom', color: '#F08A1C' },
             { id: 'yellow', weight: 24, shape: 'pom', color: '#F7C52C' },
