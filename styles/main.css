@@ -679,17 +679,7 @@ button { cursor: pointer; background: none; border: 0; }
     object-fit: contain;
     filter: drop-shadow(0 12px 18px rgba(0, 0, 0, .5));
 }
-/* Rays of light behind him, and a pool of gold beneath */
-.hero-portrait::before {
-    content: '';
-    position: absolute;
-    inset: -30% -80% -8%;
-    z-index: 0;
-    pointer-events: none;
-    background: repeating-conic-gradient(from -4deg at 50% 44%, rgba(255, 205, 120, .11) 0 5deg, rgba(255, 205, 120, 0) 5deg 10deg);
-    -webkit-mask-image: radial-gradient(closest-side at 50% 44%, #000 0, rgba(0, 0, 0, .5) 42%, transparent 80%);
-    mask-image: radial-gradient(closest-side at 50% 44%, #000 0, rgba(0, 0, 0, .5) 42%, transparent 80%);
-}
+/* A pool of lamp-glow behind and beneath him */
 .hero-portrait::after {
     content: '';
     position: absolute;

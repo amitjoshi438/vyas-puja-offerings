@@ -1,7 +1,7 @@
 // ============================================
 // Home page: the sanctum garlands, stats, names strip, year cards
 // Festoons of flowers hang across the top of the hero, two garlanded pillars flank Maharaj, and he
-// sits on a seat of flowers. The flowers on the pillars stand for the most recent offerings.
+// sits behind a row of flowers. Every flower stands for one of the most recent offerings.
 // ============================================
 (function () {
     'use strict';
@@ -197,12 +197,12 @@
         const touch = window.matchMedia('(hover: none)').matches;
         const sr = document.getElementById('garland-sr');
         if (sr) {
-            sr.textContent = 'Garlands of marigold, rose and jasmine hang across the top, and two garlanded pillars stand beside Maharaj’s portrait.'
-                + (info.assigned ? ` The flowers on the pillars stand for the most recent offerings. ${VP.formatNumber(info.total)} have been published in all, and you can read them on the Offerings page.` : '');
+            sr.textContent = 'Garlands of marigold, rose and jasmine hang across the top and beside Maharaj’s portrait, and a row of flowers lies before him.'
+                + (info.assigned ? ` Each flower stands for one of the most recent offerings. ${VP.formatNumber(info.total)} have been published in all, and you can read them on the Offerings page.` : '');
         }
         const hint = document.getElementById('garland-hint');
         if (hint) {
-            hint.textContent = `The flowers on the two pillars are recent offerings — ${touch ? 'tap' : 'hover'} one to see whose.`;
+            hint.textContent = `Each flower is a recent offering — ${touch ? 'tap' : 'hover over'} one to see whose.`;
             hint.hidden = !info.assigned;
         }
         const note = document.getElementById('hero-note');
@@ -242,8 +242,8 @@
         let cx = 0, pw = 0, ph = 0, py = 0, gap = 14, pillarW = 60, S = 3;
         let D = 24, Df = 22, Ds = 26, valance = 24, hemY = 0, floorY = 0;
         let y0 = 0, span = 0, depth = 0, swagN = 3;
-        let pillars = [], metas = [], offerings = [], assigned = 0;
-        let base = null;
+        let pillars = [], metas = [], statics = [], blooms = [], seatItems = [], offerings = [], assigned = 0;
+        let base = null, frontShown = null;
         let startT = 0, running = false, inView = true, rafId = 0;
         let hovered = null, touchPinned = null;
 
@@ -542,30 +542,33 @@
             });
         }
 
+        // Every flower on show carries one offering, newest first, scattered over the whole garland
         function assign() {
-            pillars.forEach(f => { f.off = null; });
-            const order = pillars.slice().sort((a, b) => (a.r - b.r) || (a.side - b.side) || (a.si - b.si));
+            blooms.forEach(f => { f.off = null; });
+            const rnd = mulberry(77);
+            const order = blooms.map(f => ({ f, k: rnd() })).sort((a, b) => a.k - b.k).map(e => e.f);
             offerings.forEach((o, i) => { if (order[i]) order[i].off = o; });
             assigned = Math.min(order.length, offerings.length);
         }
 
-        function seatRows(rnd) {
-            const seatW = pw * 1.04;
-            const rows = [
-                { y: hemY + 5, w: 1, front: true }
-            ];
-            return rows.map(row => {
-                const half = (seatW * row.w) / 2;
-                const step = Ds * 0.98;
-                const n = Math.max(3, Math.round((half * 2) / step));
-                const items = [];
-                for (let i = 0; i < n; i++) {
-                    const dx = ((i + 0.5) / n - 0.5) * 2 * half;
-                    const arch = (dx / half) * (dx / half);
-                    items.push({ x: cx + dx + (rnd() - 0.5) * 3, y: row.y - arch * 9 + (rnd() - 0.5) * 3, kind: pickKind(rnd), v: Math.floor(rnd() * 3), size: Ds * (0.98 + rnd() * 0.12) });
-                }
-                return { front: row.front, items };
-            });
+        // One row of flowers laid before him, drawn above the hem of his robe
+        function buildSeat(rnd) {
+            const half = (pw * 1.04) / 2;
+            const step = Ds * 0.98;
+            const n = Math.max(3, Math.round((half * 2) / step));
+            const items = [];
+            for (let i = 0; i < n; i++) {
+                const dx = ((i + 0.5) / n - 0.5) * 2 * half;
+                const arch = (dx / half) * (dx / half);
+                const x = cx + dx + (rnd() - 0.5) * 3;
+                const y = hemY + 5 - arch * 9 + (rnd() - 0.5) * 3;
+                items.push({
+                    x, y, sx: x, sy: y, front: true,
+                    kind: pickKind(rnd), variant: Math.floor(rnd() * 3), size: Ds * (0.98 + rnd() * 0.12),
+                    off: null, life: 0
+                });
+            }
+            return items;
         }
 
         function drawRosette(g, x, y, size) {
@@ -587,13 +590,14 @@
             g.fill();
         }
 
-        // Everything that does not move: the festoons, the pillar caps and the back of the seat
-        function buildBase(rnd, seat) {
+        // Everything that does not move: the festoons and the pillar caps
+        function buildBase(rnd) {
             base = document.createElement('canvas');
             base.width = back.width;
             base.height = back.height;
             const g = base.getContext('2d');
             g.scale(dpr, dpr);
+            statics = [];
 
             const curves = [];
             for (let i = 0; i < swagN; i++) curves.push(swagCurve(i));
@@ -622,20 +626,28 @@
 
             // A single mala of flowers along each festoon, each one clear of the next (and of the pillar caps)
             const nearPillar = x => metas.some(m => Math.abs(x - m.x) < Df * 1.15);
+            const place = (kind, variant, x, y, size, extra) => {
+                statics.push(Object.assign({ x, y, sx: x, sy: y, kind, variant, size, off: null, life: 0 }, extra));
+            };
             curves.forEach(c => {
                 walk(c, Df * 1.12, 22).forEach(pt => {
                     const k = pickKind(rnd), vv = Math.floor(rnd() * 3), sz = Df * (0.96 + rnd() * 0.1);
-                    if (!nearPillar(pt.x)) stamp(g, k, vv, pt.x, pt.y, sz);
+                    if (nearPillar(pt.x)) return;
+                    stamp(g, k, vv, pt.x, pt.y, sz);
+                    place(k, vv, pt.x, pt.y, sz);
                 });
             });
 
-            // A small rosette where each festoon meets the next
-            for (let i = 0; i <= swagN; i++) drawRosette(g, i * span, y0 + 2, Df * 1.45);
+            // A rosette where each festoon meets the next, and one capping each pillar
+            const rosettes = [];
+            for (let i = 0; i <= swagN; i++) rosettes.push({ x: i * span, y: y0 + 2 });
+            metas.forEach(m => rosettes.push({ x: m.x, y: m.top - Df * 0.95 }));
+            rosettes.forEach(r => {
+                drawRosette(g, r.x, r.y, Df * 1.45);
+                place(KNOT, 1, r.x, r.y, Df * 1.45, { rosette: true });
+            });
 
-            // A rosette caps each pillar where it hangs from the festoon
-            metas.forEach(m => drawRosette(g, m.x, m.top - Df * 0.95, Df * 1.45));
-
-            // The glow of the lamps beneath, and the back of the seat of flowers
+            // The glow of the lamps beneath
             g.save();
             g.globalCompositeOperation = 'lighter';
             const gw = pw * 0.8;
@@ -649,25 +661,39 @@
             g.arc(0, 0, gw, 0, TAU);
             g.fill();
             g.restore();
-            seat.filter(r => !r.front).forEach(r => r.items.forEach(f => stamp(g, f.kind, f.v, f.x, f.y, f.size)));
         }
 
-        // The front of the seat lies over the hem of his robe, so it is drawn above the portrait
-        function paintFront(seat) {
+        // The seat lies over the hem of his robe, so it is drawn above the portrait; the flower being read is lifted out of the row
+        function paintFront() {
             if (!fctx) return;
             fctx.setTransform(1, 0, 0, 1, 0, 0);
             fctx.clearRect(0, 0, front.width, front.height);
             fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            seat.filter(r => r.front).forEach(r => r.items.forEach(f => stamp(fctx, f.kind, f.v, f.x, f.y, f.size)));
+            seatItems.forEach(f => stamp(fctx, f.kind, f.variant, f.x, f.y, f.size));
+            if (frontShown) {
+                const f = frontShown;
+                const s = Math.max(30, D * 1.9);
+                fctx.globalCompositeOperation = 'lighter';
+                fctx.drawImage(glowSprite('255, 210, 130'), f.sx - s * 1.3, f.sy - s * 1.3, s * 2.6, s * 2.6);
+                fctx.globalCompositeOperation = 'source-over';
+                stamp(fctx, f.kind, f.variant, f.sx, f.sy, s);
+                fctx.strokeStyle = 'rgba(255, 231, 176, .95)';
+                fctx.lineWidth = 1.2;
+                fctx.beginPath();
+                fctx.arc(f.sx, f.sy, s * 0.62, 0, TAU);
+                fctx.stroke();
+            }
         }
 
         function layout() {
             measure();
-            const seat = seatRows(mulberry(5));
             buildPillars(mulberry(11));
+            buildBase(mulberry(19));
+            seatItems = buildSeat(mulberry(5));
+            blooms = pillars.concat(statics, seatItems);
             assign();
-            buildBase(mulberry(19), seat);
-            paintFront(seat);
+            frontShown = null;
+            paintFront();
             if (onChange && offerings.length) onChange({ assigned, total: offerings.total || offerings.length });
             if (!running) draw(performance.now());
         }
@@ -709,7 +735,7 @@
                 });
             });
 
-            // Threads, then a faint glow, then the flowers
+            // Threads, then the flowers
             bctx.lineWidth = 1.2;
             bctx.strokeStyle = 'rgba(242, 209, 140, .65)';
             bctx.beginPath();
@@ -722,17 +748,9 @@
                 if (last) drawTassel(bctx, last.sx, last.sy + D * 0.7);
             }));
 
-            bctx.globalCompositeOperation = 'lighter';
-            const glow = glowSprite('255, 176, 80');
-            for (const f of pillars) {
-                f.life = clamp((el - f.delay) / 600, 0, 1);
-                if (f.life <= 0 || !f.off) continue;
-                const s = D * 2.6 * f.life;
-                bctx.globalAlpha = 0.32;
-                bctx.drawImage(glow, f.sx - s / 2, f.sy - s / 2, s, s);
-            }
-            bctx.globalCompositeOperation = 'source-over';
-
+            for (const f of pillars) f.life = clamp((el - f.delay) / 600, 0, 1);
+            statics.forEach(f => { f.life = rv; });
+            seatItems.forEach(f => { f.life = rv; });
             // A pair of leaves between every other flower
             const leaf = leafSprite();
             for (const f of pillars) {
@@ -755,17 +773,25 @@
             bctx.globalAlpha = 1;
 
             const f = touchPinned || hovered;
+            const lifted = f && f.front ? f : null;
+            if (lifted !== frontShown) {
+                frontShown = lifted;
+                paintFront();
+            }
             if (f) {
-                const s = Math.max(30, D * 1.9);
-                bctx.globalCompositeOperation = 'lighter';
-                bctx.drawImage(glowSprite('255, 210, 130'), f.sx - s * 1.3, f.sy - s * 1.3, s * 2.6, s * 2.6);
-                bctx.globalCompositeOperation = 'source-over';
-                stamp(bctx, f.kind, f.variant, f.sx, f.sy, s);
-                bctx.strokeStyle = 'rgba(255, 231, 176, .95)';
-                bctx.lineWidth = 1.2;
-                bctx.beginPath();
-                bctx.arc(f.sx, f.sy, s * 0.62, 0, TAU);
-                bctx.stroke();
+                if (!f.front) {
+                    const s = Math.max(30, D * 1.9);
+                    bctx.globalCompositeOperation = 'lighter';
+                    bctx.drawImage(glowSprite('255, 210, 130'), f.sx - s * 1.3, f.sy - s * 1.3, s * 2.6, s * 2.6);
+                    bctx.globalCompositeOperation = 'source-over';
+                    if (f.rosette) drawRosette(bctx, f.sx, f.sy, s);
+                    else stamp(bctx, f.kind, f.variant, f.sx, f.sy, s);
+                    bctx.strokeStyle = 'rgba(255, 231, 176, .95)';
+                    bctx.lineWidth = 1.2;
+                    bctx.beginPath();
+                    bctx.arc(f.sx, f.sy, s * 0.62, 0, TAU);
+                    bctx.stroke();
+                }
                 placeTip({ x: f.sx, y: f.sy });
             }
         }
@@ -794,7 +820,7 @@
             const radius = touch ? Math.max(20, D * 0.95) : Math.max(11, D * 0.75);
             let best = null;
             let bestD = radius * radius;
-            for (const f of pillars) {
+            for (const f of blooms) {
                 if (!f.off || f.life < 0.5) continue;
                 const dx = f.sx - x, dy = f.sy - y;
                 const d = dx * dx + dy * dy;
@@ -809,7 +835,7 @@
         }
 
         function blocked(target) {
-            return !!(target && target.closest && target.closest('.hero-heading, .hero-side, .hero-portrait, .hero-inscription, .flower-tip, a, button'));
+            return !!(target && target.closest && target.closest('.hero-heading, .hero-side, .hero-inscription, .flower-tip, a, button'));
         }
 
         function showTip(f) {
@@ -855,7 +881,15 @@
         hero.addEventListener('pointerleave', () => setHover(null));
 
         hero.addEventListener('click', e => {
-            if (!assigned || blocked(e.target)) return;
+            if (!assigned) return;
+            if (blocked(e.target)) {
+                if (touchPinned) {
+                    touchPinned = null;
+                    hideTip();
+                    if (!running) draw(performance.now());
+                }
+                return;
+            }
             const pt = localPoint(e);
             const f = nearest(pt.x, pt.y);
             const touch = matchMedia('(hover: none)').matches;
