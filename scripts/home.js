@@ -23,11 +23,14 @@
     async function init() {
         renderYearCards(null);
         renderSubmissionStatus();
-        const garland = createGarland();
+        const garland = createGarland(info => renderGarlandNote(info));
 
         const results = await VP.loadAllYears();
-        const byYear = new Map(results.map(r => [r.year, r.offerings]));
-        state.years = VP.years.map(y => ({ ...y, offerings: byYear.get(y.year) || [] }));
+        const byYear = new Map(results.map(r => [r.year, r]));
+        state.years = VP.years.map(y => {
+            const r = byYear.get(y.year) || {};
+            return { ...y, offerings: r.offerings || [], failed: !!(r.errors && r.errors.length) };
+        });
         state.all = state.years.flatMap(y => y.offerings);
 
         renderStats();
@@ -35,9 +38,30 @@
         renderYearCards(state.years);
         renderLegend();
         if (garland) garland.setYears(state.years);
+        else renderGarlandNote({ shown: 0, total: state.all.length });
     }
 
     // ---------- Helpers ----------
+    // A fixed, repeatable scramble, so no name is favoured by its first letter
+    function hashKey(value) {
+        let h = 2166136261;
+        const s = String(value);
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+    }
+
+    // Newest first where a date is known; otherwise a fixed scramble (not A to Z)
+    function gardenOrder(offerings) {
+        const stamp = o => {
+            const t = Date.parse(o.submittedAt || '');
+            return Number.isFinite(t) ? t : 0;
+        };
+        return offerings.slice().sort((a, b) => (stamp(b) - stamp(a)) || (hashKey(a.id) - hashKey(b.id)));
+    }
+
     function normKey(value) {
         return String(value || '').toLowerCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
     }
@@ -143,6 +167,7 @@
             else badge = '<span class="yc-badge is-archive">Archive</span>';
             let foot;
             if (count === null) foot = 'Gathering…';
+            else if (empty && y.failed) foot = 'Couldn’t load just now · reload to try again';
             else if (empty && open) foot = 'Be the first to offer';
             else if (empty) foot = 'Offerings coming soon';
             else foot = `${VP.formatNumber(count)} offering${count === 1 ? '' : 's'}`;
@@ -176,10 +201,39 @@
             .filter(y => y.offerings.length)
             .map(y => `<span${current && y.year === current.year ? ' class="is-fresh"' : ''}><i></i>${y.year} · ${VP.formatNumber(y.offerings.length)}</span>`)
             .join('');
-        const hint = document.querySelector('.garland-hint');
-        if (hint && window.matchMedia('(hover: none)').matches) {
-            hint.textContent = 'Each flower is an offering — tap one to see whose.';
+        if (window.matchMedia('(hover: none)').matches) {
+            document.querySelectorAll('.garland-hint, .caption-hint').forEach(h => {
+                h.textContent = 'Each flower is an offering — tap one to see whose.';
+            });
         }
+    }
+
+    // ---------- What the garland shows, for everyone ----------
+    function renderGarlandNote(info) {
+        const total = info.total;
+        const sr = document.getElementById('garland-sr');
+        if (sr) {
+            sr.textContent = total
+                ? `Around Maharaj’s portrait hangs a garland of marigold, rose and jasmine, with one flower for each of the ${VP.formatNumber(total)} published offerings. You can read them all on the Offerings page.`
+                : '';
+        }
+        const note = document.getElementById('hero-note');
+        if (!note) return;
+        const current = VP.currentYear();
+        const cur = current && state.years.find(y => y.year === current.year);
+        const parts = [];
+        if (!total && state.years.some(y => y.failed)) {
+            parts.push('The offerings could not be loaded just now. Please reload the page to try again.');
+        } else if (total) {
+            if (cur && !cur.offerings.length && !cur.failed) {
+                parts.push(`These flowers are from earlier years. This year’s join the garland as offerings are published.`);
+            }
+            if (info.shown && info.shown < total) {
+                parts.push(`The garland shows ${VP.formatNumber(info.shown)} of ${VP.formatNumber(total)} offerings; all of them can be read in <a href="offerings.html">Offerings</a>.`);
+            }
+        }
+        note.innerHTML = parts.join(' ');
+        note.hidden = !parts.length;
     }
 
     // ---------- Festival garland ----------
@@ -188,7 +242,7 @@
     // is one offering. The newest hang closest to him: first along the swag above the portrait, then in
     // the strands nearest to it. Flowers shrink as offerings grow, down to a floor; any that still do
     // not fit are simply not drawn (the counts and the Offerings page still include them).
-    function createGarland() {
+    function createGarland(onChange) {
         const hero = document.getElementById('hero');
         const canvas = document.getElementById('hero-garland');
         const portrait = document.getElementById('hero-portrait');
@@ -556,6 +610,7 @@
             }
             assign();
             buildBase();
+            if (onChange && flowers.length) onChange({ shown: placed.length, total: flowers.length });
             if (!running) draw(performance.now());
         }
 
@@ -648,11 +703,11 @@
         }
 
         function setYears(list) {
-            // Newest year first, so it hangs closest to Maharaj
+            // Newest year first, so it hangs closest to Maharaj; within a year, newest first (see gardenOrder)
             const current = VP.currentYear();
             flowers = [];
             list.forEach(y => {
-                y.offerings.forEach(o => {
+                gardenOrder(y.offerings).forEach(o => {
                     flowers.push({
                         o,
                         kind: pickKind(),
@@ -797,7 +852,9 @@
 
         // ---------- Interaction ----------
         function nearest(x, y) {
-            const radius = Math.max(11, pitch * 0.8);
+            // A finger is far less exact than a pointer
+            const touch = matchMedia('(hover: none)').matches;
+            const radius = touch ? Math.max(24, pitch * 1.6) : Math.max(11, pitch * 0.8);
             let best = -1;
             let bestD = radius * radius;
             for (let i = 0; i < flowers.length; i++) {

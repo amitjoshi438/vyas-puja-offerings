@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css?v=7">
+    <link rel="stylesheet" href="styles/main.css?v=8">
 </head>
 <body class="home">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -36,6 +36,7 @@
                 <span class="brand-mark" aria-hidden="true"></span>
                 <span class="brand-text">Vyāsa Pūjā<em data-current-year>2026</em></span>
             </a>
+            <a class="header-offer" href="offer.html">Offer</a>
             <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
                 <span></span><span></span><span class="sr-only">Menu</span>
             </button>
@@ -83,14 +84,16 @@
                         <div class="hero-stat"><strong id="stat-countries">—</strong><span>Countries</span></div>
                         <div class="hero-stat"><strong id="stat-cities">—</strong><span>Cities</span></div>
                     </div>
+                    <p class="hero-note" id="hero-note" hidden></p>
                 </div>
 
                 <figure class="hero-portrait" id="hero-portrait">
                     <img src="assets/images/maharaj-seated.webp?v=2" alt="His Holiness Radhanath Swami Maharaj, seated and smiling, in saffron robes" width="840" height="1120" fetchpriority="high">
-                    <figcaption>HH Radhanath Swami</figcaption>
+                    <figcaption>HH Radhanath Swami<span class="caption-hint">Each flower is an offering — tap one to see whose.</span></figcaption>
                 </figure>
             </div>
 
+            <p class="sr-only" id="garland-sr"></p>
             <div class="flower-tip" id="flower-tip" aria-hidden="true"></div>
             <p class="garland-hint" aria-hidden="true">Each flower is an offering — hover to see whose.</p>
             <div class="garland-legend" id="garland-legend" aria-hidden="true"></div>
@@ -145,7 +148,7 @@
         </section>
 
         <!-- Years -->
-        <section class="section years on-dark" id="years" aria-labelledby="years-title">
+        <section class="section years" id="years" aria-labelledby="years-title">
             <div class="container">
                 <div class="years-head" data-reveal>
                     <div>
@@ -208,6 +211,6 @@
 
     <script src="scripts/config.js?v=5"></script>
     <script src="scripts/common.js?v=4"></script>
-    <script src="scripts/home.js?v=7"></script>
+    <script src="scripts/home.js?v=8"></script>
 </body>
 </html>
