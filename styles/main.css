@@ -459,18 +459,50 @@ button { cursor: pointer; background: none; border: 0; }
    HOME
    ========================================================================== */
 .hero {
+    --valance-h: 30px;
     position: relative;
     min-height: calc(100svh - var(--header-h));
     min-height: calc(100vh - var(--header-h));
     display: flex;
     align-items: center;
     overflow: hidden;
-    color: var(--paper);
-    background: var(--night);
+    color: var(--ink);
+    /* Morning light in a festival pandal: ivory silk, faint pleats, a sunlit glow behind the portrait */
+    background:
+        radial-gradient(56% 74% at 74% 52%, #fffaf0 0%, rgba(255, 250, 240, 0) 72%),
+        repeating-linear-gradient(90deg, rgba(214, 162, 74, .12) 0 34px, rgba(214, 162, 74, 0) 34px 68px),
+        linear-gradient(180deg, #fdf4dc 0%, #fbeccb 46%, #f4d596 100%);
     isolation: isolate;
 }
 @supports (height: 100svh) {
     .hero { min-height: max(640px, calc(100svh - var(--header-h))); }
+}
+
+/* The valance the garlands hang from: kumkum silk with a gold zari line and a scalloped hem */
+.hero::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: calc(var(--valance-h) + 18px);
+    z-index: -3;
+    background:
+        radial-gradient(circle at 18px 15px, var(--gold-2) 0 2.2px, transparent 2.7px) 0 calc(var(--valance-h) - 1px) / 36px 18px repeat-x,
+        radial-gradient(circle at 18px 0, var(--kumkum) 0 17px, transparent 17.6px) 0 calc(var(--valance-h) - 1px) / 36px 18px repeat-x,
+        linear-gradient(var(--gold), var(--gold)) 0 calc(var(--valance-h) - 8px) / 100% 2px no-repeat,
+        linear-gradient(var(--kumkum), var(--kumkum)) 0 0 / 100% var(--valance-h) no-repeat;
+    filter: drop-shadow(0 3px 4px rgba(86, 38, 8, .28));
+}
+
+/* Rays of the morning sun behind the portrait */
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -4;
+    pointer-events: none;
+    background: repeating-conic-gradient(from -4deg at 74% 54%, rgba(244, 176, 60, .16) 0 5deg, rgba(244, 176, 60, 0) 5deg 10deg);
+    -webkit-mask-image: radial-gradient(circle at 74% 54%, #000 0, rgba(0, 0, 0, .55) 30%, transparent 64%);
+    mask-image: radial-gradient(circle at 74% 54%, #000 0, rgba(0, 0, 0, .55) 30%, transparent 64%);
 }
 
 .hero-garland {
@@ -480,15 +512,6 @@ button { cursor: pointer; background: none; border: 0; }
     height: 100%;
     z-index: -2;
 }
-.hero-shade {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-        linear-gradient(90deg, rgba(18, 9, 5, .94) 0%, rgba(18, 9, 5, .78) 34%, rgba(18, 9, 5, .15) 62%, transparent 75%),
-        linear-gradient(0deg, rgba(18, 9, 5, .85) 0%, transparent 22%);
-}
 
 .hero-grid {
     position: relative;
@@ -496,8 +519,8 @@ button { cursor: pointer; background: none; border: 0; }
     grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
     align-items: center;
     gap: 3rem;
-    padding-top: clamp(2.5rem, 6vh, 4.5rem);
-    padding-bottom: clamp(5rem, 10vh, 7rem);
+    padding-top: calc(var(--valance-h) + clamp(4rem, 9vh, 5.5rem));
+    padding-bottom: clamp(4rem, 8vh, 5.5rem);
     pointer-events: none;
 }
 .hero-grid a, .hero-grid button, .hero-copy > *, .hero-portrait { pointer-events: auto; }
@@ -512,7 +535,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-family: var(--font-deva);
     font-size: clamp(1.05rem, 1.6vw, 1.3rem);
     line-height: 1.55;
-    color: var(--gold-2);
+    color: var(--kumkum-2);
 }
 .hero-verse small {
     display: block;
@@ -520,7 +543,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-family: var(--font-read);
     font-style: italic;
     font-size: .98rem;
-    color: rgba(246, 238, 221, .6);
+    color: var(--ink-3);
 }
 
 .hero-title {
@@ -537,14 +560,14 @@ button { cursor: pointer; background: none; border: 0; }
     font-style: italic;
     font-size: clamp(1.6rem, 3vw, 2.4rem);
     letter-spacing: 0;
-    color: var(--gold-2);
+    color: var(--kumkum);
     margin-bottom: .4rem;
 }
 .hero-title .t-big {
     display: block;
     font-size: clamp(3.4rem, min(9vw, 13vh), 7.6rem);
-    color: var(--glow);
-    text-shadow: 0 0 42px rgba(242, 163, 58, .38), 0 0 2px rgba(255, 227, 163, .4);
+    color: var(--kumkum-2);
+    text-shadow: 0 2px 0 rgba(255, 238, 196, .9), 0 0 34px rgba(255, 196, 90, .45);
     padding-bottom: .08em;
 }
 .hero-for {
@@ -553,7 +576,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-weight: 500;
     font-size: clamp(1.15rem, 2vw, 1.55rem);
     letter-spacing: .01em;
-    color: var(--paper);
+    color: var(--ink);
     animation: rise 1.2s var(--ease-out) .5s both;
 }
 .hero-lede {
@@ -561,7 +584,7 @@ button { cursor: pointer; background: none; border: 0; }
     margin-top: 1.25rem;
     font-size: clamp(1.02rem, 1.4vw, 1.18rem);
     line-height: 1.65;
-    color: rgba(246, 238, 221, .72);
+    color: var(--ink-2);
     animation: rise 1.2s var(--ease-out) .6s both;
 }
 .hero-actions {
@@ -581,7 +604,7 @@ button { cursor: pointer; background: none; border: 0; }
 }
 .hero-stat {
     padding: 0 1.8rem;
-    border-left: 1px solid rgba(214, 162, 74, .3);
+    border-left: 1px solid rgba(140, 92, 36, .32);
 }
 .hero-stat:first-child { padding-left: 0; border-left: 0; }
 .hero-stat strong {
@@ -590,7 +613,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-size: clamp(1.8rem, 3vw, 2.5rem);
     font-weight: 600;
     line-height: 1;
-    color: var(--glow);
+    color: var(--kumkum);
     font-variant-numeric: tabular-nums;
 }
 .hero-stat span {
@@ -601,7 +624,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-weight: 500;
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: rgba(246, 238, 221, .55);
+    color: var(--ink-3);
 }
 
 .hero-portrait {
@@ -615,7 +638,7 @@ button { cursor: pointer; background: none; border: 0; }
     content: '';
     position: absolute;
     inset: -14px;
-    border: 1px solid rgba(242, 209, 140, .55);
+    border: 1px solid rgba(179, 134, 46, .75);
     border-radius: 999px 999px 6px 6px;
 }
 .hero-portrait::after {
@@ -623,7 +646,7 @@ button { cursor: pointer; background: none; border: 0; }
     position: absolute;
     inset: -60px;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(255, 210, 130, .35), transparent 70%);
+    background: radial-gradient(closest-side, rgba(255, 244, 214, .95), rgba(255, 226, 160, 0) 72%);
     z-index: -1;
     animation: breathe 6s ease-in-out infinite;
 }
@@ -634,7 +657,7 @@ button { cursor: pointer; background: none; border: 0; }
     object-position: center 20%;
     border-radius: 999px 999px 4px 4px;
     border: 3px solid var(--gold);
-    box-shadow: 0 0 0 6px rgba(18, 9, 5, .9), 0 30px 80px -10px rgba(0, 0, 0, .8);
+    box-shadow: 0 0 0 7px #fff6df, 0 0 0 8px rgba(179, 134, 46, .6), 0 26px 44px -14px rgba(120, 58, 10, .5);
 }
 .hero-portrait figcaption {
     position: absolute;
@@ -646,7 +669,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-size: .7rem;
     letter-spacing: .22em;
     text-transform: uppercase;
-    color: rgba(246, 238, 221, .55);
+    color: var(--ink-3);
 }
 
 .garland-legend {
@@ -659,17 +682,20 @@ button { cursor: pointer; background: none; border: 0; }
     font-size: .72rem;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: rgba(246, 238, 221, .6);
+    color: var(--ink-2);
     z-index: 2;
 }
 .garland-legend span { display: inline-flex; align-items: center; gap: .5rem; }
 .garland-legend i {
-    width: 14px; height: 14px;
-    background: var(--c);
+    width: 15px; height: 15px;
+    background: radial-gradient(circle, #8c3a10 0 14%, #f7c52c 16% 40%, #f08a1c 42%);
     -webkit-mask: var(--blossom) center / contain no-repeat;
     mask: var(--blossom) center / contain no-repeat;
-    filter: drop-shadow(0 0 5px var(--c));
+    filter: drop-shadow(0 1px 1px rgba(86, 38, 8, .4));
 }
+/* This year's flowers carry a little gold light in the garland */
+.garland-legend .is-fresh { color: var(--kumkum-2); font-weight: 600; }
+.garland-legend .is-fresh i { filter: drop-shadow(0 0 5px rgba(255, 194, 74, .95)) drop-shadow(0 1px 1px rgba(86, 38, 8, .4)); }
 .garland-hint {
     position: absolute;
     left: var(--gutter);
@@ -677,7 +703,7 @@ button { cursor: pointer; background: none; border: 0; }
     font-family: var(--font-read);
     font-style: italic;
     font-size: .92rem;
-    color: rgba(246, 238, 221, .5);
+    color: var(--ink-3);
     z-index: 2;
 }
 
@@ -687,10 +713,10 @@ button { cursor: pointer; background: none; border: 0; }
     min-width: 180px;
     max-width: 280px;
     padding: .75rem 1rem .7rem;
-    background: rgba(246, 238, 221, .97);
+    background: #fffaf0;
     color: var(--ink);
     border-radius: var(--radius);
-    box-shadow: 0 18px 40px -12px rgba(0, 0, 0, .7);
+    box-shadow: 0 16px 34px -12px rgba(86, 38, 8, .55), 0 0 0 1px rgba(179, 134, 46, .35);
     pointer-events: none;
     opacity: 0;
     transform: translate(-50%, calc(-100% - 14px)) scale(.96);
@@ -1079,19 +1105,20 @@ button { cursor: pointer; background: none; border: 0; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
-    .hero { align-items: flex-start; }
+    .hero { --valance-h: 24px; align-items: flex-start; }
     .hero-grid {
         grid-template-columns: 1fr;
         gap: 0;
-        padding-top: 2.5rem;
-        padding-bottom: 5.5rem;
+        padding-top: calc(var(--valance-h) + 4.75rem);
+        padding-bottom: 4.5rem;
         text-align: left;
     }
     .hero-portrait { order: -1; width: clamp(170px, 42vw, 240px); margin-bottom: 4.5rem; }
     .hero-portrait figcaption { bottom: -2.8rem; }
-    .hero-shade {
-        background:
-            linear-gradient(180deg, transparent 0%, transparent 28%, rgba(18, 9, 5, .82) 52%, rgba(18, 9, 5, .95) 100%);
+    .hero::after {
+        background: repeating-conic-gradient(from -4deg at 50% 22%, rgba(244, 176, 60, .16) 0 5deg, rgba(244, 176, 60, 0) 5deg 10deg);
+        -webkit-mask-image: radial-gradient(circle at 50% 22%, #000 0, rgba(0, 0, 0, .55) 30%, transparent 64%);
+        mask-image: radial-gradient(circle at 50% 22%, #000 0, rgba(0, 0, 0, .55) 30%, transparent 64%);
     }
     .how-grid, .about-grid { grid-template-columns: 1fr; }
     .how-intro { position: static; }

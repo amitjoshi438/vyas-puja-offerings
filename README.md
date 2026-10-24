@@ -8,7 +8,7 @@ Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. 
 
 | Page | What it does |
 |---|---|
-| `index.html` | Home page with a garland of flowers around Maharaj's portrait (each flower is one published offering), live counts, a moving strip of names, how to offer, and the year-by-year archive. |
+| `index.html` | Home page with a festival garland of marigold, rose and jasmine hung around Maharaj's portrait (each flower is one published offering), live counts, a moving strip of names, how to offer, and the year-by-year archive. |
 | `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
 | `offer.html` | **Write your offering.** The draft is saved on the device as you type. The devotee signs with their initiated name, or their official name if not initiated. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. The form is validated and protected against spam. Before anything is sent, the devotee sees the offering as it will be published and confirms it; then they see a thank-you. If no endpoint is configured, the page explains that offerings are not open yet. |
 | `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
@@ -130,14 +130,14 @@ To try the submission flow locally, point `submissionEndpoint` at a test deploym
 
 ## Design
 
-The direction is *"a garland of words"*: a night-temple glow above, marigolds strung between, hand-made paper below. Offerings appear as letters on paper.
+The direction is *"a garland of words"*: a festival hall in morning light, with garlands of marigold, rose and jasmine hung from a silk valance; one flower for each offering. Below it, hand-made paper where the offerings are read as letters.
 
 - **Type:**
   - [Eczar](https://fonts.google.com/specimen/Eczar) for display;
   - [Newsreader](https://fonts.google.com/specimen/Newsreader) for reading;
   - [Mukta](https://fonts.google.com/specimen/Mukta) for the interface;
   - [Tiro Devanagari Sanskrit](https://fonts.google.com/specimen/Tiro+Devanagari+Sanskrit) for Sanskrit and Hindi.
-- **Colour:** night indigo, marigold and champa gold, kumkum red, tulasi green and paper tones. All of them are CSS custom properties at the top of `styles/main.css`.
+- **Colour:** saffron and ivory silk in the home hero, kumkum red, marigold and champa gold, tulasi green, night indigo for the header and footer, and paper tones. All of them are CSS custom properties at the top of `styles/main.css`.
 - **Motion:** gentle reveals, flowers blooming into the garland and swaying softly. All of it respects `prefers-reduced-motion`.
 - **Accessibility:**
   - semantic landmarks;
