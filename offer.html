@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css?v=15">
+    <link rel="stylesheet" href="styles/main.css?v=16">
     <link rel="stylesheet" href="styles/offer.css?v=7">
 </head>
 <body class="offer-page">
@@ -220,33 +220,42 @@
                         <svg class="garland-art" viewBox="0 0 320 150" aria-hidden="true">
                             <defs>
                                 <radialGradient id="ga-glow" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0" stop-color="#ffd27a" stop-opacity=".75"/>
-                                    <stop offset=".45" stop-color="#f2a33a" stop-opacity=".22"/>
-                                    <stop offset="1" stop-color="#f2a33a" stop-opacity="0"/>
+                                    <stop offset="0" stop-color="#ffd3c4" stop-opacity=".7"/>
+                                    <stop offset=".45" stop-color="#f08aa8" stop-opacity=".2"/>
+                                    <stop offset="1" stop-color="#f08aa8" stop-opacity="0"/>
                                 </radialGradient>
-                                <!-- Three rings of marigold petals, centred on 0,0 -->
+                                <!-- Three rings of rose petals, centred on 0,0 -->
                                 <g id="ga-l1">
-                                    <ellipse cy="-8" rx="4.2" ry="7.5"/><ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(45)"/>
-                                    <ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(90)"/><ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(135)"/>
-                                    <ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(180)"/><ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(225)"/>
-                                    <ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(270)"/><ellipse cy="-8" rx="4.2" ry="7.5" transform="rotate(315)"/>
+                                    <ellipse cy="-6" rx="7" ry="7.4"/><ellipse cy="-6" rx="7" ry="7.4" transform="rotate(72)"/>
+                                    <ellipse cy="-6" rx="7" ry="7.4" transform="rotate(144)"/><ellipse cy="-6" rx="7" ry="7.4" transform="rotate(216)"/>
+                                    <ellipse cy="-6" rx="7" ry="7.4" transform="rotate(288)"/>
                                 </g>
                                 <g id="ga-l2">
-                                    <ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(22)"/><ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(67)"/>
-                                    <ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(112)"/><ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(157)"/>
-                                    <ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(202)"/><ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(247)"/>
-                                    <ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(292)"/><ellipse cy="-5.2" rx="3.2" ry="5.2" transform="rotate(337)"/>
+                                    <ellipse cy="-3.6" rx="5" ry="5.4" transform="rotate(36)"/><ellipse cy="-3.6" rx="5" ry="5.4" transform="rotate(108)"/>
+                                    <ellipse cy="-3.6" rx="5" ry="5.4" transform="rotate(180)"/><ellipse cy="-3.6" rx="5" ry="5.4" transform="rotate(252)"/>
+                                    <ellipse cy="-3.6" rx="5" ry="5.4" transform="rotate(324)"/>
                                 </g>
                                 <g id="ga-l3">
-                                    <ellipse cy="-3" rx="2.2" ry="3.2"/><ellipse cy="-3" rx="2.2" ry="3.2" transform="rotate(60)"/>
-                                    <ellipse cy="-3" rx="2.2" ry="3.2" transform="rotate(120)"/><ellipse cy="-3" rx="2.2" ry="3.2" transform="rotate(180)"/>
-                                    <ellipse cy="-3" rx="2.2" ry="3.2" transform="rotate(240)"/><ellipse cy="-3" rx="2.2" ry="3.2" transform="rotate(300)"/>
+                                    <ellipse cy="-1.8" rx="3.2" ry="3.4"/><ellipse cy="-1.8" rx="3.2" ry="3.4" transform="rotate(120)"/>
+                                    <ellipse cy="-1.8" rx="3.2" ry="3.4" transform="rotate(240)"/>
                                 </g>
-                                <g id="ga-flower" transform="scale(.72)">
-                                    <use href="#ga-l1" fill="#d98a25"/>
-                                    <use href="#ga-l2" fill="#f2a33a"/>
-                                    <use href="#ga-l3" fill="#ffd27a"/>
-                                    <circle r="2.2" fill="#8c3a10"/>
+                                <g id="ga-rose" transform="scale(.74)" stroke="#8c1d3c" stroke-width=".6">
+                                    <use href="#ga-l1" fill="#c93d68"/>
+                                    <use href="#ga-l2" fill="#e0557f"/>
+                                    <use href="#ga-l3" fill="#f08aa8"/>
+                                    <circle r="1.6" fill="#8c1d3c" stroke="none"/>
+                                </g>
+                                <g id="ga-rose-red" transform="scale(.74)" stroke="#6e1414" stroke-width=".6">
+                                    <use href="#ga-l1" fill="#b82c2c"/>
+                                    <use href="#ga-l2" fill="#d63a3a"/>
+                                    <use href="#ga-l3" fill="#e8625c"/>
+                                    <circle r="1.6" fill="#6e1414" stroke="none"/>
+                                </g>
+                                <g id="ga-jasmine" transform="scale(.74)" fill="#fffbef" stroke="#cfa968" stroke-width=".7">
+                                    <ellipse cy="-6" rx="4.6" ry="6.6"/><ellipse cy="-6" rx="4.6" ry="6.6" transform="rotate(72)"/>
+                                    <ellipse cy="-6" rx="4.6" ry="6.6" transform="rotate(144)"/><ellipse cy="-6" rx="4.6" ry="6.6" transform="rotate(216)"/>
+                                    <ellipse cy="-6" rx="4.6" ry="6.6" transform="rotate(288)"/>
+                                    <circle r="2" fill="#e9b544" stroke="none"/>
                                 </g>
                                 <g id="ga-leaf">
                                     <path d="M0 0c4-3 4-11 0-14-4 3-4 11 0 14z" fill="#6a9a52" transform="rotate(-38)"/>
@@ -270,30 +279,30 @@
                             </g>
 
                             <!-- The garland so far: devotees' flowers, strung from the ends toward the middle -->
-                            <g transform="translate(40 53.1)"><use class="ga-f" href="#ga-flower" style="--i:0"/></g>
-                            <g transform="translate(70 64.9)"><use class="ga-f" href="#ga-flower" style="--i:1"/></g>
-                            <g transform="translate(100 73.3)"><use class="ga-f" href="#ga-flower" style="--i:2"/></g>
-                            <g transform="translate(130 78.3)"><use class="ga-f" href="#ga-flower" style="--i:3"/></g>
-                            <g transform="translate(190 78.3)"><use class="ga-f" href="#ga-flower" style="--i:3"/></g>
-                            <g transform="translate(220 73.3)"><use class="ga-f" href="#ga-flower" style="--i:2"/></g>
-                            <g transform="translate(250 64.9)"><use class="ga-f" href="#ga-flower" style="--i:1"/></g>
-                            <g transform="translate(280 53.1)"><use class="ga-f" href="#ga-flower" style="--i:0"/></g>
+                            <g transform="translate(40 53.1)"><use class="ga-f" href="#ga-rose" style="--i:0"/></g>
+                            <g transform="translate(70 64.9)"><use class="ga-f" href="#ga-jasmine" style="--i:1"/></g>
+                            <g transform="translate(100 73.3)"><use class="ga-f" href="#ga-rose-red" style="--i:2"/></g>
+                            <g transform="translate(130 78.3)"><use class="ga-f" href="#ga-jasmine" style="--i:3"/></g>
+                            <g transform="translate(190 78.3)"><use class="ga-f" href="#ga-jasmine" style="--i:3"/></g>
+                            <g transform="translate(220 73.3)"><use class="ga-f" href="#ga-rose-red" style="--i:2"/></g>
+                            <g transform="translate(250 64.9)"><use class="ga-f" href="#ga-jasmine" style="--i:1"/></g>
+                            <g transform="translate(280 53.1)"><use class="ga-f" href="#ga-rose" style="--i:0"/></g>
 
                             <!-- Your flower: opens above the garland, then settles into the gap in the middle -->
                             <g transform="translate(160 80)">
                                 <g class="ga-fall">
                                     <circle class="ga-glow" r="52" fill="url(#ga-glow)"/>
-                                    <g class="ga-petals" fill="#ffe3a3">
+                                    <g class="ga-petals" fill="#ffc9d6">
                                         <ellipse cx="-14" cy="14" rx="2.6" ry="1.5" transform="rotate(30)"/>
                                         <ellipse cx="16" cy="10" rx="2.4" ry="1.4" transform="rotate(-25)"/>
                                         <ellipse cx="2" cy="20" rx="2.2" ry="1.3" transform="rotate(70)"/>
                                     </g>
                                     <g class="ga-open">
-                                        <g transform="scale(1.2)">
-                                            <use class="ga-ring ga-ring-1" href="#ga-l1" fill="#f6c24c"/>
-                                            <use class="ga-ring ga-ring-2" href="#ga-l2" fill="#ffe08a"/>
-                                            <use class="ga-ring ga-ring-3" href="#ga-l3" fill="#fff3c8"/>
-                                            <circle r="2.2" fill="#a8541a"/>
+                                        <g transform="scale(1.2)" stroke="#a02a4c" stroke-width=".5">
+                                            <use class="ga-ring ga-ring-1" href="#ga-l1" fill="#f39ab5"/>
+                                            <use class="ga-ring ga-ring-2" href="#ga-l2" fill="#f9bfd0"/>
+                                            <use class="ga-ring ga-ring-3" href="#ga-l3" fill="#ffe6ec"/>
+                                            <circle r="1.8" fill="#c93d68" stroke="none"/>
                                         </g>
                                     </g>
                                 </g>

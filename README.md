@@ -8,7 +8,7 @@ Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. 
 
 | Page | What it does |
 |---|---|
-| `index.html` | Home page: a temple-sanctum hero with Maharaj seated between two garlanded pillars, festoons of marigold, rose and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, and the year-by-year archive. |
+| `index.html` | Home page: a temple-sanctum hero with Maharaj seated between two garlanded pillars, festoons of roses and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, and the year-by-year archive. |
 | `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
 | `offer.html` | **Write your offering.** The draft is saved on the device as you type. The devotee signs with their initiated name, or their official name if not initiated. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. The form is validated and protected against spam. Before anything is sent, the devotee sees the offering as it will be published and confirms it; then they see a thank-you. If no endpoint is configured, the page explains that offerings are not open yet. |
 | `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
@@ -130,14 +130,14 @@ To try the submission flow locally, point `submissionEndpoint` at a test deploym
 
 ## Design
 
-The direction is *"a garland of words"*: a warm temple sanctum. Deep maroon silk, gold and lamp-glow surround garlands of marigold, rose and jasmine; hand-made paper is kept for the places where offerings are read as letters. Garland lines run along the seams between sections.
+The direction is *"a garland of words"*: a warm temple sanctum. Deep maroon silk, gold and lamp-glow surround garlands of roses and jasmine; hand-made paper is kept for the places where offerings are read as letters. Garland lines run along the seams between sections.
 
 - **Type:**
   - [Eczar](https://fonts.google.com/specimen/Eczar) for display;
   - [Newsreader](https://fonts.google.com/specimen/Newsreader) for reading;
   - [Mukta](https://fonts.google.com/specimen/Mukta) for the interface;
   - [Tiro Devanagari Sanskrit](https://fonts.google.com/specimen/Tiro+Devanagari+Sanskrit) for Sanskrit and Hindi.
-- **Colour:** temple maroon, kumkum red, marigold and champa gold, tulasi green, ivory and paper tones. All of them are CSS custom properties at the top of `styles/main.css`.
+- **Colour:** temple maroon, kumkum red, gold, tulasi green, ivory and paper tones, with roses (pink, blush, red, ivory) and jasmine for the flowers. All of them are CSS custom properties at the top of `styles/main.css`.
 - **Motion:** gentle reveals, flowers blooming into the garland and swaying softly. All of it respects `prefers-reduced-motion`.
 - **Accessibility:**
   - semantic landmarks;

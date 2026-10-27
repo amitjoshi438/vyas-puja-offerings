@@ -197,7 +197,7 @@
         const touch = window.matchMedia('(hover: none)').matches;
         const sr = document.getElementById('garland-sr');
         if (sr) {
-            sr.textContent = 'Garlands of marigold, rose and jasmine hang across the top and beside Maharaj’s portrait, and a row of flowers lies before him.'
+            sr.textContent = 'Garlands of roses and jasmine hang across the top and beside Maharaj’s portrait, and a row of flowers lies before him.'
                 + (info.assigned ? ` Each flower stands for one of the most recent offerings. ${VP.formatNumber(info.total)} have been published in all, and you can read them on the Offerings page.` : '');
         }
         const hint = document.getElementById('garland-hint');
@@ -229,14 +229,16 @@
         const sprites = new Map();
         const SPR = 112;
         const KINDS = [
-            { id: 'orange', weight: 42, shape: 'pom', color: '#F08A1C' },
-            { id: 'yellow', weight: 30, shape: 'pom', color: '#F7C52C' },
-            { id: 'rose', weight: 8, shape: 'rose', color: '#E0557F' },
-            { id: 'jasmine', weight: 20, shape: 'jasmine', color: '#FFFBEF' }
+            { id: 'rose-pink', weight: 24, shape: 'rose', color: '#E0557F' },
+            { id: 'rose-blush', weight: 16, shape: 'rose', color: '#F59BB5' },
+            { id: 'rose-red', weight: 14, shape: 'rose', color: '#D63A3A' },
+            { id: 'rose-ivory', weight: 8, shape: 'rose', color: '#FFEFE4' },
+            { id: 'jasmine', weight: 22, shape: 'jasmine', color: '#FFFBEF' },
+            { id: 'mogra', weight: 16, shape: 'mogra', color: '#FFFBEF' }
         ];
         const KIND_WEIGHT = KINDS.reduce((sum, k) => sum + k.weight, 0);
-        const KNOT = { id: 'knot', shape: 'pom', color: '#F08A1C' };
-        const KNOT_ROSE = { id: 'knotrose', shape: 'rose', color: '#C2332A' };
+        const KNOT = { id: 'knot', shape: 'rose', color: '#D63A3A' };
+        const KNOT_ROSE = { id: 'knotjasmine', shape: 'jasmine', color: '#FFFBEF' };
 
         let W = 0, H = 0, dpr = 1, mobile = false;
         let cx = 0, pw = 0, ph = 0, py = 0, gap = 14, pillarW = 60, S = 3;
@@ -278,32 +280,29 @@
         }
 
         // ---------- Flower drawings ----------
-        function drawPom(g, color, R, v) {
-            const layers = [
-                { n: 14, len: 1, tone: -0.1, turn: 0 },
-                { n: 12, len: 0.78, tone: 0.08, turn: Math.PI / 12 },
-                { n: 9, len: 0.56, tone: 0.28, turn: 0.2 },
-                { n: 6, len: 0.34, tone: 0.45, turn: 0.5 }
+        // Mogra: the full, double-petalled jasmine of a gajra
+        function drawMogra(g, color, R, v) {
+            g.lineWidth = 1;
+            g.strokeStyle = '#cfa968';
+            const rings = [
+                { n: 8, len: 1, w: 0.27, fill: color, turn: 0 },
+                { n: 7, len: 0.68, w: 0.25, fill: '#FFF1D2', turn: 0.45 }
             ];
-            layers.forEach((L, li) => {
-                const len = R * L.len;
-                const half = Math.max(2.2, len * Math.sin(Math.PI / L.n) * 1.08);
-                g.fillStyle = shade(color, L.tone);
-                g.strokeStyle = shade(color, L.tone - 0.34);
-                g.lineWidth = 1;
-                for (let i = 0; i < L.n; i++) {
+            rings.forEach((ring, ri) => {
+                g.fillStyle = ring.fill;
+                for (let i = 0; i < ring.n; i++) {
                     g.save();
-                    g.rotate(L.turn + v * (0.37 + li * 0.11) + (i / L.n) * TAU);
+                    g.rotate(ring.turn + v * (0.3 + ri * 0.15) + (i / ring.n) * TAU);
                     g.beginPath();
-                    g.ellipse(0, -len * 0.52, half, len * 0.5, 0, 0, TAU);
+                    g.ellipse(0, -R * ring.len * 0.52, R * ring.w, R * ring.len * 0.5, 0, 0, TAU);
                     g.fill();
                     g.stroke();
                     g.restore();
                 }
             });
-            g.fillStyle = shade(color, -0.5);
+            g.fillStyle = '#E9B544';
             g.beginPath();
-            g.arc(0, 0, R * 0.12, 0, TAU);
+            g.arc(0, 0, R * 0.13, 0, TAU);
             g.fill();
         }
 
@@ -361,8 +360,8 @@
             flat.width = flat.height = SPR;
             const f = flat.getContext('2d');
             f.translate(SPR / 2, SPR / 2);
-            if (kind.shape === 'pom') drawPom(f, kind.color, R, variant);
-            else if (kind.shape === 'rose') drawRose(f, kind.color, R, variant);
+            if (kind.shape === 'rose') drawRose(f, kind.color, R, variant);
+            else if (kind.shape === 'mogra') drawMogra(f, kind.color, R, variant);
             else drawJasmine(f, kind.color, R, variant);
             const c = document.createElement('canvas');
             c.width = c.height = SPR;
