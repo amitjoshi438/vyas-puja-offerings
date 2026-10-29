@@ -565,19 +565,9 @@ button { cursor: pointer; background: none; border: 0; }
     letter-spacing: -.025em;
     animation: rise 1.2s var(--ease-out) .35s both;
 }
-.hero-title .t-small {
-    display: block;
-    font-family: var(--font-read);
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(1.5rem, 2.6vw, 2.3rem);
-    letter-spacing: 0;
-    color: var(--gold-2);
-    margin-bottom: .4rem;
-}
 .hero-title .t-big {
     display: block;
-    font-size: clamp(3.6rem, 6.9vw, 6.7rem);
+    font-size: clamp(3rem, 5.2vw, 4.8rem);
     line-height: .98;
     color: #ffe3a3;
     text-shadow: 0 2px 0 rgba(60, 12, 8, .7), 0 0 38px rgba(255, 170, 70, .5);

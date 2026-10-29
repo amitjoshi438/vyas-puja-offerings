@@ -139,7 +139,7 @@
             const offerings = [];
             results.forEach(r => {
                 if (r.status === 'rejected') {
-                    console.warn(`[Vyasa Puja] Could not load part of ${yearConfig.year}:`, r.reason);
+                    console.warn(`[Offerings] Could not load part of ${yearConfig.year}:`, r.reason);
                     errors.push(String(r.reason && r.reason.message || r.reason));
                     return;
                 }

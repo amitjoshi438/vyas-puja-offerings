@@ -215,7 +215,8 @@ Until step 2 is done, the site works exactly as before: the archive is readable,
 ## ✅ Pre-Deployment Checklist
 
 - [ ] Test locally over HTTP (`python -m http.server 8000`)
-- [ ] Home page shows counts, the garlanded sanctum around Maharaj and the strip of names
+- [ ] Home page shows the "Garland of Gratitude" title, counts, the garlanded sanctum around Maharaj and the strip of names
+- [ ] No page mentions Vyāsa Pūjā, appearance day or an edition number (the lecture texts and devotees' own offerings are left as written)
 - [ ] **Read offerings**: year switch, search, country/city filters, reader (←/→, Esc), share link
 - [ ] **Offer yours**: draft is kept after a reload; validation messages; a test offering reaches the sheet
 - [ ] A test offering appears on **Read offerings** after ticking **Approved**, and disappears after unticking

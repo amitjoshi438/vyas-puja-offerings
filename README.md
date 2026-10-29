@@ -1,6 +1,6 @@
-# Vyasa Puja Offerings — HH Radhanath Swami Maharaj
+# Offerings to Gurudev — HH Radhanath Swami Maharaj
 
-Every year, disciples and well-wishers from around the world write offerings for His Holiness Radhanath Swami Maharaj's Vyasa Puja, his appearance day. This site gathers them in one place. Devotees can now **write and send their offering directly on the website**. It appears in the garland once a moderator approves it.
+Every year, disciples and well-wishers from around the world write offerings of gratitude for His Holiness Radhanath Swami Maharaj. This site gathers them in one place. Devotees can **write and send their offering directly on the website**. It appears in the garland once a moderator approves it.
 
 Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. It is a static site on GitHub Pages; submissions go to a Google Sheet through Google Apps Script.
 
@@ -8,7 +8,7 @@ Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. 
 
 | Page | What it does |
 |---|---|
-| `index.html` | Home page: a temple-sanctum hero with Maharaj seated between two garlanded pillars, festoons of roses and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, and the year-by-year archive. |
+| `index.html` | Home page: a temple-sanctum hero titled "Garland of Gratitude", with Maharaj seated between two garlanded pillars, festoons of roses and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, and the year-by-year archive. |
 | `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
 | `offer.html` | **Write your offering.** The draft is saved on the device as you type. The devotee signs with their initiated name, or their official name if not initiated. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. The form is validated and protected against spam. Before anything is sent, the devotee sees the offering as it will be published and confirms it; then they see a thank-you. If no endpoint is configured, the page explains that offerings are not open yet. |
 | `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
@@ -79,7 +79,7 @@ years: [
 
 | Field | Meaning |
 |---|---|
-| `edition` | Which Vyasa Puja this is (shown as "76th"). |
+| `edition` | Which edition this year is. Kept for the archive and the book tool; the website no longer shows it. |
 | `dataFile` | Static JSON for archived offerings (optional). |
 | `live` | Also fetch approved offerings from the Apps Script. |
 | `submissionsOpen` | Show the form for this year. |

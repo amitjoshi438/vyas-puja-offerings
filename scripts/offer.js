@@ -96,7 +96,7 @@
             els.form.hidden = true;
             els.closed.hidden = false;
             els.closedTitle.textContent = `Offerings for ${year} are closed`;
-            els.closedText.textContent = 'Thank you for your love. Online offerings are no longer being accepted for this Vyāsa Pūjā — but every offering received is waiting to be read.';
+            els.closedText.textContent = 'Thank you for your love. Online offerings are no longer being accepted online — but every offering received is waiting to be read.';
             els.status.hidden = false;
             els.status.innerHTML = '<span class="status-dot is-closed" aria-hidden="true"></span>Offerings closed';
             return;
@@ -305,7 +305,7 @@
             cityBox.refresh();
         }).catch(err => {
             if (place.listCountry !== c) return;
-            console.warn('[Vyasa Puja] Town list unavailable:', err);
+            console.warn('[Offerings] Town list unavailable:', err);
             place.loadingCities = false;
             restoreTown = null;
             setTyped('failed');
@@ -395,7 +395,7 @@
 
     // Without the lists, both become ordinary text boxes.
     function placesUnavailable(err) {
-        console.warn('[Vyasa Puja] Country list unavailable:', err);
+        console.warn('[Offerings] Country list unavailable:', err);
         place.failed = true;
         countryBox.setEnabled(false);
         setTyped('');
@@ -831,7 +831,7 @@
             }
             showStatus(SERVER_MESSAGES[data.code] || data.error || 'Something went wrong. Please try again.', 'error');
         } catch (err) {
-            console.warn('[Vyasa Puja] Submission failed:', err);
+            console.warn('[Offerings] Submission failed:', err);
             showStatus(err.code === 'timeout'
                 ? 'This is taking longer than expected. Your draft is saved — please try again.'
                 : 'We couldn’t reach the server. Your draft is saved on this device — please check your connection and try again.', 'error');

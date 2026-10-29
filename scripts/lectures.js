@@ -171,7 +171,7 @@ function renderHero(entry) {
         ${actions}
     `;
 
-    document.title = `${entry.title} — Initiation lectures · Vyasa Puja`;
+    document.title = `${entry.title} — Initiation lectures · HH Radhanath Swami Maharaj`;
 }
 
 // ---- Lectures ----

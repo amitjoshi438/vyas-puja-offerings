@@ -175,7 +175,7 @@
                 <a class="year-card" href="${href}" data-reveal>
                     ${badge}
                     <span class="yc-year">${y.year}</span>
-                    <span class="yc-edition">${VP.ordinal(y.edition)} Vyāsa Pūjā</span>
+                    <span class="yc-edition">Words of gratitude</span>
                     <span class="yc-foot"><span>${foot}</span><span class="arrow" aria-hidden="true">→</span></span>
                 </a>`;
         });

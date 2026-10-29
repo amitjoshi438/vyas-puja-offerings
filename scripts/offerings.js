@@ -75,7 +75,7 @@
             await loadYear(fallback, { push: false, replace: true });
             const open = VP.isSubmissionOpen(current) && VP.hasEndpoint();
             showNotice(`
-                <strong>Offerings for the ${VP.ordinal(current.edition)} Vyāsa Pūjā (${current.year}) will appear here as they are approved.</strong>
+                <strong>Offerings for ${current.year} will appear here as they are approved.</strong>
                 <span>Meanwhile, read the offerings from ${fallback}.</span>
                 ${open ? '<a class="text-link" href="offer.html">Offer yours</a>' : ''}`);
         } else {
@@ -123,7 +123,7 @@
         els.yearTabs.innerHTML = VP.years.map(y => {
             const live = VP.isSubmissionOpen(y) && VP.hasEndpoint();
             return `<a class="year-tab${live ? ' is-live' : ''}" href="?year=${y.year}" data-year="${y.year}"${y.year === active ? ' aria-current="page"' : ''}>
-                <b>${y.year}</b><small>${VP.ordinal(y.edition)}</small>
+                <b>${y.year}</b>
             </a>`;
         }).join('');
     }
@@ -131,8 +131,8 @@
     function updateHero(year) {
         const y = VP.getYear(year);
         if (!y) return;
-        els.heroKicker.textContent = `The ${VP.ordinal(y.edition)} Vyāsa Pūjā · ${y.year}`;
-        document.title = `Offerings ${y.year} — Vyasa Puja of HH Radhanath Swami Maharaj`;
+        els.heroKicker.textContent = `Offerings · ${y.year}`;
+        document.title = `Offerings ${y.year} — HH Radhanath Swami Maharaj`;
     }
 
     // ---------- Controls ----------
@@ -451,8 +451,7 @@
     function fillReader() {
         const o = state.filtered[state.readerIndex];
         if (!o) return;
-        const y = VP.getYear(o.year);
-        els.readerKicker.textContent = y ? `${VP.ordinal(y.edition)} Vyāsa Pūjā · ${o.year}` : `Vyāsa Pūjā ${o.year}`;
+        els.readerKicker.textContent = `Offering · ${o.year}`;
         els.readerText.innerHTML = paragraphs(o.text || '');
         els.readerName.textContent = o.name;
         els.readerPlace.textContent = VP.formatLocation(o);
@@ -529,7 +528,7 @@
         const o = state.filtered[state.readerIndex];
         if (!o) return;
         const url = new URL(VP.offeringUrl(o), location.href).href;
-        const title = `Vyasa Puja offering from ${o.name}`;
+        const title = `Offering to Gurudev from ${o.name}`;
         if (navigator.share && matchMedia('(hover: none)').matches) {
             try { await navigator.share({ title, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
         }
