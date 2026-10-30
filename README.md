@@ -2,7 +2,7 @@
 
 Every year, disciples and well-wishers from around the world write offerings of gratitude for His Holiness Radhanath Swami Maharaj. This site gathers them in one place. Devotees can **write and send their offering directly on the website**. It appears in the garland once a moderator approves it.
 
-Live at **[rnsmvyaspujaofferings.co.in](https://rnsmvyaspujaofferings.co.in)**. It is a static site on GitHub Pages; submissions go to a Google Sheet through Google Apps Script.
+Live at **[garlandofgratitude.co.in](https://garlandofgratitude.co.in)**. It is a static site on GitHub Pages; submissions go to a Google Sheet through Google Apps Script.
 
 ## Pages
 
