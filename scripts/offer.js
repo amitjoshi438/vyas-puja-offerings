@@ -57,7 +57,9 @@
         confirmPlace: $('confirm-place'),
         confirmEmail: $('confirm-email'),
         confirmEdit: $('confirm-edit'),
-        confirmSend: $('confirm-send')
+        confirmSend: $('confirm-send'),
+        confirmSendText: $('confirm-send-text'),
+        confirmStatus: $('confirm-status')
     };
 
     const yearConfig = VP.currentYear();
@@ -788,21 +790,42 @@
 
     function onConfirmClosed() {
         document.documentElement.classList.remove('confirm-open');
-        const payload = pendingPayload;
         pendingPayload = null;
-        if (els.confirm.returnValue === 'send' && payload) sendOffering(payload);
+    }
+
+    // While the offering travels, the dialog stays up with the progress, rather than dropping away
+    // and leaving the page looking idle.
+    function setConfirmBusy(on) {
+        if (!els.confirm) return;
+        els.confirm.classList.toggle('is-sending', on);
+        els.confirm.setAttribute('aria-busy', String(on));
+        els.confirmSend.disabled = on;
+        els.confirmEdit.disabled = on;
+        if (els.confirmSendText) els.confirmSendText.textContent = on ? 'Offering to Gurudev…' : 'Yes, offer to Gurudev';
+        if (els.confirmStatus) els.confirmStatus.textContent = on ? 'Offering to Gurudev. Please wait a moment.' : '';
+    }
+
+    function closeConfirm(value) {
+        document.documentElement.classList.remove('confirm-open');
+        setConfirmBusy(false);
+        if (els.confirm && els.confirm.open) els.confirm.close(value);
     }
 
     function setupConfirm() {
         if (!els.confirm) return;
         els.confirmEdit.addEventListener('click', () => els.confirm.close('edit'));
-        els.confirmSend.addEventListener('click', () => els.confirm.close('send'));
+        els.confirmSend.addEventListener('click', () => {
+            if (submitting || !pendingPayload) return;
+            sendOffering(pendingPayload);
+        });
+        // Esc and the backdrop must not abandon an offering that is on its way.
+        els.confirm.addEventListener('cancel', e => { if (submitting) e.preventDefault(); });
         // A click on the dimmed backdrop lands on the dialog itself. Ignore drags that began
         // inside the letter (selecting text) and ended on the backdrop.
         let pressedBackdrop = false;
         els.confirm.addEventListener('pointerdown', e => { pressedBackdrop = e.target === els.confirm; });
         els.confirm.addEventListener('click', e => {
-            if (pressedBackdrop && e.target === els.confirm) els.confirm.close('edit');
+            if (pressedBackdrop && e.target === els.confirm && !submitting) els.confirm.close('edit');
             pressedBackdrop = false;
         });
         els.confirm.addEventListener('close', onConfirmClosed);
@@ -812,19 +835,23 @@
         if (submitting) return;
         payload.elapsedMs = Date.now() - loadedAt;
         if (payload.elapsedMs < MIN_ELAPSED_MS) {
+            closeConfirm('edit');
             showStatus(SERVER_MESSAGES.too_fast, 'error');
             return;
         }
 
         setSubmitting(true);
+        setConfirmBusy(true);
         try {
             const data = await postOffering(payload);
             if (data.ok) {
                 clearDraft();
+                closeConfirm('sent');
                 showSuccess(payload, Boolean(data.duplicate));
                 if (typeof window.gtag === 'function') window.gtag('event', 'offering_submitted', { year });
                 return;
             }
+            closeConfirm('failed');
             if (data.code === 'invalid' && data.field && els[data.field]) {
                 setError(data.field, data.error || SERVER_MESSAGES.invalid);
                 els[data.field].focus();
@@ -832,6 +859,7 @@
             showStatus(SERVER_MESSAGES[data.code] || data.error || 'Something went wrong. Please try again.', 'error');
         } catch (err) {
             console.warn('[Offerings] Submission failed:', err);
+            closeConfirm('failed');
             showStatus(err.code === 'timeout'
                 ? 'This is taking longer than expected. Your draft is saved — please try again.'
                 : 'We couldn’t reach the server. Your draft is saved on this device — please check your connection and try again.', 'error');
@@ -850,29 +878,19 @@
             : `Thank you, ${payload.name}. Your offering will join the garland as soon as the sevaks have read it.`;
         els.doneRead.href = `offerings.html?year=${year}`;
 
-        const reveal = () => {
-            els.form.hidden = true;
-            els.notice.hidden = true;
-            els.done.hidden = false;
-            els.done.classList.remove('is-offered');
-            void els.done.offsetWidth;
-            els.done.classList.add('is-offered');
-            els.done.scrollIntoView({ behavior: VP.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-            els.done.focus({ preventScroll: true });
-        };
-
-        if (VP.prefersReducedMotion()) {
-            reveal();
-        } else {
-            els.form.classList.add('is-sending');
-            setTimeout(reveal, 520);
-        }
+        els.form.hidden = true;
+        els.notice.hidden = true;
+        els.done.hidden = false;
+        els.done.classList.remove('is-offered');
+        void els.done.offsetWidth;
+        els.done.classList.add('is-offered');
+        els.done.scrollIntoView({ behavior: VP.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+        els.done.focus({ preventScroll: true });
     }
 
     function writeAnother() {
         els.offering.value = '';
         els.consent.checked = false;
-        els.form.classList.remove('is-sending');
         els.form.hidden = false;
         els.done.hidden = true;
         els.done.classList.remove('is-offered');

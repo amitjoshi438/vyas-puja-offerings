@@ -628,9 +628,22 @@
 }
 .form-status[data-kind='error'] { color: var(--kumkum); font-weight: 500; }
 
-/* Sending away */
-.letter-form.is-sending .sheet { animation: sendAway .5s cubic-bezier(.5, 0, .75, 0) forwards; }
-.letter-form.is-sending .envelope { animation: fadeAway .35s ease-in forwards; }
+/* The offering is on its way: the dialog stays, with a quiet moving line above the buttons */
+.confirm.is-sending { cursor: progress; }
+.confirm.is-sending .confirm-foot { position: relative; }
+.confirm.is-sending .confirm-foot::before {
+    content: '';
+    position: absolute;
+    left: clamp(1.25rem, 5vw, 2.5rem);
+    right: clamp(1.25rem, 5vw, 2.5rem);
+    top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--kumkum), transparent) -40% 0 / 40% 100% no-repeat;
+    animation: sendLine 1.1s linear infinite;
+}
+.confirm.is-sending #confirm-send svg { animation: nudge 1s ease-in-out infinite; }
+.confirm.is-sending .btn[disabled] { opacity: .8; cursor: progress; }
+.confirm.is-sending #confirm-edit[disabled] { opacity: .4; }
 
 /* ---------- A flower for the garland ---------- */
 .offer-done {
@@ -684,12 +697,12 @@
 .offer-done.is-offered .ga-petals ellipse:nth-child(3) { animation-delay: 4.7s; }
 
 .offer-done > :not(.garland-art) { opacity: 0; }
-.offer-done.is-offered > :not(.garland-art) { animation: rise .8s var(--ease-out) forwards; }
-.offer-done.is-offered > .kicker { animation-delay: 1.3s; }
-.offer-done.is-offered > .done-title { animation-delay: 1.4s; }
-.offer-done.is-offered > .done-text { animation-delay: 1.5s; }
-.offer-done.is-offered > .done-card { animation-name: cardIn; animation-delay: 1.65s; }
-.offer-done.is-offered > .done-actions { animation-delay: 1.8s; }
+.offer-done.is-offered > :not(.garland-art) { animation: rise .6s var(--ease-out) forwards; }
+.offer-done.is-offered > .kicker { animation-delay: .3s; }
+.offer-done.is-offered > .done-title { animation-delay: .4s; }
+.offer-done.is-offered > .done-text { animation-delay: .5s; }
+.offer-done.is-offered > .done-card { animation-name: cardIn; animation-delay: .6s; }
+.offer-done.is-offered > .done-actions { animation-delay: .75s; }
 
 .done-title {
     margin-top: .7rem;
@@ -997,8 +1010,7 @@ html.confirm-open { overflow: hidden; }
 
 /* ---------- Keyframes ---------- */
 @keyframes statusPulse { 0% { box-shadow: 0 0 0 0 rgba(143, 208, 122, .6); } 80%, 100% { box-shadow: 0 0 0 8px rgba(143, 208, 122, 0); } }
-@keyframes sendAway { to { opacity: 0; transform: translateY(-40px) rotate(-1.5deg) scale(.96); } }
-@keyframes fadeAway { to { opacity: 0; transform: translateY(10px); } }
+@keyframes sendLine { to { background-position: 140% 0; } }
 @keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
 @keyframes threadIn { to { stroke-dashoffset: 0; } }
 @keyframes fadeIn { to { opacity: 1; } }
@@ -1058,4 +1070,5 @@ html.confirm-open { overflow: hidden; }
 /* The garland arrives in order; without motion, show the finished state straight away */
 @media (prefers-reduced-motion: reduce) {
     .offer-done *, .offer-done > * { animation-delay: 0s !important; }
+    .confirm.is-sending .confirm-foot::before { background-size: 100% 100%; background-position: 0 0; animation: none; opacity: .6; }
 }
