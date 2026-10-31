@@ -1007,6 +1007,140 @@ button { cursor: pointer; background: none; border: 0; }
     margin-top: 2rem;
 }
 
+/* Book covers: a portrait on a maroon board, with a spine, a gold rule, a lotus and a ribbon.
+   Shared by the home page and books.html. */
+.book-cover {
+    --spine: 12px;
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    border-radius: 3px 8px 8px 3px;
+    background: var(--night-2);
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .3) inset, 0 2px 4px rgba(42, 25, 16, .3), 0 26px 32px -18px rgba(42, 25, 16, .75);
+    transform-origin: 0 60%;
+    transition: transform .6s var(--ease-out), box-shadow .5s ease;
+}
+.book-cover img { width: 100%; height: 100%; object-fit: cover; }
+.book-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--spine);
+    z-index: 3;
+    background: linear-gradient(90deg, rgba(18, 5, 3, .7), rgba(18, 5, 3, .2) 50%, rgba(255, 244, 220, .22) 66%, rgba(18, 5, 3, .1));
+}
+.book-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, transparent 56%, rgba(44, 11, 9, .66));
+    pointer-events: none;
+}
+.book-frame {
+    position: absolute;
+    inset: 9px 9px 9px calc(var(--spine) + 7px);
+    z-index: 2;
+    border: 1px solid rgba(242, 209, 140, .65);
+    pointer-events: none;
+}
+.book-frame::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 14%;
+    aspect-ratio: 3 / 2;
+    transform: translateX(-50%);
+    background: var(--gold-2);
+    -webkit-mask: var(--lotus) center / contain no-repeat;
+    mask: var(--lotus) center / contain no-repeat;
+}
+.book-ribbon {
+    position: absolute;
+    top: -1px;
+    right: 14%;
+    z-index: 3;
+    width: 9%;
+    aspect-ratio: 1 / 2.5;
+    background: linear-gradient(90deg, #8c1b14, var(--kumkum) 45%, #c7342a);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+}
+a:hover > .book-cover, a:focus-visible > .book-cover, .book-cover:hover {
+    transform: perspective(1100px) rotateY(-10deg) translateY(-6px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .3) inset, 0 2px 4px rgba(42, 25, 16, .3), 0 38px 40px -20px rgba(42, 25, 16, .8);
+}
+
+/* Years band: the books of earlier years, below the year cards */
+.years-books {
+    position: relative;
+    margin-top: clamp(3.5rem, 7vw, 5rem);
+}
+.years-books .lotus-rule { color: var(--kumkum-2); margin-bottom: 3rem; }
+.yb-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    align-items: center;
+    gap: 2.5rem clamp(1.5rem, 4vw, 4rem);
+}
+.yb-text h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2rem, 3.6vw, 2.9rem);
+    line-height: 1.04;
+    letter-spacing: -.015em;
+    color: var(--ink);
+    text-wrap: balance;
+}
+.yb-text h3 em { font-family: var(--font-read); font-weight: 300; color: var(--kumkum-2); }
+.yb-text p { max-width: 26rem; margin: 1.1rem 0 1.9rem; color: var(--ink-2); font-size: 1.12rem; line-height: 1.65; }
+.yb-text .btn-ghost { --btn-fg: var(--ink); border-color: rgba(42, 25, 16, .55); }
+.yb-text .btn-ghost:hover { --btn-bg: var(--ink); --btn-fg: var(--paper-hi); }
+.yb-row {
+    --bw: clamp(130px, 16vw, 200px);
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem clamp(1.1rem, 3vw, 2.6rem);
+}
+.yb-row li { width: var(--bw); }
+.yb-book { display: block; text-decoration: none; color: var(--ink); }
+.yb-book .book-cover { margin-inline: auto; }
+.yb-book strong {
+    display: block;
+    margin-top: 1.1rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1;
+    letter-spacing: -.02em;
+    color: var(--kumkum-2);
+    transition: color .3s ease;
+}
+.yb-book small {
+    display: block;
+    margin-top: .35rem;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: .74rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+}
+.yb-book:hover strong { color: var(--kumkum); }
+@media (max-width: 960px) {
+    .yb-layout { grid-template-columns: 1fr; text-align: center; }
+    .yb-text p { margin-inline: auto; }
+    .yb-row { --bw: clamp(150px, 26vw, 200px); }
+}
+@media (max-width: 560px) {
+    .yb-row { gap: 2rem 1.2rem; }
+    .yb-row li { width: calc(50% - .6rem); }
+}
+
 /* About: one calm centred column */
 .about-inner { max-width: 46rem; text-align: center; }
 .about-quote { position: relative; }
@@ -1174,4 +1308,5 @@ button { cursor: pointer; background: none; border: 0; }
     }
     .name-track { animation: none; }
     .name-strip { overflow-x: auto; }
+    a:hover > .book-cover, a:focus-visible > .book-cover, .book-cover:hover { transform: none; }
 }

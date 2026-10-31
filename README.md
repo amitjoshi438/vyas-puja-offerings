@@ -8,10 +8,11 @@ Live at **[garlandofgratitude.co.in](https://garlandofgratitude.co.in)**. It is 
 
 | Page | What it does |
 |---|---|
-| `index.html` | Home page: a temple-sanctum hero titled "Garland of Gratitude", with Maharaj seated between two garlanded pillars, festoons of roses and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, and the year-by-year archive. |
+| `index.html` | Home page: a temple-sanctum hero titled "Garland of Gratitude", with Maharaj seated between two garlanded pillars, festoons of roses and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, the year-by-year archive and the books of earlier years. |
 | `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
 | `offer.html` | **Write your offering.** The draft is saved on the device as you type. The devotee signs with their initiated name, or their official name if not initiated. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. The form is validated and protected against spam. Before anything is sent, the devotee sees the offering as it will be published and confirms it; then they see a thank-you. If no endpoint is configured, the page explains that offerings are not open yet. |
 | `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
+| `books.html` | **Books of earlier years** (2021, 2023 and 2024). Each book has a cover, its page count and file size, and buttons to read it online or download the PDF. Links such as `books.html#book-2023` open on that book. The home page shows the same covers beneath the year cards. |
 
 ## How it fits together
 
@@ -28,18 +29,19 @@ offer.html ──POST──▶ Google Apps Script ──▶ Google Sheet  (moder
 ## Project structure
 
 ```
-├── index.html, offerings.html, offer.html, lectures.html
+├── index.html, offerings.html, offer.html, lectures.html, books.html
 ├── scripts/
-│   ├── config.js        # years, endpoint URL, field limits
+│   ├── config.js        # years, books, endpoint URL, field limits
 │   ├── common.js        # shared helpers (window.VP): data loading, header, reveal animations
-│   ├── home.js          # home page: sanctum garlands (canvas), counts, strip of names
+│   ├── home.js          # home page: sanctum garlands (canvas), counts, strip of names, books
 │   ├── offerings.js     # browse, search, filter, reader
 │   ├── offer.js         # submission form
 │   ├── places.js        # country/town search and the dropdowns on the form
-│   └── lectures.js      # lecture series
+│   ├── lectures.js      # lecture series
+│   └── books.js         # books of earlier years
 ├── styles/
-│   ├── main.css         # design system (tokens, type, header/footer, buttons) + home page
-│   ├── offerings.css, offer.css, lectures.css
+│   ├── main.css         # design system (tokens, type, header/footer, buttons, book covers) + home page
+│   ├── offerings.css, offer.css, lectures.css, books.css
 ├── data/
 │   ├── 2025/offerings.json     # archived offerings (75th Vyasa Puja)
 │   ├── lectures/               # lecture index + per-series JSON
@@ -48,7 +50,7 @@ offer.html ──POST──▶ Google Apps Script ──▶ Google Sheet  (moder
 ├── tools/book/                 # optional Node tool: print-ready PDF book of a year's offerings
 ├── tools/places/               # Node script that generates data/places/
 ├── .github/workflows/          # "Offerings book": builds that PDF on GitHub on demand
-├── assets/                     # images, favicon, PDFs
+├── assets/                     # images (including book covers), favicon, PDFs (books, lecture booklet)
 └── CNAME                       # custom domain for GitHub Pages
 ```
 
@@ -93,6 +95,17 @@ years: [
 4. Add the next year at the top of `years`.
 
 See [data/README.md](data/README.md) for the file formats.
+
+## Adding a book of an earlier year
+
+The books on `books.html` (and under the year cards on the home page) come from `books` in `scripts/config.js`, newest first. To add one:
+
+1. Save the PDF as `assets/pdfs/offerings-YYYY.pdf`.
+2. Save a 3:4 portrait of Maharaj (no lettering) as `assets/images/books/YYYY.webp`, about 600 × 800 px.
+3. Add an entry to `books`: `{ year, pages, size, file, cover }`.
+4. Bump the `?v=` on `config.js` in every page that loads it.
+
+GitHub rejects files over 100 MB. If a PDF from a layout tool is that large, the cause is often an oversized accessibility tag tree rather than the pages themselves: removing the structure tree (for example with PyMuPDF) took the 2023 book from 124 MB to 8 MB with identical pages.
 
 ## Printing the offerings book
 

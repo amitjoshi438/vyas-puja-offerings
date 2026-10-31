@@ -1,5 +1,5 @@
 // ============================================
-// Home page: the sanctum garlands, stats, names strip, year cards
+// Home page: the sanctum garlands, stats, names strip, year cards, books of earlier years
 // Festoons of flowers hang across the top of the hero, two garlanded pillars flank Maharaj, and he
 // sits behind a row of flowers. Every flower stands for one of the most recent offerings.
 // ============================================
@@ -23,6 +23,7 @@
 
     async function init() {
         renderYearCards(null);
+        renderBooksRow();
         renderSubmissionStatus();
         const garland = createGarland(renderGarlandNote);
 
@@ -190,6 +191,28 @@
         wrap.innerHTML = cards.join('');
         if (wasVisible) wrap.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-visible'));
         else VP.initReveal(wrap);
+    }
+
+    // ---------- Books of earlier years ----------
+    function renderBooksRow() {
+        const block = document.getElementById('years-books');
+        const row = document.getElementById('books-row');
+        const books = ((VP.config && VP.config.books) || []).slice().sort((a, b) => b.year - a.year);
+        if (!block || !row || !books.length) return;
+        row.innerHTML = books.map((b, i) => `
+            <li data-reveal style="--reveal-delay:${(i * 0.08).toFixed(2)}s">
+                <a class="yb-book" href="books.html#book-${b.year}" aria-label="Offerings of ${b.year}, a book of ${VP.formatNumber(b.pages)} pages">
+                    <span class="book-cover">
+                        <img src="${VP.escapeHtml(b.cover)}" alt="" width="600" height="800" loading="lazy" decoding="async">
+                        <span class="book-frame" aria-hidden="true"></span>
+                        <span class="book-ribbon" aria-hidden="true"></span>
+                    </span>
+                    <strong>${b.year}</strong>
+                    <small>${VP.formatNumber(b.pages)} pages</small>
+                </a>
+            </li>`).join('');
+        block.hidden = false;
+        VP.initReveal(block);
     }
 
     // ---------- What the garlands tell everyone ----------

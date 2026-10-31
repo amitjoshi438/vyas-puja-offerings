@@ -185,7 +185,7 @@ The zip only contains committed work, so commit first.
 
 ## 📊 Analytics
 
-Google Analytics (`G-CS3RYDL2F6`) is already included in the `<head>` of all four pages (`index.html`, `offerings.html`, `offer.html`, `lectures.html`). Each successful submission also sends an `offering_submitted` event. To use a different property, replace the ID in all four files:
+Google Analytics (`G-CS3RYDL2F6`) is already included in the `<head>` of all five pages (`index.html`, `offerings.html`, `offer.html`, `lectures.html`, `books.html`). Each successful submission also sends an `offering_submitted` event. To use a different property, replace the ID in all five files:
 
 ```html
 <!-- Google Analytics -->
@@ -221,6 +221,7 @@ Until step 2 is done, the site works exactly as before: the archive is readable,
 - [ ] **Offer yours**: draft is kept after a reload; validation messages; a test offering reaches the sheet
 - [ ] A test offering appears on **Read offerings** after ticking **Approved**, and disappears after unticking
 - [ ] **Lectures**: days, topics expand, PDF opens
+- [ ] **Books**: all three covers load, **Read online** and **Download** work for each PDF, and the covers on the home page open the right book
 - [ ] Mobile layout (≈375px wide) and keyboard-only navigation
 - [ ] `scripts/config.js`: `currentYear`, `submissionsOpen` and `closesOn` are correct for this season
 

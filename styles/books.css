@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Books — the offerings of earlier years, each one a book to open
+   The cover itself (.book-cover) lives in main.css, because the home page shows it too.
+   ========================================================================== */
+
+.books-hero .page-title {
+    max-width: 15ch;
+    font-size: clamp(2.6rem, 6.4vw, 4.8rem);
+    line-height: 1;
+    text-wrap: balance;
+}
+
+.books-section { padding: clamp(3.5rem, 7vw, 5.5rem) 0 clamp(3.5rem, 7vw, 5rem); }
+
+.book-list {
+    --bw: clamp(200px, 27vw, 300px);
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(3rem, 6vw, 4.5rem) clamp(1.6rem, 3.5vw, 3rem);
+    max-width: 1060px;
+    margin: 0 auto;
+}
+.books-empty { width: 100%; text-align: center; font-style: italic; color: var(--ink-2); }
+
+.book {
+    width: var(--bw);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+.book .book-cover { width: 100%; }
+.book:hover .book-cover {
+    transform: perspective(1100px) rotateY(-10deg) translateY(-6px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .3) inset, 0 2px 4px rgba(42, 25, 16, .3), 0 38px 40px -20px rgba(42, 25, 16, .8);
+}
+
+.book-body { margin-top: 1.9rem; width: 100%; }
+.book-eyebrow { font-style: italic; font-size: 1.15rem; color: var(--ink-2); }
+.book-year {
+    margin-top: .15rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3.8rem, 6vw, 4.8rem);
+    line-height: .95;
+    letter-spacing: -.03em;
+    color: var(--kumkum-2);
+    transition: color .4s ease;
+}
+.book:hover .book-year, .book.is-target .book-year { color: var(--kumkum); }
+.book-meta {
+    margin-top: .85rem;
+    font-family: var(--font-ui);
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+}
+.book-actions {
+    display: grid;
+    gap: .7rem;
+    width: min(100%, 260px);
+    margin: 1.5rem auto 0;
+}
+.book-actions .btn { width: 100%; }
+
+/* A link such as books.html#book-2023 lights the cover it points to */
+.book.is-target .book-cover {
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--gold), 0 2px 4px rgba(42, 25, 16, .3), 0 38px 40px -20px rgba(42, 25, 16, .8);
+}
+
+.books-tip {
+    max-width: 38rem;
+    margin: clamp(3rem, 6vw, 4.5rem) auto 0;
+    padding-top: 1.6rem;
+    border-top: 1px solid rgba(179, 134, 46, .45);
+    text-align: center;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--ink-2);
+}
+.books-tip .keys { white-space: nowrap; }
+.books-tip kbd {
+    padding: .05em .5em;
+    font-family: var(--font-ui);
+    font-size: .8em;
+    border: 1px solid var(--paper-edge);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    background: var(--paper-hi);
+    color: var(--ink);
+}
+
+.books-cta { padding: clamp(3.5rem, 7vw, 5rem) 0; }
+.books-cta .section-title { max-width: 20ch; }
+
+@media (max-width: 460px) {
+    .book-list { --bw: min(100%, 300px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .book:hover .book-cover { transform: none; }
+}

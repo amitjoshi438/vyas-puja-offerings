@@ -34,6 +34,14 @@ window.VYASA_CONFIG = {
         }
     ],
 
+    // Books of earlier years, newest first (shown on books.html and on the home page).
+    // To add one: put the PDF in assets/pdfs/, a 3:4 portrait in assets/images/books/, then add an entry here.
+    books: [
+        { year: 2024, pages: 746, size: '12.4 MB', file: 'assets/pdfs/offerings-2024.pdf', cover: 'assets/images/books/2024.webp' },
+        { year: 2023, pages: 664, size: '7.9 MB',  file: 'assets/pdfs/offerings-2023.pdf', cover: 'assets/images/books/2023.webp' },
+        { year: 2021, pages: 501, size: '14 MB',   file: 'assets/pdfs/offerings-2021.pdf', cover: 'assets/images/books/2021.webp' }
+    ],
+
     limits: {
         nameMax: 120,
         cityMax: 120,
