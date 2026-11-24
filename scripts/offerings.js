@@ -32,7 +32,7 @@
             'year-tabs', 'hero-kicker', 'hero-lede', 'search', 'search-clear', 'country-filter', 'city-filter',
             'random-btn', 'results-count', 'reset-filters', 'notice', 'letters', 'letters-state', 'load-more',
             'load-more-btn', 'sentinel', 'reader', 'reader-pos', 'reader-share', 'reader-close', 'reader-paper',
-            'reader-kicker', 'reader-text', 'reader-name', 'reader-place', 'reader-prev', 'reader-next', 'toast'
+            'reader-kicker', 'reader-image', 'reader-text', 'reader-name', 'reader-place', 'reader-prev', 'reader-next', 'toast'
         ].forEach(id => { els[id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = document.getElementById(id); });
 
         const params = new URLSearchParams(location.search);
@@ -345,15 +345,21 @@
         return out + VP.escapeHtml(text.slice(last));
     }
 
+    const PEN_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11 2.5 13.5 5 5.5 13H3v-2.5L11 2.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+
     function letterHtml(o, index) {
         const q = key(state.query);
         const place = VP.formatLocation(o);
         const no = String(index + 1).padStart(4, '0');
         const words = o.text ? o.text.split(/\s+/).length : 0;
+        const meta = o.hasImage ? `<span class="letter-hand">${PEN_ICON}Handwritten</span>` : (words ? `${VP.formatNumber(words)} words` : '');
+        const body = o.text
+            ? `<span class="letter-text">${highlight(excerptFor(o.text, q), q)}</span>`
+            : `<span class="letter-text is-hand">${o.hasImage ? 'A handwritten offering. Open it to see the page.' : ''}</span>`;
         return `
             <button type="button" class="letter" data-index="${index}" aria-haspopup="dialog" aria-label="Read the offering from ${VP.escapeHtml(o.name)}">
-                <span class="letter-top"><span class="letter-no">№ ${no}</span><span class="letter-len">${words ? `${VP.formatNumber(words)} words` : ''}</span></span>
-                <span class="letter-text">${highlight(excerptFor(o.text || '', q), q)}</span>
+                <span class="letter-top"><span class="letter-no">№ ${no}</span><span class="letter-len">${meta}</span></span>
+                ${body}
                 <span class="letter-sign">
                     <b>${highlight(o.name, q)}</b>
                     ${place ? `<small>${highlight(place, q)}</small>` : ''}
@@ -448,11 +454,42 @@
             .join('');
     }
 
+    // A handwritten page is fetched when its offering is opened, and shown above any typed words.
+    function renderReaderImage(o) {
+        const box = els.readerImage;
+        if (!box) return;
+        if (!o.hasImage) {
+            box.hidden = true;
+            box.innerHTML = '';
+            return;
+        }
+        const stillShowing = () => {
+            const current = state.filtered[state.readerIndex];
+            return Boolean(current) && current.id === o.id;
+        };
+        box.hidden = false;
+        box.innerHTML = '<div class="reader-image-state" role="status"><div class="spinner" aria-hidden="true"></div><p>Opening the handwritten page…</p></div>';
+        VP.loadOfferingImage(o).then(url => {
+            if (!stillShowing()) return;
+            box.innerHTML = `
+                <a class="reader-image-link" href="${url}" target="_blank" rel="noopener" tabindex="-1">
+                    <img src="${url}" alt="Handwritten offering from ${VP.escapeHtml(o.name)}">
+                </a>
+                <figcaption><a href="${url}" target="_blank" rel="noopener">Open the page full size<span class="sr-only"> (opens in a new tab)</span></a></figcaption>`;
+        }).catch(() => {
+            if (!stillShowing()) return;
+            box.innerHTML = '<div class="reader-image-state"><p>The handwritten page couldn’t be opened just now.</p><button type="button" class="reader-image-retry">Try again</button></div>';
+            box.querySelector('button').addEventListener('click', () => renderReaderImage(o));
+        });
+    }
+
     function fillReader() {
         const o = state.filtered[state.readerIndex];
         if (!o) return;
         els.readerKicker.textContent = `Offering · ${o.year}`;
+        renderReaderImage(o);
         els.readerText.innerHTML = paragraphs(o.text || '');
+        els.readerText.hidden = !o.text;
         els.readerName.textContent = o.name;
         els.readerPlace.textContent = VP.formatLocation(o);
         els.readerPos.textContent = `${VP.formatNumber(state.readerIndex + 1)} of ${VP.formatNumber(state.filtered.length)}`;

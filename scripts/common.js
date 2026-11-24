@@ -85,8 +85,30 @@
             country: pick(['country', 'Country'], cleanLine),
             text,
             year: Number(year),
-            submittedAt: raw.submittedAt || null
+            submittedAt: raw.submittedAt || null,
+            hasImage: raw.hasImage === true
         };
+    }
+
+    // ---------- Handwritten offerings (images) ----------
+    // The image is fetched from the Apps Script only when someone opens that offering, and kept for next time.
+    const imageCache = new Map();
+
+    function loadOfferingImage(offering) {
+        if (!offering || !offering.hasImage || !hasEndpoint()) return Promise.reject(new Error('No image'));
+        if (imageCache.has(offering.id)) return imageCache.get(offering.id);
+        const url = `${config.submissionEndpoint.trim()}?action=image&id=${encodeURIComponent(offering.id)}`;
+        const pending = fetchJson(url, { timeout: 45000 }).then(data => {
+            if (!data || data.ok !== true || typeof data.data !== 'string') throw new Error((data && data.error) || 'Unexpected response');
+            const bin = atob(data.data);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return URL.createObjectURL(new Blob([bytes], { type: data.mime || 'image/jpeg' }));
+        });
+        imageCache.set(offering.id, pending);
+        // A failed attempt must not be remembered, so the reader can try again.
+        pending.catch(() => imageCache.delete(offering.id));
+        return pending;
     }
 
     function compareByName(a, b) {
@@ -229,6 +251,7 @@
         loadYear,
         loadAllYears,
         offeringUrl,
+        loadOfferingImage,
         escapeHtml,
         ordinal,
         formatNumber,

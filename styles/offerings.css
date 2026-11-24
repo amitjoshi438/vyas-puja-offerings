@@ -246,6 +246,13 @@
 }
 .letter-no { color: var(--kumkum); }
 .letter-len { color: var(--ink-3); }
+.letter-hand {
+    display: inline-flex;
+    align-items: center;
+    gap: .4em;
+    color: var(--kumkum-2);
+}
+.letter-hand svg { width: 1.15em; height: 1.15em; }
 
 .letter-text {
     display: block;
@@ -267,6 +274,18 @@
     line-height: .78;
     margin: .2rem .45rem 0 0;
     color: var(--kumkum);
+}
+
+.letter-text.is-hand {
+    font-style: italic;
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+.letter-text.is-hand::first-letter {
+    float: none;
+    font: inherit;
+    margin: 0;
+    color: inherit;
 }
 
 .letter-sign {
@@ -459,6 +478,38 @@ html.reader-open { overflow: hidden; }
     color: var(--kumkum);
 }
 .reader-head .lotus-rule { max-width: 260px; margin: 0 auto; }
+
+/* A handwritten page, shown at the width of the letter */
+.reader-image { margin: 0 0 2rem; text-align: center; }
+.reader-image[hidden] { display: none; }
+.reader-image img {
+    display: inline-block;
+    max-width: 100%;
+    max-height: 80vh;
+    padding: .5rem;
+    background: #fff;
+    border: 1px solid var(--paper-edge);
+    box-shadow: var(--shadow-paper);
+}
+.reader-image figcaption { margin-top: .8rem; font-family: var(--font-ui); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; }
+.reader-image figcaption a { color: var(--kumkum); }
+.reader-image figcaption a:hover { color: var(--ink); }
+.reader-image-state { display: grid; justify-items: center; gap: .8rem; padding: 2.5rem 1rem; color: var(--ink-3); font-style: italic; }
+.reader-image-retry {
+    min-height: 44px;
+    padding: .5rem 1.1rem;
+    font-family: var(--font-ui);
+    font-style: normal;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--kumkum);
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+}
+.reader-image-retry:hover { background: var(--kumkum); border-color: var(--kumkum); color: var(--paper-hi); }
+.reader-text[hidden] { display: none; }
 
 .reader-text {
     font-size: clamp(1.1rem, 1.6vw, 1.22rem);

@@ -23,6 +23,10 @@ const CONFIG = {
   CACHE_SECONDS: 900,        // how long the published list is cached (changes in the sheet clear it)
   MIN_ELAPSED_MS: 3000,      // offerings sent sooner than this after opening the page are treated as bots
   RATE_LIMIT: { MAX: 5, WINDOW_SECONDS: 600 },  // per name + city
+  IMAGE_UPLOADS: true,       // accept one handwritten letter or artwork with an offering (saved to a private Drive folder)
+  IMAGE_MAX_BYTES: 1536 * 1024,   // the website sends about 700 KB; anything over this is refused
+  IMAGE_DAILY_MAX: 150,      // most images accepted per day (script time zone), as a guard against spam
+  IMAGE_FOLDER_NAME: 'Vyasa Puja offering images',
   LIMITS: {                  // keep in sync with `limits` in scripts/config.js
     nameMax: 120,
     cityMax: 120,
@@ -38,7 +42,9 @@ const HEADERS = ['Timestamp', 'Year', 'Name', 'City', 'Country', 'Email', 'Offer
 const COL = HEADERS.reduce((map, h, i) => { map[h.toLowerCase()] = i + 1; return map; }, {});
 
 const CACHE_CHUNK_CHARS = 25000;   // CacheService values are capped at 100 KB (UTF-8)
-const MAX_BODY_CHARS = 100000;
+const MAX_BODY_CHARS = 100000;                 // a request without an image
+const MAX_IMAGE_BODY_CHARS = 2300000;          // a request with an image (base64 is about 4/3 of the bytes)
+const IMAGE_HEADER = 'Image';                  // header of the column that holds each offering's image link
 const UNLISTED_CITY_NOTE = 'City typed by the devotee (not in the town list) — check the spelling.';
 
 // ============================================
@@ -55,6 +61,7 @@ function doGet(e) {
       const offerings = cachedList_(year);
       return json_({ ok: true, year, count: offerings.length, offerings });
     }
+    if (p.action === 'image') return json_(imageResponse_(String(p.id || '')));
     return json_({
       ok: true,
       service: 'vyasa-puja-offerings',
@@ -100,7 +107,10 @@ function handleSubmit_(p) {
     };
   }
 
-  const fingerprint = sha256_([CONFIG.CURRENT_YEAR, o.name.toLowerCase(), o.offering.replace(/\s+/g, ' ').toLowerCase()].join('|'));
+  const fingerprintParts = [CONFIG.CURRENT_YEAR, o.name.toLowerCase(), o.offering.replace(/\s+/g, ' ').toLowerCase()];
+  // An offering that is only a picture has no text to tell it apart, so the picture counts too.
+  if (o.image) fingerprintParts.push(o.image.hash);
+  const fingerprint = sha256_(fingerprintParts.join('|'));
   const rateKey = 'rl:' + sha256_([o.name.toLowerCase(), o.city.toLowerCase()].join('|')).slice(0, 40);
   const cache = CacheService.getScriptCache();
 
@@ -114,9 +124,16 @@ function handleSubmit_(p) {
 
     const sent = Number(cache.get(rateKey)) || 0;
     if (sent >= CONFIG.RATE_LIMIT.MAX) return { ok: false, code: 'rate_limited' };
+    if (o.image && !takeImageSlot_()) return { ok: false, code: 'image_limit' };
 
     id = newId_();
-    appendOffering_(sheet, o, id, fingerprint);
+    const file = o.image ? saveImage_(id, o.image.bytes) : null;
+    try {
+      appendOffering_(sheet, o, id, fingerprint, file);
+    } catch (err) {
+      if (file) file.setTrashed(true);
+      throw err;
+    }
     cache.put(rateKey, String(sent + 1), CONFIG.RATE_LIMIT.WINDOW_SECONDS);
   } finally {
     lock.releaseLock();
@@ -138,8 +155,16 @@ function validate_(p) {
   };
   const fail = (field, error) => ({ field, error });
 
-  if (!v.offering) return fail('offering', 'Please write your offering.');
-  if (v.offering.length < L.offeringMin) return fail('offering', `A few more words, please — at least ${L.offeringMin} characters.`);
+  // A picture of a handwritten letter or artwork can be the offering itself.
+  if (p.image) {
+    if (!CONFIG.IMAGE_UPLOADS) return fail('image', 'Images aren’t being accepted right now. Please send your offering as typed words.');
+    const decoded = decodeImage_(p.image);
+    if (decoded.error) return fail('image', decoded.error);
+    v.image = decoded.value;
+  }
+
+  if (!v.offering && !v.image) return fail('offering', 'Please write your offering.');
+  if (!v.image && v.offering.length < L.offeringMin) return fail('offering', `A few more words, please — at least ${L.offeringMin} characters.`);
   if (v.offering.length > L.offeringMax) return fail('offering', `Please keep your offering under ${L.offeringMax} characters.`);
   if (v.name.length < 2) return fail('name', 'Please sign with your name.');
   if (v.name.length > L.nameMax) return fail('name', `Please keep your name under ${L.nameMax} characters.`);
@@ -149,11 +174,32 @@ function validate_(p) {
   v.country = canonicalCountry_(v.country);
   if (!v.country) return fail('country', 'Please choose your country from the list.');
   if (v.email && (!isEmail_(v.email) || v.email.length > L.emailMax)) return fail('email', 'This email doesn’t look quite right — or leave it empty.');
+  if (v.image && p.imageConsent !== true && p.imageConsent !== 'true') return fail('imageConsent', 'Please confirm that the image is your own, so we can publish it.');
   if (p.consent !== true && p.consent !== 'true') return fail('consent', 'Please confirm so we can publish your offering.');
   return { value: v };
 }
 
-function appendOffering_(sheet, o, id, fingerprint) {
+// The website sends one JPEG, already shrunk in the browser. Check it really is one.
+function decodeImage_(img) {
+  const tooBig = { error: 'This image is too large. Please choose a smaller one.' };
+  const data = img && typeof img.data === 'string' ? img.data : '';
+  if (!data) return { error: 'We couldn’t read this image. Please choose it again.' };
+  if (data.length > Math.ceil(CONFIG.IMAGE_MAX_BYTES / 3) * 4 + 8) return tooBig;
+  let bytes;
+  try {
+    bytes = Utilities.base64Decode(data);
+  } catch (_) {
+    return { error: 'We couldn’t read this image. Please choose it again.' };
+  }
+  const n = bytes.length;
+  if (n > CONFIG.IMAGE_MAX_BYTES) return tooBig;
+  // Apps Script bytes are signed: 0xFF is -1, 0xD8 is -40 and 0xD9 is -39.
+  const isJpeg = n > 1024 && bytes[0] === -1 && bytes[1] === -40 && bytes[2] === -1 && bytes[n - 2] === -1 && bytes[n - 1] === -39;
+  if (!isJpeg) return { error: 'Please choose a JPG, PNG or WebP image.' };
+  return { value: { bytes, hash: sha256_(data).slice(0, 16) } };
+}
+
+function appendOffering_(sheet, o, id, fingerprint, imageFile) {
   const row = sheet.getLastRow() + 1;
   if (row > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), 100);
 
@@ -176,6 +222,12 @@ function appendOffering_(sheet, o, id, fingerprint) {
     o.cityListed ? '' : UNLISTED_CITY_NOTE
   ]]);
   sheet.getRange(row, COL.approved).insertCheckboxes();
+
+  if (imageFile) {
+    // The link is ours (a Drive URL), so a formula is safe here. A moderator clears the cell to take the image off the website.
+    const col = imageCol_(sheet, true);
+    sheet.getRange(row, col).setFormula(`=HYPERLINK("${imageFile.getUrl()}","View image")`);
+  }
 }
 
 function findByFingerprint_(sheet, fingerprint) {
@@ -191,7 +243,7 @@ function findByFingerprint_(sheet, fingerprint) {
 function notify_(o, id) {
   if (!CONFIG.NOTIFY_EMAIL) return;
   try {
-    const excerpt = o.offering.length > 600 ? o.offering.slice(0, 600) + '…' : o.offering;
+    const excerpt = !o.offering ? '(No typed words — the offering is the image.)' : o.offering.length > 600 ? o.offering.slice(0, 600) + '…' : o.offering;
     const options = {
       to: CONFIG.NOTIFY_EMAIL,
       subject: `New Vyasa Puja offering — ${o.name}, ${o.city}`,
@@ -199,6 +251,7 @@ function notify_(o, id) {
       body: [
         `${o.name} (${o.city}, ${o.country}) has placed an offering. It is waiting for approval.`,
         o.cityListed ? '' : `\nThe city "${o.city}" was typed in by hand (it isn't in the town list) — please check its spelling.\n`,
+        o.image ? '\nA handwritten letter or artwork came with it. Open the "Image" column in the sheet to look at it.\n' : '',
         excerpt,
         '',
         `Id: ${id}`,
@@ -219,23 +272,27 @@ function listApproved_(year) {
   const sheet = getSheet_();
   const last = sheet.getLastRow();
   if (last < 2) return [];
-  const rows = sheet.getRange(2, 1, last - 1, HEADERS.length).getValues();
+  const imgCol = imageCol_(sheet, false);
+  const rows = sheet.getRange(2, 1, last - 1, Math.max(HEADERS.length, imgCol)).getValues();
   const out = [];
   rows.forEach(r => {
     if (!isApproved_(r[COL.approved - 1])) return;
     if ((Number(r[COL.year - 1]) || CONFIG.CURRENT_YEAR) !== year) return;
     const name = oneLine_(unsafeCell_(r[COL.name - 1]));
     const offering = multiLine_(unsafeCell_(r[COL.offering - 1]));
-    if (!name && !offering) return;
+    const hasImage = CONFIG.IMAGE_UPLOADS && imgCol > 0 && String(r[imgCol - 1] || '').trim() !== '';
+    if (!name && !offering && !hasImage) return;
     const ts = r[COL.timestamp - 1];
-    out.push({
+    const item = {
       id: String(r[COL.id - 1] || '').trim() || 'h' + sha256_(name + '|' + offering).slice(0, 12),
       name,
       city: oneLine_(unsafeCell_(r[COL.city - 1])),
       country: oneLine_(unsafeCell_(r[COL.country - 1])),
       offering,
       submittedAt: isDate_(ts) ? ts.toISOString() : null
-    });
+    };
+    if (hasImage) item.hasImage = true;
+    out.push(item);
   });
   return out;
 }
@@ -290,6 +347,75 @@ function bumpListGeneration_() {
 }
 
 // ============================================
+// Images (one handwritten letter or artwork per offering)
+// Files live in a private Drive folder. The website never links to Drive: it asks this script for an
+// image, and the script answers only while that offering is approved and its "Image" cell is not empty.
+// ============================================
+function imageFolder_(create) {
+  const props = PropertiesService.getScriptProperties();
+  const known = props.getProperty('IMAGE_FOLDER_ID');
+  if (known) {
+    try { return DriveApp.getFolderById(known); } catch (err) { console.warn('Image folder not found', err); }
+  }
+  if (!create) return null;
+  const folder = DriveApp.createFolder(CONFIG.IMAGE_FOLDER_NAME);
+  props.setProperty('IMAGE_FOLDER_ID', folder.getId());
+  return folder;
+}
+
+function saveImage_(id, bytes) {
+  return imageFolder_(true).createFile(Utilities.newBlob(bytes, 'image/jpeg', id + '.jpg'));
+}
+
+// Counts today's images and refuses more than IMAGE_DAILY_MAX. Call it while holding the script lock.
+function takeImageSlot_() {
+  const props = PropertiesService.getScriptProperties();
+  const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  const parts = String(props.getProperty('IMG_DAY') || '').split(':');
+  const used = parts[0] === today ? Number(parts[1]) || 0 : 0;
+  if (used >= CONFIG.IMAGE_DAILY_MAX) return false;
+  props.setProperty('IMG_DAY', today + ':' + (used + 1));
+  return true;
+}
+
+// The "Image" column sits after Notes, wherever there is room. Looks it up by its header, so a moderator's
+// own columns are never overwritten. Returns 0 when it does not exist and `create` is false.
+function imageCol_(sheet, create) {
+  const width = Math.max(sheet.getLastColumn(), HEADERS.length);
+  const headers = sheet.getRange(1, 1, 1, width).getValues()[0].map(v => String(v).trim());
+  for (let i = HEADERS.length; i < headers.length; i++) {
+    if (headers[i].toLowerCase() === IMAGE_HEADER.toLowerCase()) return i + 1;
+  }
+  if (!create) return 0;
+  let col = HEADERS.length + 1;
+  while (col <= headers.length && headers[col - 1] !== '') col++;
+  sheet.getRange(1, col).setValue(IMAGE_HEADER).setFontWeight('bold')
+    .setNote('A photo or scan that came with the offering: click to look at it. Clear this cell to keep the image off the website.');
+  return col;
+}
+
+function imageResponse_(id) {
+  const notFound = { ok: false, code: 'not_found', error: 'This image isn’t available.' };
+  if (!CONFIG.IMAGE_UPLOADS || !/^[A-Za-z0-9]{6,40}$/.test(id)) return notFound;
+
+  const sheet = getSheet_();
+  const col = imageCol_(sheet, false);
+  const last = sheet.getLastRow();
+  if (!col || last < 2) return notFound;
+
+  const hit = sheet.getRange(2, COL.id, last - 1, 1).createTextFinder(id).matchEntireCell(true).findNext();
+  if (!hit) return notFound;
+  const row = hit.getRow();
+  if (!isApproved_(sheet.getRange(row, COL.approved).getValue())) return notFound;
+  if (String(sheet.getRange(row, col).getValue() || '').trim() === '') return notFound;
+
+  const folder = imageFolder_(false);
+  const files = folder ? folder.getFilesByName(id + '.jpg') : null;
+  if (!files || !files.hasNext()) return notFound;
+  return { ok: true, mime: 'image/jpeg', data: Utilities.base64Encode(files.next().getBlob().getBytes()) };
+}
+
+// ============================================
 // Sheet helpers, triggers and menu
 // ============================================
 
@@ -298,7 +424,11 @@ function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   if (!ss) throw new Error('Open the Google Sheet, choose Extensions → Apps Script, and run setup() from there.');
   PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
-  ensureSheet_(ss);
+  const sheet = ensureSheet_(ss);
+  if (CONFIG.IMAGE_UPLOADS) {
+    imageCol_(sheet, true);
+    imageFolder_(true);   // also makes Google ask for Drive access now, rather than on a devotee's first image
+  }
 
   ScriptApp.getProjectTriggers()
     .filter(t => t.getHandlerFunction() === 'onSheetEdit')
@@ -369,9 +499,14 @@ function json_(obj) {
 
 function parseBody_(e) {
   const raw = e && e.postData && e.postData.contents;
-  if (raw && raw.length > MAX_BODY_CHARS) return null;
+  if (raw && raw.length > MAX_IMAGE_BODY_CHARS) return null;
   if (raw) {
-    try { return JSON.parse(raw); } catch (_) { /* maybe form-encoded */ }
+    try {
+      const body = JSON.parse(raw);
+      // Only an image may make a request large.
+      if (raw.length > MAX_BODY_CHARS && !(body && body.image)) return null;
+      return body;
+    } catch (_) { /* maybe form-encoded */ }
   }
   return (e && e.parameter) || null;
 }

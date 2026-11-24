@@ -6,8 +6,17 @@
 
     const VP = window.VP;
     const limits = Object.assign({
-        nameMax: 120, cityMax: 120, countryMax: 80, emailMax: 200, offeringMin: 20, offeringMax: 12000
+        nameMax: 120, cityMax: 120, countryMax: 80, emailMax: 200, offeringMin: 20, offeringMax: 12000,
+        imagePickMax: 20 * 1024 * 1024
     }, VP.config.limits || {});
+
+    // A handwritten page stays easy to read at this size, and the script refuses anything over 1.5 MB.
+    const IMAGE_EDGES = [1800, 1600, 1400, 1200];
+    const IMAGE_QUALITIES = [0.85, 0.75, 0.65, 0.55];
+    const IMAGE_TARGET_BYTES = 700 * 1024;
+    const IMAGE_HARD_BYTES = 1500 * 1024;
+    const IMAGE_SUBMIT_TIMEOUT_MS = 90000;
+    const imagesOn = VP.config.imageUploads === true && VP.hasEndpoint();
 
     const MIN_ELAPSED_MS = 3000;
     const SUBMIT_TIMEOUT_MS = 30000;
@@ -25,6 +34,18 @@
         offering: $('f-offering'),
         count: $('f-offering-count'),
         draft: $('draft-status'),
+        image: $('f-image'),
+        imageField: $('field-image'),
+        imageEmpty: $('image-empty'),
+        imageFilled: $('image-filled'),
+        imagePreview: $('image-preview'),
+        imageName: $('image-name'),
+        imageRemove: $('image-remove'),
+        imageStatus: $('image-status'),
+        imageConsent: $('f-imageConsent'),
+        imageConsentField: $('field-image-consent'),
+        confirmImage: $('confirm-image'),
+        confirmImageImg: $('confirm-image-img'),
         name: $('f-name'),
         city: $('f-city'),
         cityToggle: $('f-city-toggle'),
@@ -69,6 +90,9 @@
 
     let submitting = false;
     let canSubmit = false;
+    let image = null;        // { base64, blob, previewUrl, name } once a picture is ready to send
+    let imageBusy = false;
+    let imageRun = 0;        // lets a newer choice cancel an older one still being prepared
 
     // ---------- Helpers ----------
     const oneLine = v => String(v || '').replace(/\s+/g, ' ').trim();
@@ -610,16 +634,22 @@
     }
 
     function validateField(field) {
-        const v = field === 'consent' ? els.consent.checked : els[field].value;
+        const v = field === 'consent' || field === 'imageConsent' ? els[field].checked : els[field].value;
         let msg = '';
         switch (field) {
             case 'offering': {
                 const text = multiLine(v);
-                if (!text) msg = 'Please write your offering.';
-                else if (text.length < limits.offeringMin) msg = `A few more words, please — at least ${limits.offeringMin} characters.`;
+                if (!text && !image) msg = 'Please write your offering.';
+                else if (text && !image && text.length < limits.offeringMin) msg = `A few more words, please — at least ${limits.offeringMin} characters.`;
                 else if (text.length > limits.offeringMax) msg = `Please keep your offering under ${VP.formatNumber(limits.offeringMax)} characters.`;
                 break;
             }
+            case 'image':
+                if (imageBusy) msg = 'One moment, your image is still being prepared.';
+                break;
+            case 'imageConsent':
+                if (image && !v) msg = 'Please confirm that the image is your own, so we can publish it.';
+                break;
             case 'name': {
                 const t = oneLine(v);
                 if (t.length < 2) msg = 'Please sign with your initiated or official name.';
@@ -654,7 +684,7 @@
         return !msg;
     }
 
-    const VALIDATE_ORDER = ['offering', 'name', 'country', 'city', 'email', 'consent'];
+    const VALIDATE_ORDER = ['offering', 'image', 'name', 'country', 'city', 'email', 'imageConsent', 'consent'];
 
     function validateAll() {
         resolveCountry();
@@ -669,6 +699,164 @@
             invalid.sort((a, b) => VALIDATE_ORDER.indexOf(a) - VALIDATE_ORDER.indexOf(b));
         }
         return invalid;
+    }
+
+    // ---------- Handwritten letter or artwork ----------
+    function loadBitmap(file) {
+        const viaElement = () => new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode')); };
+            img.src = url;
+        });
+        if (typeof createImageBitmap !== 'function') return viaElement();
+        return createImageBitmap(file, { imageOrientation: 'from-image' })
+            .catch(() => createImageBitmap(file))
+            .catch(viaElement);
+    }
+
+    const toJpeg = (canvas, quality) => new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+
+    // Shrinks the picture and saves it as a JPEG. Re-drawing it also drops hidden details such as GPS location.
+    async function shrinkImage(file) {
+        const bitmap = await loadBitmap(file);
+        const w = bitmap.width || bitmap.naturalWidth;
+        const h = bitmap.height || bitmap.naturalHeight;
+        if (!w || !h) throw new Error('decode');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let blob = null;
+        let tried = Infinity;
+        for (const edge of IMAGE_EDGES) {
+            const longest = Math.min(edge, Math.max(w, h));
+            if (longest >= tried) continue;   // a small picture needs only one size
+            tried = longest;
+            const scale = longest / Math.max(w, h);
+            canvas.width = Math.max(1, Math.round(w * scale));
+            canvas.height = Math.max(1, Math.round(h * scale));
+            ctx.fillStyle = '#fff';   // a transparent PNG would otherwise turn black
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+            for (const q of IMAGE_QUALITIES) {
+                blob = await toJpeg(canvas, q);
+                if (blob && blob.size <= IMAGE_TARGET_BYTES) break;
+            }
+            if (blob && blob.size <= IMAGE_TARGET_BYTES) break;
+        }
+        if (bitmap.close) bitmap.close();
+        if (!blob || blob.size > IMAGE_HARD_BYTES) throw new Error('size');
+        return blob;
+    }
+
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    function showImageStatus(message) {
+        els.imageStatus.textContent = message || '';
+    }
+
+    function renderImage() {
+        const has = Boolean(image);
+        els.imageEmpty.hidden = has;
+        els.imageFilled.hidden = !has;
+        els.imageConsentField.hidden = !has;
+        els.offering.required = !has;
+        if (has) {
+            els.imagePreview.src = image.previewUrl;
+            els.imageName.textContent = image.name;
+        } else {
+            els.imagePreview.removeAttribute('src');
+            els.imageConsent.checked = false;
+            setError('imageConsent', '');
+        }
+        // With a picture attached, a few typed words are welcome but no longer required.
+        if (els.offering.getAttribute('aria-invalid')) validateField('offering');
+    }
+
+    function clearImage(focusPicker) {
+        imageRun++;
+        imageBusy = false;
+        if (image) URL.revokeObjectURL(image.previewUrl);
+        image = null;
+        els.image.value = '';
+        setError('image', '');
+        showImageStatus('');
+        renderImage();
+        if (focusPicker) els.image.focus();
+    }
+
+    async function chooseImage(file) {
+        if (!file) return;
+        const run = ++imageRun;
+        setError('image', '');
+        const type = (file.type || '').toLowerCase();
+        if (/heic|heif/.test(type) || /\.hei[cf]$/i.test(file.name)) {
+            setError('image', 'This looks like an iPhone HEIC photo. Please choose a JPG or PNG instead, or take the photo again.');
+            els.image.value = '';
+            return;
+        }
+        if (!/^image\/(jpeg|png|webp)$/.test(type) && !(!type && /\.(jpe?g|png|webp)$/i.test(file.name))) {
+            setError('image', 'Please choose a JPG, PNG or WebP image.');
+            els.image.value = '';
+            return;
+        }
+        if (file.size > limits.imagePickMax) {
+            setError('image', `That image is larger than ${Math.round(limits.imagePickMax / 1048576)} MB. Please choose a smaller one.`);
+            els.image.value = '';
+            return;
+        }
+
+        imageBusy = true;
+        showImageStatus('Preparing your image…');
+        try {
+            const blob = await shrinkImage(file);
+            const base64 = await blobToBase64(blob);
+            if (run !== imageRun) return;
+            if (image) URL.revokeObjectURL(image.previewUrl);
+            image = { blob, base64, previewUrl: URL.createObjectURL(blob), name: file.name.replace(/\.[^.]+$/, '') || 'Your image' };
+            imageBusy = false;
+            showImageStatus('Your image is ready.');
+            renderImage();
+        } catch (err) {
+            if (run !== imageRun) return;
+            imageBusy = false;
+            showImageStatus('');
+            els.image.value = '';
+            setError('image', err && err.message === 'size'
+                ? 'This image is too detailed to send. Please choose a smaller photo.'
+                : 'We couldn’t open this image. Please choose another.');
+        }
+    }
+
+    function setupImage() {
+        if (!imagesOn || !els.imageField) return;
+        els.imageField.hidden = false;
+        els.image.addEventListener('change', () => chooseImage(els.image.files && els.image.files[0]));
+        els.imageRemove.addEventListener('click', () => clearImage(true));
+        els.imageConsent.addEventListener('change', () => validateField('imageConsent'));
+
+        // Dropping a file on the box works too
+        const drop = $('image-drop');
+        ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => {
+            if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
+                e.preventDefault();
+                drop.classList.add('is-over');
+            }
+        }));
+        ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, () => drop.classList.remove('is-over')));
+        drop.addEventListener('drop', e => {
+            const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+            if (!file) return;
+            e.preventDefault();
+            chooseImage(file);
+        });
     }
 
     // ---------- Submit ----------
@@ -687,7 +875,7 @@
 
     async function postOffering(payload) {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS);
+        const timer = setTimeout(() => controller.abort(), payload.image ? IMAGE_SUBMIT_TIMEOUT_MS : SUBMIT_TIMEOUT_MS);
         try {
             // text/plain keeps this a "simple" request, so Apps Script needs no CORS preflight.
             const res = await fetch(VP.config.submissionEndpoint.trim(), {
@@ -723,6 +911,7 @@
         invalid: 'Some details need another look. Please check the form and try again.',
         too_fast: 'That was very quick! Please take a moment and send again.',
         rate_limited: 'We’ve received several offerings from you just now. Please wait a few minutes and try again.',
+        image_limit: 'We have received a great many images today. Please try again tomorrow, or send your offering as typed words.',
         busy: 'Many devotees are offering right now. Please try again in a moment.'
     };
 
@@ -755,6 +944,10 @@
             consent: true,
             website: els.website.value
         };
+        if (image) {
+            payload.image = { mime: 'image/jpeg', data: image.base64 };
+            payload.imageConsent = true;
+        }
 
         if (payload.website) {
             // Honeypot filled: quietly pretend all is well.
@@ -775,6 +968,10 @@
         }
         pendingPayload = payload;
         els.confirmText.textContent = payload.offering;
+        els.confirmText.hidden = !payload.offering;
+        els.confirmImage.hidden = !image;
+        if (image) els.confirmImageImg.src = image.previewUrl;
+        else els.confirmImageImg.removeAttribute('src');
         els.confirmName.textContent = payload.name;
         els.confirmPlace.textContent = placeLine;
         els.confirmEmail.textContent = payload.email
@@ -870,7 +1067,7 @@
 
     function showSuccess(payload, duplicate) {
         const excerpt = payload.offering.length > 260 ? `${payload.offering.slice(0, 260).trim()}…` : payload.offering;
-        els.doneExcerpt.textContent = excerpt;
+        els.doneExcerpt.textContent = excerpt || 'A handwritten offering';
         els.doneName.textContent = payload.name;
         els.donePlace.textContent = [payload.city, payload.country].filter(Boolean).join(', ');
         els.doneText.textContent = duplicate
@@ -891,6 +1088,7 @@
     function writeAnother() {
         els.offering.value = '';
         els.consent.checked = false;
+        clearImage(false);
         els.form.hidden = false;
         els.done.hidden = true;
         els.done.classList.remove('is-offered');
@@ -954,6 +1152,7 @@
 
         restoreDraft();
         setupPlaces();
+        setupImage();
         trackPresses();
         updateCount();
         autosize();

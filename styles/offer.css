@@ -210,6 +210,88 @@
 }
 .draft-discard:hover { color: var(--ink); }
 
+/* ---------- Handwritten letter or artwork ---------- */
+.field[hidden], .image-empty[hidden], .image-filled[hidden] { display: none; }
+.field-image { margin-top: 2.1rem; }
+.image-drop {
+    position: relative;
+    padding: 1.5rem 1.2rem 1.35rem;
+    text-align: center;
+    background: var(--paper);
+    border: 1.5px dashed rgba(133, 105, 79, .5);
+    border-radius: 3px;
+    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.image-drop.is-over,
+.image-drop:has(.image-input:focus-visible) {
+    border-color: var(--marigold);
+    background: var(--paper-hi);
+    box-shadow: 0 0 0 3px rgba(242, 163, 58, .25);
+}
+.field-image.has-error .image-drop { border-color: var(--kumkum); }
+/* Hidden visually, still reachable by keyboard and screen readers; the label beside it is the button */
+.image-input {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: 0; padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+.image-empty { display: grid; justify-items: center; gap: .85rem; }
+.image-icon { width: 38px; height: 38px; color: var(--ink-3); }
+.image-lede { font-size: 1.12rem; font-style: italic; color: var(--ink-2); }
+.image-pick { cursor: pointer; }
+.image-formats {
+    font-family: var(--font-ui);
+    font-size: .8rem;
+    letter-spacing: .04em;
+    color: var(--ink-3);
+}
+.image-preview {
+    display: block;
+    max-width: 100%;
+    max-height: min(24rem, 60vh);
+    margin: 0 auto;
+    padding: .45rem;
+    background: #fff;
+    border: 1px solid var(--paper-edge);
+    box-shadow: var(--shadow-paper);
+}
+.image-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .15rem 1.4rem;
+    margin-top: 1rem;
+}
+.image-name {
+    max-width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+    color: var(--ink-3);
+}
+.image-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-ui);
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--kumkum);
+    cursor: pointer;
+}
+.image-link:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.image-status { margin-top: .6rem; text-align: center; font-family: var(--font-ui); font-size: .86rem; color: var(--ink-3); }
+.image-status:empty { display: none; }
+.field-image .field-hint { text-align: center; }
+.field-image .field-error { text-align: center; }
+
 /* Signature */
 .sheet-sign {
     width: min(100%, 480px);
@@ -872,6 +954,16 @@ html.confirm-open { overflow: hidden; }
 }
 .confirm-letter:focus { outline: none; }
 .confirm-letter:focus-visible { outline: 2px solid var(--marigold); outline-offset: 2px; }
+.confirm-image { margin: 0 0 1.3rem; text-align: center; }
+.confirm-image img {
+    display: inline-block;
+    max-width: 100%;
+    max-height: 46vh;
+    padding: .4rem;
+    background: #fff;
+    border: 1px solid var(--paper-edge);
+    box-shadow: var(--shadow-paper);
+}
 .confirm-text {
     font-size: 1.06rem;
     line-height: 1.75;

@@ -219,6 +219,7 @@ Until step 2 is done, the site works exactly as before: the archive is readable,
 - [ ] No page mentions Vyāsa Pūjā, appearance day or an edition number (the lecture texts and devotees' own offerings are left as written)
 - [ ] **Read offerings**: year switch, search, country/city filters, reader (←/→, Esc), share link
 - [ ] **Offer yours**: draft is kept after a reload; validation messages; a test offering reaches the sheet
+- [ ] **Images** (only once `imageUploads` is `true`): use a separate test deployment. A photo is accepted and shrunk; an image-only offering can be sent; the **Image** cell links to it in the sheet; it appears in the reader only after **Approved** is ticked, and disappears when the cell is cleared or *Approved* is unticked
 - [ ] A test offering appears on **Read offerings** after ticking **Approved**, and disappears after unticking
 - [ ] **Lectures**: days, topics expand, PDF opens
 - [ ] **Books**: all three covers load, **Read online** and **Download** work for each PDF, and the covers on the home page open the right book

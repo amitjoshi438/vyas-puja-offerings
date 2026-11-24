@@ -57,6 +57,7 @@ Notes:
 
 - Rows with neither a name nor text are skipped.
 - Missing names show as "Anonymous".
+- An offering sent with a handwritten letter or artwork carries `"hasImage": true`. The image is not in the file: the website asks the Apps Script for it when someone opens that offering. For an archived year, keep that year's rows in the sheet (do not delete them) and keep the Drive folder, or the pages will say the image could not be opened.
 - Keep `id`s stable once published, because shared links such as `offerings.html?year=2026#o=<id>` depend on them. The Apps Script export already provides stable ids.
 
 ## Adding an archived year

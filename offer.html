@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400..800&family=Mukta:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/main.css?v=19">
-    <link rel="stylesheet" href="styles/offer.css?v=9">
+    <link rel="stylesheet" href="styles/offer.css?v=10">
 </head>
 <body class="offer-page">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -111,6 +111,32 @@
                                 <p class="field-error" id="f-offering-error"></p>
                             </div>
 
+                            <!-- Shown only when scripts/config.js has imageUploads: true -->
+                            <div class="field field-image" id="field-image" hidden>
+                                <span class="sheet-label" id="f-image-label">Handwritten letter or artwork <span class="optional">optional</span></span>
+                                <div class="image-drop" id="image-drop">
+                                    <div class="image-empty" id="image-empty">
+                                        <svg class="image-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="4" y="6" width="24" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M4 21l6-6 5 5 4-4 9 9" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="21.5" cy="12.5" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+                                        <p class="image-lede">Photograph or scan it. One image.</p>
+                                        <label class="btn btn-ghost image-pick" for="f-image">Choose an image</label>
+                                        <p class="image-formats">JPG, PNG or WebP, up to 20 MB</p>
+                                    </div>
+                                    <div class="image-filled" id="image-filled" hidden>
+                                        <img class="image-preview" id="image-preview" alt="Preview of your handwritten offering">
+                                        <div class="image-actions">
+                                            <span class="image-name" id="image-name"></span>
+                                            <label class="image-link" for="f-image">Choose another</label>
+                                            <button type="button" class="image-link" id="image-remove">Remove</button>
+                                        </div>
+                                    </div>
+                                    <input class="image-input" id="f-image" name="image" type="file" accept="image/jpeg,image/png,image/webp"
+                                        aria-labelledby="f-image-label" aria-describedby="f-image-hint f-image-error">
+                                </div>
+                                <p class="image-status" id="image-status" role="status" aria-live="polite"></p>
+                                <p class="field-hint" id="f-image-hint">Please add a few typed words too, so everyone can read and search it.</p>
+                                <p class="field-error" id="f-image-error"></p>
+                            </div>
+
                             <div class="sheet-sign">
                                 <span class="sign-label">Offered by</span>
                                 <div class="field field-name">
@@ -171,6 +197,15 @@
                                 <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
                             </div>
 
+                            <div class="field field-consent" id="field-image-consent" hidden>
+                                <label class="consent">
+                                    <input id="f-imageConsent" name="imageConsent" type="checkbox" aria-describedby="f-imageConsent-error">
+                                    <span class="consent-box" aria-hidden="true"></span>
+                                    <span>I’m sharing my own handwriting or artwork, and I’m happy for it to be shown with my offering.</span>
+                                </label>
+                                <p class="field-error" id="f-imageConsent-error"></p>
+                            </div>
+
                             <div class="field field-consent">
                                 <label class="consent">
                                     <input id="f-consent" name="consent" type="checkbox" required aria-describedby="f-consent-error">
@@ -199,6 +234,9 @@
                                 <p class="confirm-lede" id="confirm-lede">Please read it through once more. This is how it will appear after the sevaks have read it.</p>
                             </header>
                             <div class="confirm-letter" id="confirm-letter" tabindex="0" role="region" aria-label="Your offering">
+                                <figure class="confirm-image" id="confirm-image" hidden>
+                                    <img id="confirm-image-img" alt="Your handwritten offering">
+                                </figure>
                                 <p class="confirm-text" id="confirm-text"></p>
                                 <p class="confirm-sign">
                                     <span class="confirm-sign-label">Offered by</span>
@@ -392,9 +430,9 @@
         </div>
     </footer>
 
-    <script src="scripts/config.js?v=6"></script>
-    <script src="scripts/common.js?v=5"></script>
+    <script src="scripts/config.js?v=7"></script>
+    <script src="scripts/common.js?v=6"></script>
     <script src="scripts/places.js?v=5"></script>
-    <script src="scripts/offer.js?v=9"></script>
+    <script src="scripts/offer.js?v=10"></script>
 </body>
 </html>

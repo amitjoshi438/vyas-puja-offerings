@@ -15,6 +15,10 @@ window.VYASA_CONFIG = {
 
     currentYear: 2026,
 
+    // Let devotees add one handwritten letter or artwork to their offering.
+    // Turn this on only after Code.gs with IMAGE_UPLOADS has been deployed (see backend/google-apps-script/README.md).
+    imageUploads: false,
+
     years: [
         {
             year: 2026,

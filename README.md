@@ -9,8 +9,8 @@ Live at **[garlandofgratitude.co.in](https://garlandofgratitude.co.in)**. It is 
 | Page | What it does |
 |---|---|
 | `index.html` | Home page: a temple-sanctum hero titled "Garland of Gratitude", with Maharaj seated between two garlanded pillars, festoons of roses and jasmine across the top, and a row of flowers laid before him. Every flower stands for one of the most recent offerings (hover or tap to see whose). Also live counts, a moving strip of names, how to offer, the year-by-year archive and the books of earlier years. |
-| `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. |
-| `offer.html` | **Write your offering.** The draft is saved on the device as you type. The devotee signs with their initiated name, or their official name if not initiated. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. The form is validated and protected against spam. Before anything is sent, the devotee sees the offering as it will be published and confirms it; then they see a thank-you. If no endpoint is configured, the page explains that offerings are not open yet. |
+| `offerings.html` | Read every offering. Choose a year, search by name, city, country or words, filter by country and city, pick one at random, and open any letter in a full reader (←/→ to move between letters). Each letter has a shareable link. An offering sent with a handwritten letter or artwork carries a "Handwritten" mark, and its reader shows the page above any typed words. |
+| `offer.html` | **Write your offering.** The draft is saved on the device as you type. The devotee signs with their initiated name, or their official name if not initiated. Country and town are chosen from searchable lists, so every place is spelled one way; a devotee whose town is missing can type it, and the sheet flags it for checking. Email typos such as `gmial.com` get a suggested fix. Optionally, a devotee can add one handwritten letter or artwork (see below). The form is validated and protected against spam. Before anything is sent, the devotee sees the offering as it will be published and confirms it; then they see a thank-you. If no endpoint is configured, the page explains that offerings are not open yet. |
 | `lectures.html` | Initiation lecture series, laid out as palm-leaf pages with a downloadable PDF booklet. |
 | `books.html` | **Books of earlier years** (2021, 2023 and 2024). Each book has a cover, its page count and file size, and buttons to read it online or download the PDF. Links such as `books.html#book-2023` open on that book. The home page shows the same covers beneath the year cards. |
 
@@ -66,6 +66,10 @@ Until a submission endpoint is configured, `offer.html` shows a gentle "not open
    ```
 
 3. Commit and push. Moderators then publish offerings by ticking **Approved** in the sheet.
+
+### Handwritten letters and artwork
+
+The form can take one photo or scan with an offering. It is **off until you turn it on**: first deploy the updated Apps Script (it needs Google Drive access; see [Images](backend/google-apps-script/README.md#images-handwritten-letters-and-artwork)), then set `imageUploads: true` in `scripts/config.js`. A devotee picks an image of up to 20 MB; the browser shrinks it to about 700 KB before sending. Images are stored in a private Drive folder, and the website shows one only while its offering is approved.
 
 ## Opening a new year / archiving the last one
 
