@@ -17,7 +17,7 @@ window.VYASA_CONFIG = {
 
     // Let devotees add one handwritten letter or artwork to their offering.
     // Turn this on only after Code.gs with IMAGE_UPLOADS has been deployed (see backend/google-apps-script/README.md).
-    imageUploads: false,
+    imageUploads: true,
 
     years: [
         {
